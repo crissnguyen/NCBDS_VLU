@@ -28,8 +28,9 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                 <input type="text" placeholder="Tìm theo tên hoặc email..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} style={{ flex: 1, border: 'none', outline: 'none', fontSize: '0.875rem', background: 'transparent', color: '#0f172a' }} />
               </div>
               <div style={{ background: 'white', borderRadius: 14, border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Người dùng', 'Vai trò / Quyền', 'Trạng thái', 'Tin đăng', 'Hiệu suất', 'Thao tác'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.73rem',fontWeight:700,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.05em',background:'#fafafa'}}>{h}</th>)}</tr></thead>
+                <div className="responsive-table-wrapper">
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Người dùng', 'Vai trò / Quyền', 'Trạng thái', 'Tin đăng', 'Hiệu suất', 'Thao tác'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.73rem',fontWeight:700,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.05em',background:'#fafafa'}}>{h}</th>)}</tr></thead>
                   <tbody>
                     {filteredUsers.map((user, idx) => (
                       <tr key={user.id} style={{ borderBottom: idx < filteredUsers.length - 1 ? '1px solid #f8fafc' : 'none', transition: 'background 0.12s' }}
@@ -82,7 +83,8 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                  </table>
+                </div>
                 {filteredUsers.length === 0 && <div style={{ padding: '2.5rem', textAlign: 'center', color: '#94a3b8' }}><Users size={36} style={{ margin:'0 auto 0.5rem',opacity:0.25 }}/><p style={{ margin:0 }}>Không tìm thấy nhân viên nào</p></div>}
               </div>
             

@@ -7,8 +7,9 @@ export default function AllPropertiesTab({ allProperties, setEditingProperty, ha
                 <div style={{ background:'white',padding:'3rem',textAlign:'center',borderRadius:16,border:'1px solid #e2e8f0',color:'#64748b' }}>Không có tin đăng nào.</div>
               ) : (
                 <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
-                    <thead>
+                  <div className="responsive-table-wrapper">
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+                      <thead>
                       <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', color: '#475569' }}>
                         <th style={{ padding: '1rem', fontWeight: 600 }}>Thông tin</th>
                         <th style={{ padding: '1rem', fontWeight: 600 }}>Loại</th>
@@ -50,8 +51,9 @@ export default function AllPropertiesTab({ allProperties, setEditingProperty, ha
                           </td>
                         </tr>
                       ))}
-                    </tbody>
-                  </table>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
             

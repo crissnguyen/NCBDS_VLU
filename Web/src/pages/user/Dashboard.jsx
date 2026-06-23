@@ -50,13 +50,13 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
   const statusLabel = { Approved: 'Đã duyệt', Pending: 'Chờ duyệt', Rejected: 'Từ chối' };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: '#f1f5f9', fontFamily: 'Plus Jakarta Sans, sans-serif', overflow: 'hidden' }}>
+    <div className="dashboard-layout">
       <style>{`@keyframes fadeInScale { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }`}</style>
       <Toasts toasts={toast.toasts} remove={toast.remove} />
 
       {/* SIDEBAR */}
-      <aside style={{ width: 250, flexShrink: 0, display: 'flex', flexDirection: 'column', background: 'linear-gradient(160deg, #0f2a44 0%, #1e4066 60%, #0f4c75 100%)' }}>
-        <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+      <aside className="dashboard-sidebar">
+        <div className="dashboard-sidebar-logo">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', cursor: 'pointer' }} onClick={() => setCurrentPage('home')}>
             <div style={{ width: 38, height: 38, borderRadius: 10, background: 'linear-gradient(135deg, #0f766e, #0891b2)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 10px rgba(8,145,178,0.4)' }}>
               <Home size={18} color="white" />
@@ -67,12 +67,12 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
             </div>
           </div>
         </div>
-        <nav style={{ padding: '1rem', flex: 1, overflowY: 'auto' }}>
+        <nav className="dashboard-sidebar-nav">
           {navItems.map(item => (
             <SidebarItem key={item.tab} icon={item.icon} label={item.label} active={activeTab === item.tab} onClick={() => setActiveTab(item.tab)} />
           ))}
         </nav>
-        <div style={{ padding: '1rem 1.25rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className="dashboard-sidebar-user">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
             <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg, #0f766e, #0891b2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><User size={15} color="white" /></div>
             <div style={{ flex: 1, overflow: 'hidden' }}>
@@ -89,8 +89,8 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
       </aside>
 
       {/* MAIN */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <header style={{ height: 60, background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.75rem', flexShrink: 0 }}>
+      <div className="dashboard-main-area">
+        <header className="dashboard-header">
           <div>
             <h2 style={{ margin: 0, fontWeight: 700, fontSize: '1rem', color: '#0f172a' }}>{navItems.find(n => n.tab === activeTab)?.label}</h2>
             <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 1 }}>{new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
@@ -104,7 +104,7 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
           </div>
         </header>
 
-        <main style={{ flex: 1, overflowY: 'auto', padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <main className="dashboard-content">
           {/* TAB 0: Tổng quan */}
           {activeTab === 0 && (
             <>
@@ -114,7 +114,7 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
                   Bạn đang có <strong style={{ color: 'white' }}>{properties.length} tin đăng</strong> trên hệ thống.
                 </p>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+              <div className="dashboard-stats-grid">
                 <StatCard icon={FileText} label="Tổng tin đăng" value={properties.length} change="Tất cả" color="#0f766e" />
                 <StatCard icon={TrendingUp} label="Lượt xem" value="1,248" change="+12% tuần này" color="#0891b2" />
                 <StatCard icon={Users} label="Lead Khách hàng" value="86" change="+5 hôm nay" color="#f59e0b" />
@@ -125,8 +125,9 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
                   <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>Tin đăng gần đây</h3>
                   <button onClick={() => setActiveTab(2)} style={{ background: 'none', border: 'none', color: '#0f766e', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>Xem tất cả</button>
                 </div>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Tin đăng', 'Khu vực', 'Giá', 'Trạng thái'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.73rem',fontWeight:700,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.05em',background:'#fafafa'}}>{h}</th>)}</tr></thead>
+                <div className="responsive-table-wrapper">
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Tin đăng', 'Khu vực', 'Giá', 'Trạng thái'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.73rem',fontWeight:700,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.05em',background:'#fafafa'}}>{h}</th>)}</tr></thead>
                   <tbody>
                     {properties.slice(0, 5).map((p, idx) => (
                       <tr key={p.id} style={{ borderBottom: idx < 4 ? '1px solid #f8fafc' : 'none' }}>
@@ -142,7 +143,8 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
                     ))}
                     {properties.length === 0 && <tr><td colSpan="4" style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>Chưa có tin đăng nào.</td></tr>}
                   </tbody>
-                </table>
+                  </table>
+                </div>
               </div>
             </>
           )}
@@ -161,8 +163,9 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
                   <PlusCircle size={14} /> Thêm tin mới
                 </button>
               </div>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Mã tin', 'Tiêu đề', 'Khu vực', 'Mức giá', 'Trạng thái'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.73rem',fontWeight:700,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.05em',background:'#fafafa'}}>{h}</th>)}</tr></thead>
+              <div className="responsive-table-wrapper">
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Mã tin', 'Tiêu đề', 'Khu vực', 'Mức giá', 'Trạng thái'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.73rem',fontWeight:700,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.05em',background:'#fafafa'}}>{h}</th>)}</tr></thead>
                 <tbody>
                   {properties.map((p, idx) => (
                     <tr key={p.id} style={{ borderBottom: idx < properties.length - 1 ? '1px solid #f8fafc' : 'none' }} onMouseOver={e => e.currentTarget.style.background = '#fafafa'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
@@ -179,7 +182,8 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
                   ))}
                   {properties.length === 0 && <tr><td colSpan="5" style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>Bạn chưa có tin đăng nào. Hãy tạo tin mới!</td></tr>}
                 </tbody>
-              </table>
+                </table>
+              </div>
             </div>
           )}
 

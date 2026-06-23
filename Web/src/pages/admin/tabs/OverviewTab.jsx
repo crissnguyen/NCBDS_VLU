@@ -26,13 +26,13 @@ export default function OverviewTab({ stats, currentUser, pendingProperties, all
                   <strong style={{ color: 'white' }}>{pendingProperties.length} tin đăng</strong> chờ phê duyệt · <strong style={{ color: 'white' }}>{metrics.totalSales || 0} nhân viên</strong> đang hoạt động
                 </p>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem' }}>
+              <div className="dashboard-stats-grid">
                 <StatCard icon={Users} label="Tổng số Sale" value={metrics.totalSales || 0} change="+2 tháng này" color="#0f766e" />
                 <StatCard icon={FileText} label="Tin chờ duyệt" value={pendingProperties.length} change={pendingProperties.length === 0 ? 'Xong hết' : 'Cần xử lý'} up={pendingProperties.length === 0} color="#f59e0b" />
                 <StatCard icon={Home} label="Tổng tin đăng" value={allProperties.length} change="Tất cả" color="#0f2a44" />
                 <StatCard icon={TrendingUp} label="Giao dịch" value={metrics.successfulTransactions || 0} change="+12%" color="#0891b2" />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.25rem' }}>
+              <div className="dashboard-charts-grid">
                 <div style={{ background: 'white', borderRadius: 14, padding: '1.25rem 1.5rem', border: '1px solid #e2e8f0' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                     <div><h3 style={{ margin: 0, fontWeight: 700, fontSize: '0.95rem' }}>Xu hướng tin đăng</h3><p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8', marginTop: 2 }}>6 tháng gần nhất</p></div>

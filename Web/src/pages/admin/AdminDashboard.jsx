@@ -179,14 +179,14 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
   const metrics = data?.metrics || {};
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: '#f1f5f9', fontFamily: 'Plus Jakarta Sans, sans-serif', overflow: 'hidden' }}>
+    <div className="dashboard-layout">
       <style>{`@keyframes fadeInScale { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }`}</style>
       <Toasts toasts={toast.toasts} remove={toast.remove} />
 
       {/* SIDEBAR */}
-      <aside style={{ width: 250, flexShrink: 0, display: 'flex', flexDirection: 'column', background: 'linear-gradient(160deg, #0f2a44 0%, #1e4066 60%, #0f4c75 100%)' }}>
+      <aside className="dashboard-sidebar">
         {/* Logo */}
-        <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className="dashboard-sidebar-logo">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
             <div style={{ width: 38, height: 38, borderRadius: 10, background: 'linear-gradient(135deg, #0f766e, #0891b2)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 10px rgba(8,145,178,0.4)' }}>
               <Home size={18} color="white" />
@@ -198,13 +198,13 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
           </div>
         </div>
         {/* Nav */}
-        <nav style={{ padding: '1rem', flex: 1, overflowY: 'auto' }}>
+        <nav className="dashboard-sidebar-nav">
           {navItems.map(item => (
             <SidebarItem key={item.tab} icon={item.icon} label={item.label} active={activeTab === item.tab} badge={item.badge || 0} onClick={() => setActiveTab(item.tab)} />
           ))}
         </nav>
         {/* User */}
-        <div style={{ padding: '1rem 1.25rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className="dashboard-sidebar-user">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
             <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg, #0f766e, #0891b2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><User size={15} color="white" /></div>
             <div style={{ flex: 1, overflow: 'hidden' }}>
@@ -221,9 +221,9 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
       </aside>
 
       {/* MAIN */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div className="dashboard-main-area">
         {/* Topbar */}
-        <header style={{ height: 60, background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.75rem', flexShrink: 0 }}>
+        <header className="dashboard-header">
           <div>
             <h2 style={{ margin: 0, fontWeight: 700, fontSize: '1rem', color: '#0f172a' }}>{navItems.find(n => n.tab === activeTab)?.label}</h2>
             <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 1 }}>{new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
@@ -243,7 +243,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
         </header>
 
         {/* Content */}
-        <main style={{ flex: 1, overflowY: 'auto', padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <main className="dashboard-content">
 
           
           {activeTab === 0 && <OverviewTab stats={stats} currentUser={currentUser} pendingProperties={pendingProperties} allProperties={allProperties} metrics={metrics} />}
