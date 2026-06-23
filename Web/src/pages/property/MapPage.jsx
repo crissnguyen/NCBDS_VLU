@@ -12,21 +12,50 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Hàm tạo tọa độ giả lập ổn định dựa trên ID của bài đăng (do database hiện tại chưa có cột lat/lng)
-const generateCoordinate = (idString) => {
+// Từ điển tọa độ các khu vực lớn tại Việt Nam
+const PROVINCE_COORDS = {
+  "hà nội": { lat: 21.0285, lng: 105.8542 },
+  "hồ chí minh": { lat: 10.8231, lng: 106.6297 },
+  "hcm": { lat: 10.8231, lng: 106.6297 },
+  "đà nẵng": { lat: 16.0471, lng: 108.2068 },
+  "hải phòng": { lat: 20.8449, lng: 106.6881 },
+  "cần thơ": { lat: 10.0452, lng: 105.7469 },
+  "nha trang": { lat: 12.2451, lng: 109.1943 },
+  "khánh hòa": { lat: 12.2451, lng: 109.1943 },
+  "bình dương": { lat: 11.1667, lng: 106.6667 },
+  "đồng nai": { lat: 10.9483, lng: 106.8283 },
+  "bà rịa": { lat: 10.4956, lng: 107.1682 },
+  "vũng tàu": { lat: 10.3460, lng: 107.0843 },
+  "huế": { lat: 16.4637, lng: 107.5909 },
+  "quảng ninh": { lat: 21.0065, lng: 107.2932 },
+  "đà lạt": { lat: 11.9404, lng: 108.4583 },
+  "quy nhơn": { lat: 13.7829, lng: 109.2197 },
+  "phú yên": { lat: 13.0886, lng: 109.3244 },
+  "quảng nam": { lat: 15.5413, lng: 108.1530 },
+  "thanh hóa": { lat: 19.8056, lng: 105.7766 },
+  "nghệ an": { lat: 18.6796, lng: 105.6813 },
+  "vinh": { lat: 18.6796, lng: 105.6813 },
+  "phú quốc": { lat: 10.2289, lng: 103.9572 }
+};
+
+// Hàm tạo tọa độ thông minh: Đọc chuỗi địa chỉ và khoanh vùng
+const generateSmartCoordinate = (locString, idString) => {
   let hash = 0;
-  for (let i = 0; i < idString.length; i++) {
-    hash = idString.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  // Tọa độ trung tâm Nha Trang: 12.245, 109.18
-  // Tạo độ lệch ngẫu nhiên nhưng cố định theo ID trong khoảng bán kính nhất định
+  for (let i = 0; i < idString.length; i++) hash = idString.charCodeAt(i) + ((hash << 5) - hash);
   const latOffset = ((Math.abs(hash) % 100) / 1000) - 0.05;
   const lngOffset = ((Math.abs(hash >> 2) % 100) / 1000) - 0.05;
+
+  if (locString) {
+    const lower = locString.toLowerCase();
+    for (const [key, coords] of Object.entries(PROVINCE_COORDS)) {
+      if (lower.includes(key)) {
+        return { lat: coords.lat + latOffset, lng: coords.lng + lngOffset };
+      }
+    }
+  }
   
-  return {
-    lat: 12.245 + latOffset,
-    lng: 109.18 + lngOffset
-  };
+  // Mặc định Nha Trang nếu không khớp địa danh nào
+  return { lat: 12.245 + latOffset, lng: 109.18 + lngOffset };
 };
 
 export default function MapPage() {
@@ -47,7 +76,7 @@ export default function MapPage() {
         if (Array.isArray(data)) {
           // Chỉ lấy các tin đã duyệt (Approved), và gán tọa độ giả lập cho chúng
           const propertiesWithCoords = data.filter(p => p.status === 'Approved').map(p => {
-            const coords = generateCoordinate(p.id);
+            const coords = generateSmartCoordinate(p.location, p.id);
             return {
               ...p,
               lat: coords.lat,
