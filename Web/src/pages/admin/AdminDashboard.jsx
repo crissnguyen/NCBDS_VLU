@@ -270,7 +270,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     }
     if (window.confirm('Bạn có chắc chắn muốn xóa vĩnh viễn người dùng này? Các bài đăng của họ sẽ bị gỡ tên tác giả nhưng vẫn tồn tại trên hệ thống.')) {
       try {
-        const res = await fetch(`${API_URL}/api/admin/users/${userId}`, {
+        const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/users/${userId}`, {
           method: 'DELETE'
         });
         const data = await res.json();

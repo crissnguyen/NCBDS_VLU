@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UserCircle2, Mail, Calendar, ShieldCheck, MapPin } from 'lucide-react';
+import { UserCircle2, Mail, Calendar, ShieldCheck, MapPin, LogOut } from 'lucide-react';
 import { Field } from '../components/ui';
 
 export default function Profile({ currentUser, setCurrentPage, setCurrentUser }) {
@@ -9,7 +9,39 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+
+  const handleDeleteAccount = async () => {
+    if (window.confirm('CẢNH BÁO: Hành động này không thể hoàn tác! Bạn có chắc chắn muốn xóa vĩnh viễn tài khoản của mình?')) {
+      const secondConfirm = window.prompt('Gõ chữ "XOA" để xác nhận xóa tài khoản:');
+      if (secondConfirm === 'XOA') {
+        try {
+          const res = await fetch('https://ncbds-vlu.onrender.com/api/auth/profile', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: currentUser.email })
+          });
+          const data = await res.json();
+          if (data.success) {
+            alert('Tài khoản đã được xóa vĩnh viễn!');
+            localStorage.removeItem('user');
+            setTimeout(() => {
+              window.location.href = '/login';
+            }, 1000);
+          } else {
+            alert(data.message || 'Lỗi khi xóa tài khoản');
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Lỗi kết nối máy chủ');
+        }
+      } else if (secondConfirm !== null) {
+        alert('Xác nhận không hợp lệ. Đã hủy xóa.');
+      }
+    }
+  };
+
   if (!currentUser) return null;
+
 
   const handleChange = (e) => {
     setForm(p => ({ ...p, [e.target.name]: e.target.value }));
