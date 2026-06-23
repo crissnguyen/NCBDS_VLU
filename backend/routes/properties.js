@@ -203,10 +203,10 @@ router.post('/', (req, res, next) => {
       return `data:${file.mimetype};base64,${base64Data}`;
     }) : [];
 
-    if (imagePaths.length < 2) {
+    if (imagePaths.length < 1) {
       return res.status(400).json({
         success: false,
-        message: 'Vui lòng tải lên ít nhất 2 ảnh cho tin đăng.',
+        message: 'Vui lòng tải lên ít nhất 1 ảnh cho tin đăng.',
       });
     }
 
