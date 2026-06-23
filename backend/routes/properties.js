@@ -67,7 +67,16 @@ const prisma = new PrismaClient();
  */
 router.get('/', async (req, res) => {
   try {
+    const { authorId } = req.query;
+    let whereClause = { status: 'Approved' };
+
+    // Nếu có truyền authorId thì lấy tất cả tin của tác giả đó (không quan tâm status)
+    if (authorId) {
+      whereClause = { authorId };
+    }
+
     const properties = await prisma.property.findMany({
+      where: whereClause,
       orderBy: { createdAt: 'desc' }
     });
     res.json(properties);

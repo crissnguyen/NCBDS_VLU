@@ -38,6 +38,11 @@ model User {
   title       String     @default("Sale")
   performance String?    @default("0%")
   properties  Property[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  resetToken             String?
+  resetTokenExpiry       DateTime?
+  isVerified             Boolean    @default(false)
+  verificationCode       String?
+  verificationCodeExpiry DateTime?
+  createdAt              DateTime   @default(now())
+  updatedAt              DateTime   @updatedAt
 }

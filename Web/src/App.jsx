@@ -3,14 +3,18 @@ import Header from './components/Header';
 import Home from './pages/Home';
 import Search from './pages/Search';
 import MapPage from './pages/MapPage';
-import Projects from './pages/Projects';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
-import PostProperty from './pages/PostProperty';
+
 import Login from './pages/Login';
+import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import VerifyAccount from './pages/VerifyAccount';
 import ChatWidget from './components/ChatWidget';
 import Footer from './components/Footer';
 import PropertyDetail from './pages/PropertyDetail';
+import Profile from './pages/Profile';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(() => localStorage.getItem('currentPage') || 'home');
@@ -21,7 +25,13 @@ function App() {
   });
 
   useEffect(() => {
-    localStorage.setItem('currentPage', currentPage);
+    // Nếu truy cập từ URL trực tiếp (từ email)
+    if (window.location.pathname === '/reset-password') {
+      setCurrentPage('reset_password');
+      // Tránh việc ghi đè lại localstorage ngay lập tức thành trang cũ
+    } else {
+      localStorage.setItem('currentPage', currentPage);
+    }
   }, [currentPage]);
 
   useEffect(() => {
@@ -48,8 +58,12 @@ function App() {
       case 'home': return <Home setCurrentPage={setCurrentPage} />;
       case 'search': return <Search setCurrentPage={setCurrentPage} />;
       case 'map': return <MapPage />;
-      case 'projects': return <Projects />;
       case 'login': return <Login setUserRole={setUserRole} setCurrentUser={setCurrentUser} setCurrentPage={setCurrentPage} />;
+      case 'register': return <Register setCurrentPage={setCurrentPage} />;
+      case 'forgot_password': return <ForgotPassword setCurrentPage={setCurrentPage} />;
+      case 'reset_password': return <ResetPassword setCurrentPage={setCurrentPage} />;
+      case 'verify': return <VerifyAccount setCurrentPage={setCurrentPage} userEmail={localStorage.getItem('verifyEmail')} />;
+      case 'profile': return requireAuth(<Profile currentUser={currentUser} setCurrentPage={setCurrentPage} setCurrentUser={setCurrentUser} />);
       
       // Protected Routes
       case 'dashboard': 
@@ -58,8 +72,7 @@ function App() {
       case 'admin_dashboard': 
         if (userRole !== 'admin') return requireAuth(<Dashboard currentUser={currentUser} setCurrentPage={setCurrentPage} setUserRole={setUserRole} setCurrentUser={setCurrentUser} />); // Redirect sale
         return requireAuth(<AdminDashboard currentUser={currentUser} setCurrentPage={setCurrentPage} setUserRole={setUserRole} setCurrentUser={setCurrentUser} />);
-      case 'post': 
-        return requireAuth(<PostProperty currentUser={currentUser} />);
+
         
       default:
         return (
@@ -81,7 +94,7 @@ function App() {
     <div className="app-container">
       {/* Hide global header on internal dashboards to allow them to use their own full height layout with sidebar */}
       {currentPage !== 'admin_dashboard' && currentPage !== 'dashboard' && (
-        <Header currentPage={currentPage} setCurrentPage={setCurrentPage} userRole={userRole} setUserRole={setUserRole} />
+        <Header currentPage={currentPage} setCurrentPage={setCurrentPage} userRole={userRole} setUserRole={setUserRole} currentUser={currentUser} />
       )}
 
       {renderPage()}
@@ -90,7 +103,7 @@ function App() {
       {currentPage !== 'admin_dashboard' && <ChatWidget />}
       
       {/* Footer across main pages */}
-      {currentPage !== 'admin_dashboard' && currentPage !== 'dashboard' && currentPage !== 'login' && (
+      {currentPage !== 'admin_dashboard' && currentPage !== 'dashboard' && currentPage !== 'login' && currentPage !== 'register' && currentPage !== 'forgot_password' && currentPage !== 'reset_password' && currentPage !== 'verify' && (
         <Footer />
       )}
     </div>

@@ -38,9 +38,8 @@ router.get('/dashboard', async (req, res) => {
       where: { isSold: true }
     });
 
-    // 4. Danh sách môi giới (tính cả số tin đăng)
+    // 4. Danh sách người dùng (tính cả số tin đăng)
     const users = await prisma.user.findMany({
-      where: { role: 'sale' },
       select: {
         id: true,
         name: true,
@@ -119,6 +118,51 @@ router.put('/users/:id/status', async (req, res) => {
   } catch (error) {
     console.error("Lỗi cập nhật trạng thái user:", error);
     res.status(500).json({ success: false, message: "Lỗi máy chủ hoặc không tìm thấy người dùng" });
+  }
+});
+
+/**
+ * @swagger
+ * /api/admin/users/{id}/role:
+ *   put:
+ *     summary: Thay đổi vai trò tài khoản
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 enum: [user, sale, admin]
+ *     responses:
+ *       200:
+ *         description: Cập nhật thành công
+ */
+router.put('/users/:id/role', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    if (!['user', 'sale', 'admin'].includes(role)) {
+      return res.status(400).json({ success: false, message: "Vai trò không hợp lệ" });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: { role, title: role === 'sale' ? 'Chuyên viên Môi giới' : 'Khách hàng' }
+    });
+
+    res.json({ success: true, message: `Đã đổi quyền thành ${role}`, user: updatedUser });
+  } catch (error) {
+    console.error("Lỗi cập nhật quyền user:", error);
+    res.status(500).json({ success: false, message: "Lỗi máy chủ" });
   }
 });
 

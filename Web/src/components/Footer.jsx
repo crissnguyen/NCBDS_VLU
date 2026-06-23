@@ -13,7 +13,7 @@ export default function Footer() {
             <a href="#"><Share2 size={18} /></a>
           </div>
         </div>
-        
+
         <div className="footer-links">
           <h3>Về chúng tôi</h3>
           <ul>
@@ -23,7 +23,7 @@ export default function Footer() {
             <li><a href="#">Chính sách bảo mật</a></li>
           </ul>
         </div>
-        
+
         <div className="footer-links">
           <h3>Dịch vụ</h3>
           <ul>
@@ -33,13 +33,13 @@ export default function Footer() {
             <li><a href="#">Gói môi giới Pro</a></li>
           </ul>
         </div>
-        
+
         <div className="footer-contact">
           <h3>Thông tin liên hệ</h3>
           <ul>
-            <li><MapPin size={18} /> <span>Tầng 12, Tòa nhà Vincom, 78 Trần Phú, Nha Trang</span></li>
-            <li><Phone size={18} /> <span>1900 888 999 (24/7)</span></li>
-            <li><Mail size={18} /> <span>cskh@estateai.vn</span></li>
+            <li><MapPin size={18} /> <span>test......</span></li>
+            <li><Phone size={18} /> <span>0000000000</span></li>
+            <li><Mail size={18} /> <span>[EMAIL_ADDRESS]</span></li>
           </ul>
         </div>
       </div>

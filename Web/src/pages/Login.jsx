@@ -28,9 +28,20 @@ export default function Login({ setUserRole, setCurrentUser, setCurrentPage }) {
       if (data.success) {
         setUserRole(data.user.role);
         if (setCurrentUser) setCurrentUser(data.user);
-        setCurrentPage(data.user.role === 'admin' ? 'admin_dashboard' : 'dashboard');
+        if (data.user.role === 'admin') {
+          setCurrentPage('admin_dashboard');
+        } else if (data.user.role === 'sale') {
+          setCurrentPage('dashboard');
+        } else {
+          setCurrentPage('home');
+        }
       } else {
-        setError(data.message || 'Đăng nhập thất bại');
+        if (data.requireVerification) {
+          localStorage.setItem('verifyEmail', data.email || email);
+          setCurrentPage('verify');
+        } else {
+          setError(data.message || 'Đăng nhập thất bại');
+        }
       }
     } catch (err) {
       console.error('Login error:', err);
@@ -72,18 +83,27 @@ export default function Login({ setUserRole, setCurrentUser, setCurrentPage }) {
               </div>
             </Field>
 
-            <Field label="Mật khẩu">
-              <div className="input-with-icon" style={{ borderRadius: '12px' }}>
-                <Lock size={19} />
-                <input
-                  type="password"
-                  placeholder="Nhập mật khẩu"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  required
-                />
-              </div>
-            </Field>
+            <div style={{ position: 'relative' }}>
+              <Field label="Mật khẩu">
+                <div className="input-with-icon" style={{ borderRadius: '12px' }}>
+                  <Lock size={19} />
+                  <input
+                    type="password"
+                    placeholder="Nhập mật khẩu"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    required
+                  />
+                </div>
+              </Field>
+              <button 
+                type="button" 
+                style={{ position: 'absolute', top: 0, right: 0, padding: 0, background: 'none', border: 'none', color: 'var(--primary)', fontSize: '0.85rem', fontWeight: 500, cursor: 'pointer' }}
+                onClick={() => setCurrentPage('forgot_password')}
+              >
+                Quên mật khẩu?
+              </button>
+            </div>
 
 
             {error && (
@@ -99,9 +119,20 @@ export default function Login({ setUserRole, setCurrentUser, setCurrentPage }) {
               style={{ width: '100%', marginTop: '1rem', padding: '1rem', borderRadius: '12px', fontSize: '1rem', boxShadow: '0 8px 24px rgba(15, 118, 110, 0.25)', opacity: isLoading ? 0.7 : 1 }}
             >
               {isLoading ? 'Đang xử lý...' : (
-                <>Vào dashboard <ArrowRight size={18} /></>
+                <>Đăng nhập <ArrowRight size={18} /></>
               )}
             </button>
+
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem', fontSize: '0.9rem' }}>
+              <span style={{ color: 'var(--text-muted)', marginRight: '0.5rem' }}>Chưa có tài khoản?</span>
+              <button 
+                type="button" 
+                style={{ padding: 0, background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer' }}
+                onClick={() => setCurrentPage('register')}
+              >
+                Đăng ký ngay
+              </button>
+            </div>
           </form>
         </div>
       </section>

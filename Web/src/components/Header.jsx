@@ -1,12 +1,11 @@
 import { Home, LogOut, Plus, UserCircle2, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Header({ currentPage, setCurrentPage, userRole, setUserRole }) {
+export default function Header({ currentPage, setCurrentPage, userRole, setUserRole, currentUser }) {
   const navItems = [
     { id: 'home', label: 'Trang chủ' },
     { id: 'search', label: 'Mua bán' },
     { id: 'map', label: 'Bản đồ' },
-    { id: 'projects', label: 'Dự án' },
   ];
 
   return (
@@ -42,12 +41,12 @@ export default function Header({ currentPage, setCurrentPage, userRole, setUserR
 
       <div className="header-search-bar">
         <Search size={18} />
-        <input type="text" placeholder="Tìm kiếm khu vực, dự án..." />
+        <input type="text" placeholder="Tìm kiếm khu vực" />
       </div>
 
       <div className="flex items-center gap-2">
         {!userRole ? (
-          <button 
+          <button
             className="btn btn-primary"
             onClick={() => setCurrentPage('login')}
           >
@@ -56,21 +55,28 @@ export default function Header({ currentPage, setCurrentPage, userRole, setUserR
           </button>
         ) : (
           <>
-            {userRole === 'admin' ? (
+            <button className="btn btn-ghost" onClick={() => setCurrentPage('profile')}>
+              <UserCircle2 size={18} style={{ marginRight: '6px' }} />
+              {currentUser?.name || 'Tài khoản'}
+            </button>
+            {userRole === 'admin' && (
               <button className="btn btn-ghost" onClick={() => setCurrentPage('admin_dashboard')}>
                 Quản trị
               </button>
-            ) : (
+            )}
+            {userRole === 'sale' && (
               <button className="btn btn-ghost" onClick={() => setCurrentPage('dashboard')}>
                 Môi giới
               </button>
             )}
-            <button className="btn btn-primary" onClick={() => setCurrentPage('post')}>
-              <Plus size={18} />
-              Đăng tin
-            </button>
-            <button 
-              className="btn btn-ghost icon-button" 
+            {userRole !== 'user' && (
+              <button className="btn btn-primary" onClick={() => setCurrentPage(userRole === 'admin' ? 'admin_dashboard' : 'dashboard')}>
+                <Plus size={18} />
+                Đăng tin
+              </button>
+            )}
+            <button
+              className="btn btn-ghost icon-button"
               onClick={() => { setUserRole(null); setCurrentPage('home'); }}
               title="Đăng xuất"
             >
