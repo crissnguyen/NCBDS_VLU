@@ -67,34 +67,42 @@ const closeMailTransporter = async () => {
  */
 const sendMail = async (to, subject, htmlContent) => {
   try {
-    // Trong môi trường production, nếu chưa có SMTP_HOST thì báo lỗi ngay
-    if (env.nodeEnv === 'production' && !env.smtp.host) {
-      throw new Error('Chưa cấu hình biến môi trường SMTP (SMTP_HOST, SMTP_USER, SMTP_PASS) trên server (Render/Vercel).');
-    }
-
-    const transporter = await getTransporter();
+    // Gọi Google Apps Script Web App để lách luật chặn port của Render
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzqHyQOokV_eHulqr7ael5snUuRXfSnzqjIqH0hexk494HO_L6t0ZY87i2s-2H-d2s/exec";
     
-    const info = await transporter.sendMail({
-      from: `"EstateAI Vietnam" <${env.smtp.from}>`,
-      to,
-      subject,
-      html: htmlContent,
+    const response = await fetch(GAS_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        to: to,
+        subject: subject,
+        htmlBody: htmlContent,
+        secret: "ESTATE_AI_SECRET_2026"
+      })
     });
 
-    console.log("✅ Message sent: %s", info.messageId);
-    
-    // Nếu dùng Ethereal, cung cấp link xem trước email trên terminal
-    if (!env.smtp.host) {
-      console.log("🔗 Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    const textResult = await response.text();
+    let result;
+    try {
+      result = JSON.parse(textResult);
+    } catch(e) {
+      throw new Error("Lỗi phản hồi từ Google: " + textResult.substring(0, 100));
     }
-    
-    return { success: true, messageId: info.messageId };
+
+    if (!result.success) {
+      throw new Error(result.error || "Lỗi không xác định từ Google Apps Script");
+    }
+
+    console.log("✅ Message sent via GAS Proxy");
+    return { success: true, messageId: `gas-${Date.now()}` };
+
   } catch (error) {
-    console.error("❌ Send email error:", error);
-    // Trả về chi tiết lỗi để API có thể báo cáo rõ ràng
+    console.error("❌ Send email error via GAS:", error);
     return { 
       success: false, 
-      error: error.message || 'Lỗi gửi email không xác định',
+      error: error.message || 'Lỗi gửi email qua GAS',
       code: error.code || 'UNKNOWN'
     };
   }
