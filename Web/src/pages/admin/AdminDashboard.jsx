@@ -14,6 +14,7 @@ import PendingPropertiesTab from './tabs/PendingPropertiesTab';
 import PostPropertyTab from './tabs/PostPropertyTab';
 import AllPropertiesTab from './tabs/AllPropertiesTab';
 import SettingsTab from './tabs/SettingsTab';
+import NewsTab from './tabs/NewsTab';
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function AdminDashboard({ currentUser, setCurrentPage, setUserRole, setCurrentUser }) {
@@ -166,6 +167,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     { icon: FileText, label: 'Phê duyệt tin', tab: 2, badge: pendingProperties.length },
     { icon: PlusCircle, label: 'Đăng tin mới', tab: 3 },
     { icon: FileText, label: 'Quản lý tin đăng', tab: 4 },
+    { icon: FileText, label: 'Quản lý tin tức', tab: 6 },
     { icon: Settings, label: 'Cài đặt', tab: 5 },
   ];
 
@@ -259,6 +261,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
           {activeTab === 2 && <PendingPropertiesTab pendingProperties={pendingProperties} handleApproveProperty={handleApproveProperty} />}
           {activeTab === 3 && <PostPropertyTab currentUser={currentUser} toast={toast} fetchData={fetchData} />}
           {activeTab === 4 && <AllPropertiesTab allProperties={allProperties} setEditingProperty={setEditingProperty} handleDeleteProperty={handleDeleteProperty} handleApproveProperty={handleApproveProperty} />}
+          {activeTab === 6 && <NewsTab toast={toast} />}
           {activeTab === 5 && <SettingsTab />}
 </main>
       </div>

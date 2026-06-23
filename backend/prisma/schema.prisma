@@ -54,3 +54,17 @@ model PropertyImage {
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
 }
+
+model News {
+  id        String   @id @default(uuid())
+  title     String
+  excerpt   String
+  content   String?  @db.Text
+  image     String?
+  category  String   @default("Thị trường")
+  author    String   @default("Admin")
+  featured  Boolean  @default(false)
+  status    String   @default("Published")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

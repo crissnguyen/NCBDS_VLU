@@ -1,67 +1,36 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, ArrowRight, Clock, ChevronRight } from 'lucide-react';
 
-const newsData = [
-  {
-    id: 1,
-    title: 'Thị trường Bất động sản Việt Nam dự báo phục hồi mạnh mẽ trong quý 4',
-    excerpt: 'Các chuyên gia nhận định lãi suất giảm và các chính sách tháo gỡ khó khăn về mặt pháp lý sẽ là đòn bẩy quan trọng giúp thị trường khởi sắc trở lại vào cuối năm nay. Dòng tiền đầu tư đang rục rịch quay trở lại các phân khúc an toàn.',
-    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80',
-    category: 'Tiêu điểm Thị trường',
-    author: 'Nguyễn Văn A',
-    date: '10/06/2026',
-    featured: true
-  },
-  {
-    id: 2,
-    title: 'Xu hướng thiết kế căn hộ phong cách tối giản (Minimalism) lên ngôi',
-    excerpt: 'Không gian sống được tối ưu hóa chức năng, loại bỏ chi tiết rườm rà đang thu hút giới trẻ mua nhà lần đầu.',
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80',
-    category: 'Thiết kế',
-    author: 'Trần Thị B',
-    date: '08/06/2026',
-  },
-  {
-    id: 3,
-    title: 'Hạ tầng giao thông khu Đông TP.HCM đón loạt tin vui',
-    excerpt: 'Nhiều tuyến đường huyết mạch và cầu vượt chuẩn bị thông xe, đẩy giá trị bất động sản khu vực tăng lên một tầm cao mới.',
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80',
-    category: 'Quy hoạch',
-    author: 'Lê Hoàng C',
-    date: '05/06/2026',
-  },
-  {
-    id: 4,
-    title: 'Kinh nghiệm vay mua nhà trả góp không bị áp lực tài chính',
-    excerpt: 'Áp dụng quy tắc 50/30/20 và chọn ngân hàng có lãi suất cố định dài hạn là chìa khóa để sở hữu nhà an toàn.',
-    image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80',
-    category: 'Góc tư vấn',
-    author: 'Phạm Văn D',
-    date: '02/06/2026',
-  },
-  {
-    id: 5,
-    title: 'Luật Đất đai (sửa đổi) chính thức có hiệu lực: Những điểm cần lưu ý',
-    excerpt: 'Bảng giá đất mới, quy định về đền bù giải tỏa và cấp sổ đỏ là những nội dung người dân cần nắm rõ.',
-    image: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=800&q=80',
-    category: 'Pháp lý',
-    author: 'Luật sư E',
-    date: '28/05/2026',
-  },
-  {
-    id: 6,
-    title: 'Bất động sản công nghiệp tiếp tục là điểm sáng thu hút FDI',
-    excerpt: 'Sự dịch chuyển chuỗi cung ứng toàn cầu giúp các khu công nghiệp tại Việt Nam giữ tỷ lệ lấp đầy ấn tượng.',
-    image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80',
-    category: 'Đầu tư',
-    author: 'Chuyên gia F',
-    date: '25/05/2026',
-  }
-];
-
 export default function News() {
+  const [newsData, setNewsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('https://ncbds-vlu.onrender.com/api/news')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setNewsData(data.data);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Lỗi khi tải tin tức:', err);
+        setLoading(false);
+      });
+  }, []);
+
   const featuredArticle = newsData.find(n => n.featured);
   const gridArticles = newsData.filter(n => !n.featured);
+
+  if (loading) {
+    return (
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
+        Đang tải tin tức...
+      </div>
+    );
+  }
 
   return (
     <div style={{ paddingTop: 0, minHeight: '100vh', background: '#f8fafc', paddingBottom: '5rem', fontFamily: "'Inter', sans-serif" }}>
@@ -136,7 +105,7 @@ export default function News() {
             </div>
             <div className="featured-content">
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: '#64748b', fontSize: '0.85rem', fontWeight: 500, marginBottom: '1.25rem' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Clock size={14} /> {featuredArticle.date}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Clock size={14} /> {new Date(featuredArticle.createdAt).toLocaleDateString('vi-VN')}</span>
                 <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#cbd5e1' }} />
                 <span>Bởi {featuredArticle.author}</span>
               </div>
@@ -225,7 +194,7 @@ export default function News() {
               </div>
               <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', color: '#94a3b8', fontSize: '0.8rem', fontWeight: 500, marginBottom: '0.8rem' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Clock size={12} /> {news.date}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><Clock size={12} /> {new Date(news.createdAt).toLocaleDateString('vi-VN')}</span>
                 </div>
                 <h3 style={{ margin: '0 0 0.8rem', fontSize: '1.2rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.4, transition: 'color 0.2s' }}>
                   {news.title}
