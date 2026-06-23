@@ -60,6 +60,7 @@ model News {
   title     String
   excerpt   String
   content   String?  @db.Text
+  sourceUrl String?
   image     String?
   category  String   @default("Thị trường")
   author    String   @default("Admin")
