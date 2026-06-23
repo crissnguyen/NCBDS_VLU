@@ -30,9 +30,9 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
   const [showAddEmployee, setShowAddEmployee] = useState(false);
   const [editingProperty, setEditingProperty] = useState(null);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const [dRes, pRes, aRes] = await Promise.all([
         fetch('https://ncbds-vlu.onrender.com/api/admin/dashboard'),
         fetch('https://ncbds-vlu.onrender.com/api/admin/properties/pending'),
@@ -45,13 +45,20 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
       if (pr.success) setPendingProperties(pr.data);
       if (ar.success) setAllProperties(ar.data);
     } catch {
-      toast.error('Lỗi kết nối', 'Không thể tải dữ liệu từ máy chủ');
+      if (!silent) toast.error('Lỗi kết nối', 'Không thể tải dữ liệu từ máy chủ');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, []);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { 
+    fetchData(); 
+    // Tự động làm mới dữ liệu ngầm mỗi 10 giây (Auto Polling)
+    const interval = setInterval(() => {
+      fetchData(true);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [fetchData]);
 
   const handleToggleStatus = (user) => {
     const newStatus = user.status === 'Active' ? 'Locked' : 'Active';
