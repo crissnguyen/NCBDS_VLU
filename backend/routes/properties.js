@@ -173,9 +173,11 @@ router.get('/:id', async (req, res) => {
 router.post('/', upload.array('images', 10), async (req, res) => {
   try {
     const { title, price, location, beds, baths, area, description, transactionType, propertyType, legalStatus, authorId } = req.body;
-    
-    // Thu thập đường dẫn các file đã được upload lên Cloudinary
-    const imagePaths = req.files ? req.files.map(file => file.path) : [];
+    // Mã hoá các file ảnh thành chuỗi Base64 để lưu thẳng vào DB
+    const imagePaths = req.files ? req.files.map(file => {
+      const base64Data = file.buffer.toString('base64');
+      return `data:${file.mimetype};base64,${base64Data}`;
+    }) : [];
 
     const property = await prisma.property.create({
       data: {

@@ -77,7 +77,7 @@ export default function Home({ setCurrentPage }) {
                   const mappedProperty = {
                     ...property,
                     image: property.images && property.images.length > 0
-                      ? `https://ncbds-vlu.onrender.com${property.images[0]}`
+                      ? (property.images[0].startsWith('http') || property.images[0].startsWith('data:image') ? property.images[0] : `https://ncbds-vlu.onrender.com${property.images[0]}`)
                       : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80',
                     type: property.transactionType === 'sale' ? 'Bán' : 'Cho thuê',
                     intent: property.propertyType === 'apartment' ? 'Căn hộ' : property.propertyType === 'house' ? 'Nhà phố' : 'Đất nền'
