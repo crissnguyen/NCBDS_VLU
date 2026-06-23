@@ -64,7 +64,7 @@ export default function News() {
   const gridArticles = newsData.filter(n => !n.featured);
 
   return (
-    <div style={{ paddingTop: '4.5rem', minHeight: '100vh', background: '#f8fafc', paddingBottom: '5rem', fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ paddingTop: 0, minHeight: '100vh', background: '#f8fafc', paddingBottom: '5rem', fontFamily: "'Inter', sans-serif" }}>
       
       {/* Hero Banner with Background Image */}
       <div style={{ 
