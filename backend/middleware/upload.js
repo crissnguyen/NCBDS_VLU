@@ -1,33 +1,21 @@
 const multer = require('multer');
-const path = require('path');
-const crypto = require('crypto');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 
-// Cấu hình nơi lưu trữ file và tên file
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    // Thư mục lưu trữ ảnh (cần đảm bảo thư mục này tồn tại)
-    cb(null, 'uploads/');
+// Cấu hình Cloudinary sẽ tự động nhận CLOUDINARY_URL từ file .env
+// Ví dụ: CLOUDINARY_URL=cloudinary://my_key:my_secret@my_cloud_name
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'estateai_uploads', // Tên thư mục trên Cloudinary
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [{ width: 1200, height: 800, crop: 'limit' }] // Tự động nén ảnh để load nhanh
   },
-  filename: function (req, file, cb) {
-    // Tạo tên file ngẫu nhiên để tránh trùng lặp
-    const uniqueSuffix = crypto.randomBytes(8).toString('hex');
-    const ext = path.extname(file.originalname);
-    cb(null, uniqueSuffix + ext);
-  }
 });
-
-// Kiểm tra loại file (chỉ cho phép ảnh)
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
-    cb(null, true);
-  } else {
-    cb(new Error('Chỉ cho phép tải lên file ảnh (jpeg, png, etc.)'), false);
-  }
-};
 
 const upload = multer({ 
   storage: storage,
-  fileFilter: fileFilter,
   limits: {
     fileSize: 5 * 1024 * 1024 // Giới hạn 5MB mỗi ảnh
   }

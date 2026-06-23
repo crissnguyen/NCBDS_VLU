@@ -174,8 +174,8 @@ router.post('/', upload.array('images', 10), async (req, res) => {
   try {
     const { title, price, location, beds, baths, area, description, transactionType, propertyType, legalStatus, authorId } = req.body;
     
-    // Thu thập đường dẫn các file đã được multer upload
-    const imagePaths = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+    // Thu thập đường dẫn các file đã được upload lên Cloudinary
+    const imagePaths = req.files ? req.files.map(file => file.path) : [];
 
     const property = await prisma.property.create({
       data: {
