@@ -15,7 +15,7 @@ const createTransporter = async () => {
       secure: env.smtp.secure,
       auth: {
         user: env.smtp.user,
-        pass: env.smtp.pass,
+        pass: env.smtp.pass.replace(/\s+/g, ''), // Xoá khoảng trắng trong App Password
       },
       connectionTimeout: 10000,
       greetingTimeout: 10000,
@@ -67,6 +67,11 @@ const closeMailTransporter = async () => {
  */
 const sendMail = async (to, subject, htmlContent) => {
   try {
+    // Trong môi trường production, nếu chưa có SMTP_HOST thì báo lỗi ngay
+    if (env.nodeEnv === 'production' && !env.smtp.host) {
+      throw new Error('Chưa cấu hình biến môi trường SMTP (SMTP_HOST, SMTP_USER, SMTP_PASS) trên server (Render/Vercel).');
+    }
+
     const transporter = await getTransporter();
     
     const info = await transporter.sendMail({
@@ -86,7 +91,12 @@ const sendMail = async (to, subject, htmlContent) => {
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error("❌ Send email error:", error);
-    return { success: false, error };
+    // Trả về chi tiết lỗi để API có thể báo cáo rõ ràng
+    return { 
+      success: false, 
+      error: error.message || 'Lỗi gửi email không xác định',
+      code: error.code || 'UNKNOWN'
+    };
   }
 };
 

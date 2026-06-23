@@ -164,6 +164,7 @@ router.post('/register', async (req, res) => {
           return res.status(502).json({
             success: false,
             message: "Tài khoản đã tồn tại nhưng chưa xác thực. Không gửi được email xác thực, vui lòng thử lại sau.",
+            errorDetail: mailResult.error // Thêm chi tiết lỗi
           });
         }
 
@@ -204,6 +205,7 @@ router.post('/register', async (req, res) => {
       return res.status(502).json({
         success: false,
         message: "Không gửi được email xác thực. Vui lòng kiểm tra cấu hình SMTP hoặc thử gửi lại sau.",
+        errorDetail: mailResult.error // Thêm dòng này để dễ debug khi deploy
       });
     }
 
@@ -300,6 +302,7 @@ router.post('/resend-verification', async (req, res) => {
       return res.status(502).json({
         success: false,
         message: "Không gửi được email xác thực. Vui lòng thử lại sau.",
+        errorDetail: mailResult.error // Thêm chi tiết lỗi
       });
     }
 
