@@ -9,22 +9,27 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
 
-  const fetchProperties = async () => {
+  const fetchProperties = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const res = await fetch(`https://ncbds-vlu.onrender.com/api/properties?authorId=${currentUser?.id}`);
       const data = await res.json();
       if (Array.isArray(data)) {
         setProperties(data);
       }
     } catch {
-      toast.error('Lỗi kết nối', 'Không thể tải dữ liệu.');
+      if (!silent) toast.error('Lỗi kết nối', 'Không thể tải dữ liệu.');
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
-  useEffect(() => { fetchProperties(); }, [currentUser?.id]);
+  useEffect(() => { 
+    fetchProperties(); 
+    // Tự động làm mới dữ liệu ngầm mỗi 10 giây (Auto Polling)
+    const interval = setInterval(() => fetchProperties(true), 10000);
+    return () => clearInterval(interval);
+  }, [currentUser?.id]);
 
   const navItems = [
     { icon: LayoutDashboard, label: 'Tổng quan', tab: 0 },
