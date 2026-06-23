@@ -6,6 +6,7 @@ export const CONFIG = {
   API_BASE,
   LOCAL_KEYS: {
     NEWS: 'local_news_db',
-    PROPERTIES: 'local_properties_db'
+    PROPERTIES: 'local_properties_db',
+    CONTACTS: 'local_contacts_db'
   }
 };

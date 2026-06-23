@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { LayoutDashboard, Users, FileText, Settings, LogOut, User, Home, Check, PlusCircle, Image as ImageIcon, Bell, X, Menu } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Settings, LogOut, User, Home, Check, PlusCircle, Image as ImageIcon, Bell, X, Menu, MessageSquare } from 'lucide-react';
 import {
   AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -15,6 +15,7 @@ import PostPropertyTab from './tabs/PostPropertyTab';
 import AllPropertiesTab from './tabs/AllPropertiesTab';
 import SettingsTab from './tabs/SettingsTab';
 import NewsTab from './tabs/NewsTab';
+import ContactManagementTab from './tabs/ContactManagementTab';
 import { apiUrl } from '../../services/api';
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -169,7 +170,27 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     { icon: PlusCircle, label: 'Đăng tin mới', tab: 3 },
     { icon: FileText, label: 'Quản lý tin đăng', tab: 4 },
     { icon: FileText, label: 'Quản lý tin tức', tab: 6 },
+    { icon: MessageSquare, label: 'Ý kiến khách hàng', tab: 7 },
     { icon: Settings, label: 'Cài đặt', tab: 5 },
+  ];
+
+  const navigationGroups = [
+    {
+      title: "Hệ thống",
+      items: [navItems[0], navItems[1]]
+    },
+    {
+      title: "Bất động sản",
+      items: [navItems[2], navItems[3], navItems[4]]
+    },
+    {
+      title: "Khách hàng & Tin tức",
+      items: [navItems[5], navItems[6]]
+    },
+    {
+      title: "Cấu hình",
+      items: [navItems[7]]
+    }
   ];
 
   if (loading && !data) return (
@@ -204,9 +225,18 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
           </div>
         </div>
         {/* Nav */}
-        <nav className="dashboard-sidebar-nav">
-          {navItems.map(item => (
-            <SidebarItem key={item.tab} icon={item.icon} label={item.label} active={activeTab === item.tab} badge={item.badge || 0} onClick={() => { setActiveTab(item.tab); setIsMobileMenuOpen(false); }} />
+        <nav className="dashboard-sidebar-nav" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1rem 0' }}>
+          {navigationGroups.map(group => (
+            <div key={group.title} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <div style={{ color: 'rgba(255,255,255,0.22)', fontSize: '0.67rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 1.25rem 0.25rem' }}>
+                {group.title}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', paddingLeft: '0.75rem', paddingRight: '0.75rem' }}>
+                {group.items.map(item => (
+                  <SidebarItem key={item.tab} icon={item.icon} label={item.label} active={activeTab === item.tab} badge={item.badge || 0} onClick={() => { setActiveTab(item.tab); setIsMobileMenuOpen(false); }} />
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
         {/* User */}
@@ -258,11 +288,12 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
 
           
           {activeTab === 0 && <OverviewTab stats={stats} currentUser={currentUser} pendingProperties={pendingProperties} allProperties={allProperties} metrics={metrics} />}
-          {activeTab === 1 && <UserManagementTab users={users} currentUser={currentUser} handleRoleChange={handleRoleChange} handleToggleStatus={handleToggleStatus} handleDeleteUser={handleDeleteUser} setShowAddEmployee={setShowAddEmployee} />}
+          {activeTab === 1 && <UserManagementTab users={users} currentUser={currentUser} handleRoleChange={handleRoleChange} handleToggleStatus={handleToggleStatus} handleDeleteUser={handleDeleteUser} setShowAddEmployee={setShowAddEmployee} fetchData={fetchData} />}
           {activeTab === 2 && <PendingPropertiesTab pendingProperties={pendingProperties} handleApproveProperty={handleApproveProperty} />}
           {activeTab === 3 && <PostPropertyTab currentUser={currentUser} toast={toast} fetchData={fetchData} />}
-          {activeTab === 4 && <AllPropertiesTab allProperties={allProperties} setEditingProperty={setEditingProperty} handleDeleteProperty={handleDeleteProperty} handleApproveProperty={handleApproveProperty} />}
+          {activeTab === 4 && <AllPropertiesTab allProperties={allProperties} setEditingProperty={setEditingProperty} handleDeleteProperty={handleDeleteProperty} handleApproveProperty={handleApproveProperty} fetchData={fetchData} toast={toast} />}
           {activeTab === 6 && <NewsTab toast={toast} />}
+          {activeTab === 7 && <ContactManagementTab toast={toast} />}
           {activeTab === 5 && <SettingsTab />}
 </main>
       </div>

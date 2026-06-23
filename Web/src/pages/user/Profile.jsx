@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UserCircle2, Mail, Calendar, ShieldCheck, MapPin, LogOut } from 'lucide-react';
+import { UserCircle2, Mail, Calendar, ShieldCheck, MapPin, LogOut, Eye, EyeOff } from 'lucide-react';
 import { Field } from '../../components/ui';
 import { apiUrl } from '../../services/api';
 
@@ -9,6 +9,7 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
   const [form, setForm] = useState({ name: currentUser?.name || '', password: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
 
   const handleDeleteAccount = async () => {
@@ -131,14 +132,23 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
               
               {isEditing ? (
                 <Field label="Đổi mật khẩu (Bỏ trống nếu giữ nguyên)">
-                  <input 
-                    type="password" 
-                    name="password"
-                    value={form.password} 
-                    onChange={handleChange}
-                    placeholder="Mật khẩu mới..."
-                    style={{ background: 'white', color: '#334155', fontWeight: 500, outline: '1px solid var(--primary)' }} 
-                  />
+                  <div style={{ position: 'relative' }}>
+                    <input 
+                      type={showPassword ? 'text' : 'password'} 
+                      name="password"
+                      value={form.password} 
+                      onChange={handleChange}
+                      placeholder="Mật khẩu mới..."
+                      style={{ background: 'white', color: '#334155', fontWeight: 500, outline: '1px solid var(--primary)', width: '100%', boxSizing: 'border-box' }} 
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="password-toggle-btn"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
                 </Field>
               ) : (
                 <>

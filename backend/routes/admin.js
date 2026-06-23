@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const prisma = require('../lib/prisma');
 const { normalizeEmail } = require('../utils/auth');
+const { sendMail } = require('../services/mail');
 
 /**
  * @swagger
@@ -445,5 +446,249 @@ router.delete('/users/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+/**
+ * @swagger
+ * /api/admin/users/{id}:
+ *   put:
+ *     summary: Cập nhật thông tin cơ bản người dùng (Tên, Email)
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Cập nhật thành công
+ */
+router.put('/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email } = req.body;
 
+    if (!name || !email) {
+      return res.status(400).json({ success: false, message: "Vui lòng nhập đầy đủ tên và email" });
+    }
+
+    const normalized = normalizeEmail(email);
+
+    // Kiểm tra trùng email (loại trừ tài khoản hiện tại)
+    const existing = await prisma.user.findFirst({
+      where: {
+        email: { equals: normalized, mode: 'insensitive' },
+        NOT: { id }
+      }
+    });
+
+    if (existing) {
+      return res.status(400).json({ success: false, message: "Email này đã được sử dụng bởi tài khoản khác" });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: { name, email: normalized },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        title: true,
+        status: true,
+        performance: true,
+        _count: {
+          select: { properties: true }
+        }
+      }
+    });
+
+    res.json({ success: true, message: "Cập nhật thông tin thành công", data: updatedUser });
+  } catch (error) {
+    console.error("Lỗi cập nhật thông tin user:", error);
+    res.status(500).json({ success: false, message: "Lỗi máy chủ hoặc không tìm thấy người dùng" });
+  }
+});
+
+// --- QUẢN LÝ LIÊN HỆ (CONTACTS) ---
+
+// Lấy danh sách liên hệ
+router.get('/contacts', async (req, res) => {
+  try {
+    const contacts = await prisma.contactRequest.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+    res.json({ success: true, data: contacts });
+  } catch (error) {
+    console.error("Lỗi lấy danh sách liên hệ:", error);
+    res.status(500).json({ success: false, message: "Lỗi máy chủ khi lấy danh sách liên hệ" });
+  }
+});
+
+// Trả lời liên hệ của khách hàng và gửi email
+router.post('/contacts/:id/reply', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { replyText, subject } = req.body;
+
+    if (!replyText) {
+      return res.status(400).json({ success: false, message: "Nội dung phản hồi không được để trống" });
+    }
+
+    const contact = await prisma.contactRequest.findUnique({
+      where: { id }
+    });
+
+    if (!contact) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy yêu cầu liên hệ" });
+    }
+
+    // Gửi email cho khách hàng qua GAS
+    const emailSubject = subject || `[EstateAI] Phản hồi yêu cầu: ${contact.subject}`;
+    const emailHtml = `
+      <div style="font-family: sans-serif; padding: 20px; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <h2 style="color: #0f766e; border-bottom: 2px solid #0f766e; padding-bottom: 10px;">EstateAI Việt Nam</h2>
+        <p>Xin chào <strong>${contact.name}</strong>,</p>
+        <p>Chúng tôi đã nhận được yêu cầu liên hệ của bạn với nội dung:</p>
+        <div style="background-color: #f8fafc; padding: 15px; border-left: 4px solid #cbd5e1; margin-bottom: 20px; font-style: italic;">
+          "${contact.message}"
+        </div>
+        <p><strong>Câu trả lời từ Ban quản trị EstateAI:</strong></p>
+        <div style="background-color: #f0fdfa; padding: 15px; border-left: 4px solid #0f766e; margin-bottom: 20px; white-space: pre-line;">
+          ${replyText}
+        </div>
+        <p style="margin-top: 30px;">Nếu bạn có thêm câu hỏi, vui lòng liên hệ hotline <strong>+84 987 654 321</strong>.</p>
+        <p>Trân trọng,<br/><strong>Đội ngũ EstateAI Việt Nam</strong></p>
+      </div>
+    `;
+
+    const mailResult = await sendMail(contact.email, emailSubject, emailHtml);
+    if (!mailResult.success) {
+      return res.status(500).json({ success: false, message: `Lỗi gửi email: ${mailResult.error}` });
+    }
+
+    // Cập nhật trạng thái trong DB
+    const updatedContact = await prisma.contactRequest.update({
+      where: { id },
+      data: {
+        status: 'Replied',
+        replyText
+      }
+    });
+
+    res.json({ success: true, message: "Đã gửi phản hồi thành công", data: updatedContact });
+  } catch (error) {
+    console.error("Lỗi khi phản hồi liên hệ:", error);
+    res.status(500).json({ success: false, message: "Lỗi máy chủ khi phản hồi liên hệ" });
+  }
+});
+
+// Tạo liên hệ mới từ Admin
+router.post('/contacts', async (req, res) => {
+  try {
+    const { name, email, phone, subject, message, status, replyText } = req.body;
+    if (!name || !email || !phone || !subject || !message) {
+      return res.status(400).json({ success: false, message: "Vui lòng điền đầy đủ các thông tin bắt buộc." });
+    }
+    const newContact = await prisma.contactRequest.create({
+      data: {
+        name,
+        email,
+        phone,
+        subject,
+        message,
+        status: status || 'Pending',
+        replyText
+      }
+    });
+    res.status(201).json({ success: true, message: "Thêm khách hàng liên hệ thành công", data: newContact });
+  } catch (error) {
+    console.error("Lỗi thêm liên hệ từ admin:", error);
+    res.status(500).json({ success: false, message: "Lỗi máy chủ khi thêm liên hệ" });
+  }
+});
+
+// Cập nhật liên hệ
+router.put('/contacts/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, phone, subject, message, status, replyText } = req.body;
+    const updated = await prisma.contactRequest.update({
+      where: { id },
+      data: { name, email, phone, subject, message, status, replyText }
+    });
+    res.json({ success: true, message: "Cập nhật liên hệ thành công", data: updated });
+  } catch (error) {
+    console.error("Lỗi cập nhật liên hệ:", error);
+    res.status(500).json({ success: false, message: "Lỗi máy chủ khi cập nhật liên hệ" });
+  }
+});
+
+// Xóa liên hệ
+router.delete('/contacts/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.contactRequest.deleteMany({
+      where: { id }
+    });
+    res.json({ success: true, message: "Xóa liên hệ thành công" });
+  } catch (error) {
+    console.error("Lỗi xóa liên hệ:", error);
+    res.status(500).json({ success: false, message: "Lỗi máy chủ khi xóa liên hệ" });
+  }
+});
+
+// Xóa hàng loạt liên hệ
+router.post('/contacts/bulk-delete', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, message: "Danh sách ID không hợp lệ" });
+    }
+    await prisma.contactRequest.deleteMany({
+      where: {
+        id: { in: ids }
+      }
+    });
+    res.json({ success: true, message: "Xóa hàng loạt liên hệ thành công" });
+  } catch (error) {
+    console.error("Lỗi xóa hàng loạt liên hệ:", error);
+    res.status(500).json({ success: false, message: "Lỗi máy chủ khi xóa hàng loạt liên hệ" });
+  }
+});
+
+// Xóa hàng loạt tin đăng bất động sản
+router.post('/properties/bulk-delete', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, message: "Danh sách ID không hợp lệ" });
+    }
+    // Delete related images first due to foreign keys
+    await prisma.propertyImage.deleteMany({
+      where: {
+        propertyId: { in: ids }
+      }
+    });
+    // Delete properties
+    await prisma.property.deleteMany({
+      where: {
+        id: { in: ids }
+      }
+    });
+    res.json({ success: true, message: "Xóa hàng loạt tin đăng thành công" });
+  } catch (error) {
+    console.error("Lỗi xóa hàng loạt tin đăng:", error);
+    res.status(500).json({ success: false, message: "Lỗi máy chủ khi xóa hàng loạt tin đăng" });
+  }
+});
+
+module.exports = router;

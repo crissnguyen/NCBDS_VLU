@@ -121,7 +121,7 @@ export default function News() {
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(285px, 1fr))', gap: '1.25rem' }}>
+        <div className="news-grid" style={{ display: 'grid', gap: '1.25rem' }}>
           {gridArticles.map((news, index) => (
             <motion.article
               key={news.id}

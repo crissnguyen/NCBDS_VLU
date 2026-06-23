@@ -301,4 +301,22 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Xóa hàng loạt tin tức
+router.post('/bulk-delete', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ success: false, message: 'Danh sách ID không hợp lệ' });
+    }
+    await prisma.news.deleteMany({
+      where: {
+        id: { in: ids }
+      }
+    });
+    res.json({ success: true, message: 'Đã xóa hàng loạt tin tức thành công' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Lỗi server khi xóa hàng loạt tin tức', error: error.message });
+  }
+});
+
 module.exports = router;

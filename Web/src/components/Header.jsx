@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Home, LogOut, Plus, UserCircle2, Search, Menu, X } from 'lucide-react';
+import { Home, LogOut, Plus, UserCircle2, UserPlus, Search, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Header({ currentPage, setCurrentPage, userRole, setUserRole, currentUser }) {
@@ -16,6 +16,7 @@ export default function Header({ currentPage, setCurrentPage, userRole, setUserR
     { id: 'home', label: 'Trang chủ' },
     { id: 'search', label: 'Mua bán' },
     { id: 'news', label: 'Tin tức' },
+    { id: 'contact', label: 'Liên hệ' },
   ];
 
   const closeMenuAndNavigate = (pageId) => {
@@ -25,16 +26,78 @@ export default function Header({ currentPage, setCurrentPage, userRole, setUserR
 
   const ActionButtons = ({ isMobile }) => {
     return (
-      <div className={isMobile ? "mobile-action-buttons" : "desktop-action-buttons"} style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '1rem' : '0.5rem', flexDirection: isMobile ? 'column' : 'row', width: isMobile ? '100%' : 'auto' }}>
+      <div className={isMobile ? "mobile-action-buttons" : "desktop-action-buttons"} style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.75rem' : '0.5rem', flexDirection: isMobile ? 'column' : 'row', width: isMobile ? '100%' : 'auto' }}>
         {!userRole ? (
-          <button
-            className="btn btn-primary"
-            style={isMobile ? { width: '100%', justifyContent: 'center' } : {}}
-            onClick={() => closeMenuAndNavigate('login')}
-          >
-            <UserCircle2 size={18} />
-            Đăng nhập
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: isMobile ? '100%' : 'auto', flexDirection: isMobile ? 'column' : 'row' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: '#f1f5f9',
+              padding: '4px',
+              borderRadius: '99px',
+              border: '1px solid var(--border)',
+              width: isMobile ? '100%' : 'auto',
+              gap: '2px'
+            }}>
+              <button
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-primary)',
+                  fontWeight: 600,
+                  fontSize: '0.88rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.35rem',
+                  cursor: 'pointer',
+                  padding: '0.5rem 1.1rem',
+                  borderRadius: '99px',
+                  transition: 'all 0.2s',
+                  flex: isMobile ? 1 : 'none',
+                }}
+                onClick={() => closeMenuAndNavigate('login')}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(15, 23, 42, 0.05)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; }}
+              >
+                <UserCircle2 size={16} color="var(--text-secondary)" />
+                Đăng nhập
+              </button>
+              <button
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.35rem',
+                  background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
+                  border: 'none',
+                  borderRadius: '99px',
+                  padding: '0.5rem 1.1rem',
+                  fontSize: '0.88rem',
+                  fontWeight: 600,
+                  color: '#fff',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(15, 23, 42, 0.12)',
+                  transition: 'all 0.2s',
+                  flex: isMobile ? 1 : 'none',
+                }}
+                onClick={() => closeMenuAndNavigate('register')}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-0.5px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(15, 23, 42, 0.18)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(15, 23, 42, 0.12)'; }}
+              >
+                <UserPlus size={16} />
+                Đăng ký
+              </button>
+            </div>
+            <button 
+              className="btn btn-primary" 
+              style={isMobile ? { width: '100%', justifyContent: 'center' } : {}} 
+              onClick={() => closeMenuAndNavigate('login')}
+            >
+              <Plus size={18} />
+              Đăng tin
+            </button>
+          </div>
         ) : (
           <>
             <button className="btn btn-ghost" style={isMobile ? { width: '100%', justifyContent: 'flex-start' } : {}} onClick={() => closeMenuAndNavigate('profile')}>
@@ -51,12 +114,10 @@ export default function Header({ currentPage, setCurrentPage, userRole, setUserR
                 Môi giới
               </button>
             )}
-            {userRole !== 'user' && (
-              <button className="btn btn-primary" style={isMobile ? { width: '100%', justifyContent: 'center' } : {}} onClick={() => closeMenuAndNavigate(userRole === 'admin' ? 'admin_dashboard' : 'dashboard')}>
-                <Plus size={18} />
-                Đăng tin
-              </button>
-            )}
+            <button className="btn btn-primary" style={isMobile ? { width: '100%', justifyContent: 'center' } : {}} onClick={() => closeMenuAndNavigate(userRole === 'admin' ? 'admin_dashboard' : 'dashboard')}>
+              <Plus size={18} />
+              Đăng tin
+            </button>
             <button
               className="btn btn-ghost icon-button"
               style={isMobile ? { width: '100%', justifyContent: 'center', color: '#ef4444', background: '#fef2f2' } : {}}

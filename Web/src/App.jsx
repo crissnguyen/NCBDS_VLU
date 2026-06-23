@@ -15,6 +15,7 @@ import ChatWidget from './components/ChatWidget';
 import Footer from './components/Footer';
 import PropertyDetail from './pages/property/PropertyDetail';
 import Profile from './pages/user/Profile';
+import Contact from './pages/Contact';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(() => localStorage.getItem('currentPage') || 'home');
@@ -58,6 +59,7 @@ function App() {
       case 'home': return <Home setCurrentPage={setCurrentPage} />;
       case 'search': return <Search setCurrentPage={setCurrentPage} />;
       case 'news': return <News setCurrentPage={setCurrentPage} />;
+      case 'contact': return <Contact />;
       case 'login': return <Login setUserRole={setUserRole} setCurrentUser={setCurrentUser} setCurrentPage={setCurrentPage} />;
       case 'register': return <Register setCurrentPage={setCurrentPage} />;
       case 'forgot_password': return <ForgotPassword setCurrentPage={setCurrentPage} />;

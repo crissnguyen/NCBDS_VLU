@@ -67,15 +67,49 @@ export default function NewsTab({ toast }) {
   const [contentMode, setContentMode] = useState('write');
   const [formData, setFormData] = useState(emptyForm);
 
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
+
   const fetchNews = async () => {
     try {
       setLoading(true);
+      setSelectedIds([]);
       const res = await dataService.getNews();
       if (res.success) setNews(res.data);
     } catch (err) {
       toast.error('Lỗi', 'Không thể tải tin tức');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSelectRow = (id) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedIds.length === news.length && news.length > 0) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(news.map(n => n.id));
+    }
+  };
+
+  const executeBulkDelete = async () => {
+    try {
+      const res = await dataService.bulkDeleteNews(selectedIds);
+      if (res.success) {
+        toast.success('Thành công', `Đã xóa ${selectedIds.length} bài viết.`);
+        fetchNews();
+      } else {
+        toast.error('Thất bại', res.message || 'Không thể xóa hàng loạt.');
+      }
+    } catch (err) {
+      toast.error('Lỗi', 'Không thể kết nối đến máy chủ.');
+    } finally {
+      setIsBulkDeleteOpen(false);
     }
   };
 
@@ -179,12 +213,37 @@ export default function NewsTab({ toast }) {
           <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.35rem' }}>Quản lý tin tức</h2>
           <p style={{ color: '#64748b', fontSize: '0.88rem', margin: 0 }}>Tạo bài viết tự biên soạn hoặc gắn URL bài báo nguồn cho khách hàng đọc chi tiết.</p>
         </div>
-        <button
-          onClick={() => openModal()}
-          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', border: 'none', padding: '0.72rem 1.15rem', borderRadius: 10, fontWeight: 700, cursor: 'pointer', boxShadow: '0 12px 26px rgba(15,118,110,0.18)' }}
-        >
-          <Plus size={17} /> Thêm bài viết
-        </button>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          {selectedIds.length > 0 && (
+            <button
+              onClick={() => setIsBulkDeleteOpen(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: '#fee2e2',
+                color: '#ef4444',
+                border: 'none',
+                padding: '0.72rem 1.15rem',
+                borderRadius: 10,
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.1)',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#fecaca'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = '#fee2e2'; }}
+            >
+              <Trash2 size={17} /> Xóa hàng loạt ({selectedIds.length})
+            </button>
+          )}
+          <button
+            onClick={() => openModal()}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', border: 'none', padding: '0.72rem 1.15rem', borderRadius: 10, fontWeight: 700, cursor: 'pointer', boxShadow: '0 12px 26px rgba(15,118,110,0.18)' }}
+          >
+            <Plus size={17} /> Thêm bài viết
+          </button>
+        </div>
       </div>
 
       <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e2e8f0', overflow: 'hidden' }}>
@@ -192,6 +251,14 @@ export default function NewsTab({ toast }) {
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
               <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                <th style={{ padding: '0.9rem 1rem', width: '50px' }}>
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.length === news.length && news.length > 0}
+                    onChange={handleSelectAll}
+                    style={{ cursor: 'pointer', width: 16, height: 16, verticalAlign: 'middle' }}
+                  />
+                </th>
                 {['Bài viết', 'Chuyên mục', 'Nguồn', 'Ngày tạo', 'Thao tác'].map(label => (
                   <th key={label} style={{ padding: '0.9rem 1rem', color: '#475569', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>{label}</th>
                 ))}
@@ -199,7 +266,15 @@ export default function NewsTab({ toast }) {
             </thead>
             <tbody>
               {news.map(item => (
-                <tr key={item.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                <tr key={item.id} style={{ borderBottom: '1px solid #f1f5f9', background: selectedIds.includes(item.id) ? '#f0fdfa' : 'transparent' }}>
+                  <td style={{ padding: '1rem', width: '50px' }}>
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.includes(item.id)}
+                      onChange={() => handleSelectRow(item.id)}
+                      style={{ cursor: 'pointer', width: 16, height: 16, verticalAlign: 'middle' }}
+                    />
+                  </td>
                   <td style={{ padding: '1rem' }}>
                     <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
                       <img src={item.image} alt="" style={{ width: 78, height: 54, objectFit: 'cover', borderRadius: 10, border: '1px solid #e2e8f0' }} />
@@ -330,6 +405,63 @@ export default function NewsTab({ toast }) {
                 </div>
               </aside>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Delete Confirmation Modal */}
+      {isBulkDeleteOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.25rem' }}>
+          <div 
+            style={{ background: 'white', width: 420, maxWidth: '100%', borderRadius: 20, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', overflow: 'hidden', display: 'flex', flexDirection: 'column', animation: 'fadeInScale 0.25s ease-out' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Body */}
+            <div style={{ padding: '2rem 1.5rem 1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+              <div style={{ background: '#fee2e2', color: '#ef4444', width: 56, height: 56, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.25rem' }}>
+                <Trash2 size={28} />
+              </div>
+              
+              <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>Xác nhận xóa hàng loạt</h3>
+              
+              <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b', lineHeight: 1.5 }}>
+                Bạn có chắc chắn muốn xóa <strong style={{ color: '#ef4444' }}>{selectedIds.length}</strong> bài viết đã chọn không? Hành động này không thể hoàn tác.
+              </p>
+
+              {/* Buttons */}
+              <div style={{ display: 'flex', width: '100%', gap: '0.75rem', marginTop: '2rem' }}>
+                <button 
+                  type="button"
+                  onClick={() => setIsBulkDeleteOpen(false)}
+                  style={{ flex: 1, background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, padding: '0.75rem 1.25rem', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = '#e2e8f0'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = '#f1f5f9'; }}
+                >
+                  Hủy
+                </button>
+                <button 
+                  type="button"
+                  onClick={executeBulkDelete}
+                  style={{
+                    flex: 1,
+                    background: '#ef4444',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: 10,
+                    padding: '0.75rem 1.25rem',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = '#dc2626'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = '#ef4444'; }}
+                >
+                  Xác nhận xóa
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -214,5 +214,122 @@ export const dataService = {
       count: successCount,
       message: `Đồng bộ thành công ${successCount}/${unsynced.length} bài viết.`
     };
+  },
+
+  // --- LIÊN HỆ (CONTACTS) ---
+  getContacts: async () => {
+    if (dataService.isLocalMode()) {
+      return { success: true, data: localStore.get(CONFIG.LOCAL_KEYS.CONTACTS) };
+    }
+    const res = await fetch(`${CONFIG.API_BASE}/admin/contacts`);
+    return await res.json();
+  },
+
+  createContactRequest: async (contactData) => {
+    if (dataService.isLocalMode()) {
+      const created = localStore.insert(CONFIG.LOCAL_KEYS.CONTACTS, {
+        ...contactData,
+        status: 'Pending'
+      });
+      return { success: true, data: created };
+    }
+    const res = await fetch(`${CONFIG.API_BASE}/contacts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(contactData)
+    });
+    return await res.json();
+  },
+
+  replyContactRequest: async (id, replyText, subject) => {
+    if (dataService.isLocalMode()) {
+      const updated = localStore.update(CONFIG.LOCAL_KEYS.CONTACTS, id, {
+        status: 'Replied',
+        replyText
+      });
+      return { success: true, data: updated };
+    }
+    const res = await fetch(`${CONFIG.API_BASE}/admin/contacts/${id}/reply`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ replyText, subject })
+    });
+    return await res.json();
+  },
+
+  addContactRequest: async (contactData) => {
+    if (dataService.isLocalMode()) {
+      const created = localStore.insert(CONFIG.LOCAL_KEYS.CONTACTS, contactData);
+      return { success: true, data: created };
+    }
+    const res = await fetch(`${CONFIG.API_BASE}/admin/contacts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(contactData)
+    });
+    return await res.json();
+  },
+
+  updateContactRequest: async (id, contactData) => {
+    if (dataService.isLocalMode()) {
+      const updated = localStore.update(CONFIG.LOCAL_KEYS.CONTACTS, id, contactData);
+      return { success: true, data: updated };
+    }
+    const res = await fetch(`${CONFIG.API_BASE}/admin/contacts/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(contactData)
+    });
+    return await res.json();
+  },
+
+  deleteContactRequest: async (id) => {
+    if (dataService.isLocalMode()) {
+      localStore.delete(CONFIG.LOCAL_KEYS.CONTACTS, id);
+      return { success: true };
+    }
+    const res = await fetch(`${CONFIG.API_BASE}/admin/contacts/${id}`, {
+      method: 'DELETE'
+    });
+    return await res.json();
+  },
+
+  bulkDeleteContactRequests: async (ids) => {
+    if (dataService.isLocalMode()) {
+      ids.forEach(id => localStore.delete(CONFIG.LOCAL_KEYS.CONTACTS, id));
+      return { success: true };
+    }
+    const res = await fetch(`${CONFIG.API_BASE}/admin/contacts/bulk-delete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids })
+    });
+    return await res.json();
+  },
+
+  bulkDeleteNews: async (ids) => {
+    if (dataService.isLocalMode()) {
+      ids.forEach(id => localStore.delete(CONFIG.LOCAL_KEYS.NEWS, id));
+      return { success: true };
+    }
+    const res = await fetch(`${CONFIG.API_BASE}/news/bulk-delete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids })
+    });
+    return await res.json();
+  },
+
+  bulkDeleteProperties: async (ids) => {
+    if (dataService.isLocalMode()) {
+      ids.forEach(id => localStore.delete(CONFIG.LOCAL_KEYS.PROPERTIES, id));
+      return { success: true };
+    }
+    const res = await fetch(`${CONFIG.API_BASE}/admin/properties/bulk-delete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids })
+    });
+    return await res.json();
   }
 };

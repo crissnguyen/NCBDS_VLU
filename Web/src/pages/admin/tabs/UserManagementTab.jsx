@@ -1,12 +1,16 @@
 import { useState } from 'react';
-import { Users, ShieldAlert, MoreVertical, Search, Trash2, PlusCircle } from 'lucide-react';
+import { Users, ShieldAlert, MoreVertical, Search, Trash2, PlusCircle, Edit } from 'lucide-react';
+import { useToast } from '../../../components/DashboardShared';
+import EditUserModal from '../components/EditUserModal';
 
 const statusBg = { Active: '#dcfce7', Locked: '#fee2e2' };
 const statusColor = { Active: '#166534', Locked: '#991b1b' };
 const statusLabel = { Active: 'Hoạt động', Locked: 'Đã khóa' };
 
-export default function UserManagementTab({ users, currentUser, handleRoleChange, handleToggleStatus, handleDeleteUser, setShowAddEmployee }) {
+export default function UserManagementTab({ users, currentUser, handleRoleChange, handleToggleStatus, handleDeleteUser, setShowAddEmployee, fetchData }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [editingUser, setEditingUser] = useState(null);
+  const toast = useToast();
 
   const filteredUsers = users.filter(u => 
     u.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -72,6 +76,11 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                               onMouseOut={e=>e.currentTarget.style.background='white'}
                             ><ShieldAlert size={13} color={user.status==='Active'?'#ef4444':'#0f766e'}/></button>
                             
+                             <button onClick={() => setEditingUser(user)} title="Sửa thông tin" style={{ width:30,height:30,borderRadius:7,border:'1px solid #e2e8f0',background:'white',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer' }}
+                              onMouseOver={e=>e.currentTarget.style.background='#eef6ff'}
+                              onMouseOut={e=>e.currentTarget.style.background='white'}
+                            ><Edit size={13} color="#2563eb"/></button>
+
                             <button onClick={() => handleDeleteUser(user.id, user.email)} title="Xóa tài khoản" style={{ width:30,height:30,borderRadius:7,border:'1px solid #e2e8f0',background:'white',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer' }}
                               onMouseOver={e=>e.currentTarget.style.background='#fee2e2'}
                               onMouseOut={e=>e.currentTarget.style.background='white'}
@@ -87,9 +96,16 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                 </div>
                 {filteredUsers.length === 0 && <div style={{ padding: '2.5rem', textAlign: 'center', color: '#94a3b8' }}><Users size={36} style={{ margin:'0 auto 0.5rem',opacity:0.25 }}/><p style={{ margin:0 }}>Không tìm thấy nhân viên nào</p></div>}
               </div>
-            
-
-          
+      {editingUser && (
+        <EditUserModal
+          user={editingUser}
+          onClose={() => setEditingUser(null)}
+          onSuccess={() => {
+            if (fetchData) fetchData();
+          }}
+          toast={toast}
+        />
+      )}
     </>
   );
 }

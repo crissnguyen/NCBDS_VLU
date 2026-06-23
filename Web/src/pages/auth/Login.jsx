@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { ArrowRight, Building2, Lock, Mail } from 'lucide-react';
+import { ArrowRight, Building2, Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import { Field } from '../../components/ui';
 import { apiUrl } from '../../services/api';
 
 export default function Login({ setUserRole, setCurrentUser, setCurrentPage }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -89,12 +90,19 @@ export default function Login({ setUserRole, setCurrentUser, setCurrentPage }) {
                 <div className="input-with-icon" style={{ borderRadius: '12px' }}>
                   <Lock size={19} />
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Nhập mật khẩu"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="password-toggle-btn"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
               </Field>
               <button 

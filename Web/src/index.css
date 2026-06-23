@@ -1372,7 +1372,7 @@ tr:last-child td {
   min-height: 100vh;
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
-  padding-top: 72px;
+  padding-top: 0;
 }
 
 .login-visual {
@@ -1447,6 +1447,8 @@ tr:last-child td {
 
 .input-with-icon {
   position: relative;
+  display: block;
+  width: 100%;
 }
 
 .input-with-icon svg {
@@ -1459,6 +1461,41 @@ tr:last-child td {
 
 .input-with-icon input {
   padding-left: 2.75rem;
+  padding-right: 1rem;
+  width: 100%;
+}
+
+.input-with-icon:has(.password-toggle-btn) input {
+  padding-right: 3rem;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: background 220ms ease, color 220ms ease, transform 180ms ease;
+  z-index: 10;
+}
+
+.password-toggle-btn:hover {
+  background: rgba(15, 118, 110, 0.08); /* Soft primary tint background */
+  color: var(--primary-light);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.password-toggle-btn:active {
+  transform: translateY(-50%) scale(0.92);
 }
 
 .map-layout {
@@ -1651,7 +1688,6 @@ tr:last-child td {
 
   .page-shell,
   .hero-section,
-  .login-page,
   .app-layout,
   .map-layout {
     padding-top: 1.5rem;
@@ -2924,6 +2960,28 @@ tr:last-child td {
 
 @media (max-width: 768px) {
   .news-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.news-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1060px) {
+  .news-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .news-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .news-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -165,6 +165,32 @@ const INITIAL_PROPERTIES = [
   }
 ];
 
+const INITIAL_CONTACTS = [
+  {
+    id: 'mock_contact_1',
+    name: 'Nguyễn Văn A',
+    email: 'nva@gmail.com',
+    phone: '0912345678',
+    subject: 'Tư vấn căn hộ Lộc Thọ view biển',
+    message: 'Chào bạn, tôi đang quan tâm căn hộ Lộc Thọ view biển có giá 2.85 tỷ. Cho hỏi pháp lý đã có sổ hồng chưa và có hỗ trợ vay ngân hàng không?',
+    status: 'Pending',
+    createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+    updatedAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+  },
+  {
+    id: 'mock_contact_2',
+    name: 'Trần Thị B',
+    email: 'ttb@yahoo.com',
+    phone: '0988888888',
+    subject: 'Ký gửi nhà đất Nha Trang',
+    message: 'Tôi muốn ký gửi căn nhà phố 3 tầng tại Phước Hải để bán gấp trước mùa mưa.',
+    status: 'Replied',
+    replyText: 'Chào chị B, bên em đã nhận được thông tin. Sẽ có nhân viên liên hệ để kiểm tra thực tế nhà phố và hỗ trợ làm hồ sơ ký gửi ạ.',
+    createdAt: new Date(Date.now() - 86400000).toISOString(),
+    updatedAt: new Date(Date.now() - 86400000).toISOString(),
+  }
+];
+
 export const localStore = {
   get: (key) => {
     try {
@@ -178,6 +204,10 @@ export const localStore = {
           localStore.set(key, INITIAL_PROPERTIES);
           return INITIAL_PROPERTIES;
         }
+        if (key === CONFIG.LOCAL_KEYS.CONTACTS) {
+          localStore.set(key, INITIAL_CONTACTS);
+          return INITIAL_CONTACTS;
+        }
         return [];
       }
       const parsed = JSON.parse(data);
@@ -188,6 +218,10 @@ export const localStore = {
       if (Array.isArray(parsed) && parsed.length === 0 && key === CONFIG.LOCAL_KEYS.NEWS) {
         localStore.set(key, INITIAL_NEWS);
         return INITIAL_NEWS;
+      }
+      if (Array.isArray(parsed) && parsed.length === 0 && key === CONFIG.LOCAL_KEYS.CONTACTS) {
+        localStore.set(key, INITIAL_CONTACTS);
+        return INITIAL_CONTACTS;
       }
       return parsed;
     } catch (e) {

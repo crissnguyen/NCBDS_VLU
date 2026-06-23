@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, Building2, Lock } from 'lucide-react';
+import { ArrowRight, Building2, Lock, Eye, EyeOff } from 'lucide-react';
 import { Field } from '../../components/ui';
 import { apiUrl } from '../../services/api';
 
 export default function ResetPassword({ setCurrentPage }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [token, setToken] = useState('');
   const [email, setEmail] = useState('');
@@ -97,13 +99,20 @@ export default function ResetPassword({ setCurrentPage }) {
               <div className="input-with-icon" style={{ borderRadius: '12px' }}>
                 <Lock size={19} />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="Nhập mật khẩu mới"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   required
                   minLength={6}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="password-toggle-btn"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </Field>
 
@@ -111,13 +120,20 @@ export default function ResetPassword({ setCurrentPage }) {
               <div className="input-with-icon" style={{ borderRadius: '12px' }}>
                 <Lock size={19} />
                 <input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   placeholder="Nhập lại mật khẩu mới"
                   value={confirmPassword}
                   onChange={(event) => setConfirmPassword(event.target.value)}
                   required
                   minLength={6}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="password-toggle-btn"
+                >
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </Field>
 

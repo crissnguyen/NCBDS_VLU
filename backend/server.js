@@ -74,12 +74,14 @@ const authRoute = require('./routes/auth');
 const adminRoute = require('./routes/admin');
 const aiRoute = require('./routes/ai');
 const newsRoute = require('./routes/news');
+const contactsRoute = require('./routes/contacts');
 
 app.use('/api/properties', propertiesRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/admin', adminRoute);
 app.use('/api/ai', aiRoute);
 app.use('/api/news', newsRoute);
+app.use('/api/contacts', contactsRoute);
 
 app.get('/health', (req, res) => {
   res.json({ success: true, status: 'ok', timestamp: new Date().toISOString() });
