@@ -45,8 +45,10 @@ Hãy viết lại mô tả tin đăng bên dưới sao cho hấp dẫn, rõ ràn
 Yêu cầu:
 - Viết bằng tiếng Việt tự nhiên.
 - Không bịa thông tin ngoài dữ liệu được cung cấp.
-- Không dùng emoji, không markdown, không tiêu đề phụ.
-- Độ dài 90-140 từ.
+- Không dùng emoji, không dùng markdown.
+- Viết thành 3-4 đoạn ngắn, mỗi đoạn 2-3 câu.
+- Độ dài 180-260 từ, đủ chi tiết để dùng trực tiếp làm mô tả tin đăng.
+- Nếu mô tả gốc quá ít thông tin, hãy khai thác tối đa các trường giá, vị trí, diện tích, số phòng, pháp lý; không tự thêm tên dự án, tiện ích hoặc cam kết chưa có dữ liệu.
 - Nêu nổi bật vị trí, công năng, pháp lý, tiện ích và tiềm năng nếu nội dung có nhắc đến.
 - Giọng văn thuyết phục nhưng không phóng đại.
 
@@ -68,8 +70,8 @@ ${rawDescription}
       body: JSON.stringify({
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         generationConfig: {
-          temperature: 0.75,
-          maxOutputTokens: 420,
+          temperature: 0.82,
+          maxOutputTokens: 900,
         },
       }),
     });
