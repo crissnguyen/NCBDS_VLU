@@ -8,7 +8,7 @@ export default function NewsTab({ toast }) {
   const [editingId, setEditingId] = useState(null);
   
   const [formData, setFormData] = useState({
-    title: '', excerpt: '', content: '', image: '', category: 'Thị trường', featured: false
+    title: '', excerpt: '', content: '', image: '', category: 'Thị trường', featured: false, imageFile: null
   });
 
   const fetchNews = async () => {
@@ -41,10 +41,22 @@ export default function NewsTab({ toast }) {
       const url = editingId ? `https://ncbds-vlu.onrender.com/api/news/${editingId}` : 'https://ncbds-vlu.onrender.com/api/news';
       const method = editingId ? 'PUT' : 'POST';
 
+      const dataToSend = new FormData();
+      dataToSend.append('title', formData.title);
+      dataToSend.append('excerpt', formData.excerpt);
+      dataToSend.append('content', formData.content || '');
+      dataToSend.append('category', formData.category);
+      dataToSend.append('featured', formData.featured);
+      
+      if (formData.imageFile) {
+        dataToSend.append('imageFile', formData.imageFile);
+      } else {
+        dataToSend.append('image', formData.image);
+      }
+
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: dataToSend
       });
       const data = await res.json();
 
@@ -88,7 +100,7 @@ export default function NewsTab({ toast }) {
     } else {
       setEditingId(null);
       setFormData({
-        title: '', excerpt: '', content: '', image: '', category: 'Thị trường', featured: false
+        title: '', excerpt: '', content: '', image: '', category: 'Thị trường', featured: false, imageFile: null
       });
     }
     setShowModal(true);
@@ -205,14 +217,25 @@ export default function NewsTab({ toast }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.85rem', color: '#475569' }}>Ảnh bìa (URL)</label>
-                <input 
-                  type="text" 
-                  value={formData.image} 
-                  onChange={e => setFormData({...formData, image: e.target.value})} 
-                  style={{ width: '100%', padding: '0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0' }} 
-                  placeholder="https://..."
-                />
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.85rem', color: '#475569' }}>Ảnh bìa (Tải lên hoặc dán URL)</label>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={e => setFormData({...formData, imageFile: e.target.files[0], image: ''})} 
+                    style={{ flex: 1, padding: '0.6rem', borderRadius: '10px', border: '1px solid #e2e8f0', background: '#f8fafc' }} 
+                  />
+                  <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>hoặc</span>
+                  <input 
+                    type="text" 
+                    value={formData.image} 
+                    disabled={!!formData.imageFile}
+                    onChange={e => setFormData({...formData, image: e.target.value})} 
+                    style={{ flex: 2, padding: '0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0', background: formData.imageFile ? '#f1f5f9' : 'white' }} 
+                    placeholder="https://..."
+                  />
+                </div>
+                {formData.imageFile && <div style={{ fontSize: '0.8rem', color: '#0f766e', marginTop: '0.4rem' }}>Đã chọn file: {formData.imageFile.name}</div>}
               </div>
 
               <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>

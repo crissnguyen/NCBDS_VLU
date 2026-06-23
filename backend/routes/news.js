@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../lib/prisma');
+const upload = require('../middleware/upload');
 
 /**
  * @swagger
@@ -59,21 +60,29 @@ router.get('/', async (req, res) => {
  *       201:
  *         description: Tạo tin tức thành công
  */
-router.post('/', async (req, res) => {
+router.post('/', upload.single('imageFile'), async (req, res) => {
   try {
     const { title, excerpt, content, image, category, featured } = req.body;
     if (!title || !excerpt) {
       return res.status(400).json({ success: false, message: 'Vui lòng nhập đủ tiêu đề và tóm tắt' });
     }
 
+    let imageUrl = image;
+    if (req.file) {
+      const base64Data = req.file.buffer.toString('base64');
+      imageUrl = `data:${req.file.mimetype};base64,${base64Data}`;
+    }
+
+    const isFeatured = featured === 'true' || featured === true;
+
     const newNews = await prisma.news.create({
       data: {
         title,
         excerpt,
         content,
-        image: image || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80',
+        image: imageUrl || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80',
         category: category || 'Thị trường',
-        featured: featured || false,
+        featured: isFeatured,
         author: 'Admin'
       }
     });
@@ -117,14 +126,29 @@ router.post('/', async (req, res) => {
  *       200:
  *         description: Cập nhật thành công
  */
-router.put('/:id', async (req, res) => {
+router.put('/:id', upload.single('imageFile'), async (req, res) => {
   try {
     const { id } = req.params;
-    const data = req.body;
+    const { title, excerpt, content, image, category, featured } = req.body;
+    
+    let imageUrl = image;
+    if (req.file) {
+      const base64Data = req.file.buffer.toString('base64');
+      imageUrl = `data:${req.file.mimetype};base64,${base64Data}`;
+    }
+
+    const isFeatured = featured === 'true' || featured === true;
 
     const updated = await prisma.news.update({
       where: { id },
-      data
+      data: {
+        ...(title && { title }),
+        ...(excerpt && { excerpt }),
+        ...(content && { content }),
+        ...(imageUrl && { image: imageUrl }),
+        ...(category && { category }),
+        featured: isFeatured
+      }
     });
     res.json({ success: true, data: updated });
   } catch (error) {
