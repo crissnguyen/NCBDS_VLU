@@ -1,6 +1,6 @@
 import { Search } from 'lucide-react';
 import { properties } from '../../data/properties';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -13,8 +13,8 @@ L.Icon.Default.mergeOptions({
 });
 
 export default function MapPage() {
-  // Tọa độ trung tâm thành phố Nha Trang
-  const nhaTrangPosition = [12.245, 109.18];
+  // Trọng tâm toàn bộ lãnh thổ Việt Nam để bao quát cả Hoàng Sa & Trường Sa
+  const vietnamCenter = [14.0, 108.0];
 
   return (
     <main className="map-layout" style={{ display: 'flex', height: 'calc(100vh - 80px)', overflow: 'hidden' }}>
@@ -59,14 +59,26 @@ export default function MapPage() {
         
         {/* Bản đồ Leaflet */}
         <MapContainer 
-          center={nhaTrangPosition} 
-          zoom={13} 
+          center={vietnamCenter} 
+          zoom={5} 
           style={{ width: '100%', height: '100%', zIndex: 1 }}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+
+          {/* Đánh dấu chủ quyền biển đảo Việt Nam */}
+          <Marker position={[16.82, 112.33]}>
+            <Tooltip permanent direction="bottom" opacity={1}>
+              <strong style={{ color: '#b91c1c', fontSize: '0.85rem' }}>Quần đảo Hoàng Sa<br/>(Việt Nam)</strong>
+            </Tooltip>
+          </Marker>
+          <Marker position={[9.5, 113.0]}>
+            <Tooltip permanent direction="bottom" opacity={1}>
+              <strong style={{ color: '#b91c1c', fontSize: '0.85rem' }}>Quần đảo Trường Sa<br/>(Việt Nam)</strong>
+            </Tooltip>
+          </Marker>
           
           {properties.map((property) => (
             property.lat && property.lng && (
