@@ -184,6 +184,8 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
       <style>{`@keyframes fadeInScale { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }`}</style>
       <Toasts toasts={toast.toasts} remove={toast.remove} />
 
+      <div className={`dashboard-sidebar-overlay ${isMobileMenuOpen ? 'mobile-open' : ''}`} onClick={() => setIsMobileMenuOpen(false)} />
+
       {/* SIDEBAR */}
       <aside className={`dashboard-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
         {/* Logo */}

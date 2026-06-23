@@ -50,7 +50,7 @@ export function Toasts({ toasts, remove }) {
 // ─── StatCard ─────────────────────────────────────────────────────────────────
 export function StatCard({ icon: Icon, label, value, change, up = true, color = '#0f766e' }) {
   return (
-    <div style={{ background: 'white', borderRadius: 14, padding: '1.25rem 1.5rem', border: '1px solid #e2e8f0', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+    <div style={{ background: 'white', borderRadius: 16, padding: '1.25rem 1.5rem', border: '1px solid #e2e8f0', display: 'flex', gap: '1rem', alignItems: 'center', boxShadow: '0 10px 24px rgba(0,0,0,0.04)', transition: 'transform 0.2s, box-shadow 0.2s' }}>
       <div style={{ width: 48, height: 48, borderRadius: 12, background: color + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
         <Icon size={22} color={color} />
       </div>
