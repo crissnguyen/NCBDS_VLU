@@ -155,7 +155,9 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
         fd.append('status', 'Pending'); 
       }
       
-      images.forEach(img => fd.append('images', img));
+      
+      const compressedImages = await Promise.all(images.map(img => compressImage(img)));
+      compressedImages.forEach(img => fd.append('images', img));
 
       const res = await fetch('https://ncbds-vlu.onrender.com/api/properties', { method: 'POST', body: fd });
       const result = await res.json();
