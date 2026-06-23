@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { LayoutDashboard, FileText, PlusCircle, LogOut, User, Home, TrendingUp, Users, CheckCircle, Menu } from 'lucide-react';
+import { LayoutDashboard, FileText, PlusCircle, LogOut, User, Home, TrendingUp, Users, CheckCircle, Menu, Newspaper, MessageSquare } from 'lucide-react';
 import { useToast, Toasts, StatCard, SidebarItem, PostPropertyForm } from '../../components/DashboardShared';
 import { dataService } from '../../services/data/dataService';
+import NewsTab from '../admin/tabs/NewsTab';
+import ContactManagementTab from '../admin/tabs/ContactManagementTab';
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function Dashboard({ currentUser, setCurrentPage, setUserRole, setCurrentUser }) {
@@ -36,6 +38,8 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
     { icon: LayoutDashboard, label: 'Tổng quan', tab: 0 },
     { icon: PlusCircle, label: 'Đăng tin mới', tab: 1 },
     { icon: FileText, label: 'Quản lý tin đăng', tab: 2 },
+    { icon: Newspaper, label: 'Quản lý tin tức', tab: 3 },
+    { icon: MessageSquare, label: 'Ý kiến khách hàng', tab: 4 },
   ];
 
   if (loading && properties.length === 0) return (
@@ -193,6 +197,15 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
                 </table>
               </div>
             </div>
+          )}
+          {/* TAB 3: Quản lý tin tức */}
+          {activeTab === 3 && (
+            <NewsTab toast={toast} />
+          )}
+
+          {/* TAB 4: Ý kiến khách hàng */}
+          {activeTab === 4 && (
+            <ContactManagementTab toast={toast} />
           )}
 
         </main>
