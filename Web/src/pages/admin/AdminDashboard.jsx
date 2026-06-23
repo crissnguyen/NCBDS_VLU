@@ -262,7 +262,33 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     setConfirmModal({ isOpen: true, type: 'user', userId: user.id, userName: user.name, newStatus });
   };
 
+
+  const handleDeleteUser = async (userId, email) => {
+    if (email === 'admin@test.vn' || userId === currentUser?.id) {
+      toast.error('Không thể xóa tài khoản này!');
+      return;
+    }
+    if (window.confirm('Bạn có chắc chắn muốn xóa vĩnh viễn người dùng này? Các bài đăng của họ sẽ bị gỡ tên tác giả nhưng vẫn tồn tại trên hệ thống.')) {
+      try {
+        const res = await fetch(`${API_URL}/api/admin/users/${userId}`, {
+          method: 'DELETE'
+        });
+        const data = await res.json();
+        if (data.success) {
+          toast.success(data.message);
+          fetchAdminData();
+        } else {
+          toast.error(data.message || 'Lỗi khi xóa tài khoản');
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error('Lỗi kết nối máy chủ');
+      }
+    }
+  };
+
   const handleRoleChange = async (userId, newRole) => {
+
     try {
       const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/users/${userId}/role`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
@@ -527,7 +553,13 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
                               onMouseOver={e=>e.currentTarget.style.background=user.status==='Active'?'#fee2e2':'#d8f3ef'}
                               onMouseOut={e=>e.currentTarget.style.background='white'}
                             ><ShieldAlert size={13} color={user.status==='Active'?'#ef4444':'#0f766e'}/></button>
+                            
+                            <button onClick={() => handleDeleteUser(user.id, user.email)} title="Xóa tài khoản" style={{ width:30,height:30,borderRadius:7,border:'1px solid #e2e8f0',background:'white',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer' }}
+                              onMouseOver={e=>e.currentTarget.style.background='#fee2e2'}
+                              onMouseOut={e=>e.currentTarget.style.background='white'}
+                            ><Trash2 size={13} color="#ef4444"/></button>
                             <button style={{ width:30,height:30,borderRadius:7,border:'1px solid #e2e8f0',background:'white',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer' }}><MoreVertical size={13} color="#64748b"/></button>
+
                           </div>
                         </td>
                       </tr>
