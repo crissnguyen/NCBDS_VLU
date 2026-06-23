@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ArrowRight, Building2, Lock, Mail } from 'lucide-react';
-import { Field } from '../components/ui';
+import { Field } from '../../components/ui';
 
 export default function Login({ setUserRole, setCurrentUser, setCurrentPage }) {
   const [email, setEmail] = useState('');

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { UserCircle2, Mail, Calendar, ShieldCheck, MapPin, LogOut } from 'lucide-react';
-import { Field } from '../components/ui';
+import { Field } from '../../components/ui';
 
 export default function Profile({ currentUser, setCurrentPage, setCurrentUser }) {
   const [isEditing, setIsEditing] = useState(false);

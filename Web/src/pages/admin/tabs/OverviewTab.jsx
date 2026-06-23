@@ -1,8 +1,21 @@
-import { Activity, Building2, Users, CheckCircle, FileText, Home, TrendingUp } from 'lucide-react';
+import { Users, FileText, Home, TrendingUp } from 'lucide-react';
 import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { StatCard } from '../../../components/DashboardShared';
 
-export default function OverviewTab({ stats, revenueData, propertyTypeData, currentUser, pendingProperties, allProperties, metrics }) {
+// ─── Chart Data ───────────────────────────────────────────────────────────────
+const revenueData = [
+  { month: 'T1', tinDang: 12 }, { month: 'T2', tinDang: 18 },
+  { month: 'T3', tinDang: 9 },  { month: 'T4', tinDang: 24 },
+  { month: 'T5', tinDang: 31 }, { month: 'T6', tinDang: 28 },
+];
+const propertyTypeData = [
+  { name: 'Căn hộ', value: 45, color: '#0f766e' },
+  { name: 'Nhà phố', value: 30, color: '#0f2a44' },
+  { name: 'Đất nền', value: 25, color: '#f59e0b' },
+];
+
+
+export default function OverviewTab({ stats, currentUser, pendingProperties, allProperties, metrics }) {
 
   return (
     <>

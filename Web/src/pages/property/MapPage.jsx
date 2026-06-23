@@ -1,5 +1,5 @@
 import { Search } from 'lucide-react';
-import { properties } from '../data/properties';
+import { properties } from '../../data/properties';
 
 export default function MapPage() {
   const pinPositions = [

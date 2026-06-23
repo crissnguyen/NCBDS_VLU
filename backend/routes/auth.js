@@ -1,13 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const prisma = require('../lib/prisma');
+const { env } = require('../config/env');
 const { sendMail } = require('../services/mail');
 const { forgotPasswordTemplate } = require('../services/mail/templates/forgotPassword');
 const { verifyAccountTemplate } = require('../services/mail/templates/verifyAccount');
+const {
+  normalizeEmail,
+  normalizeOtp,
+  createOtp,
+  hashOtp,
+  hashToken,
+  otpMatches,
+  getOtpExpiry,
+  sanitizeUser,
+} = require('../utils/auth');
 
-const prisma = new PrismaClient();
+const findUserByEmail = (email) => prisma.user.findFirst({
+  where: {
+    email: {
+      equals: normalizeEmail(email),
+      mode: 'insensitive',
+    },
+  },
+});
 
 /**
  * @swagger
@@ -46,16 +64,15 @@ const prisma = new PrismaClient();
  */
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { password } = req.body;
+    const email = normalizeEmail(req.body.email);
     
     if (!email || !password) {
       return res.status(400).json({ success: false, message: "Vui lòng nhập email và mật khẩu" });
     }
     
     // Tìm user trong DB
-    const user = await prisma.user.findUnique({
-      where: { email }
-    });
+    const user = await findUserByEmail(email);
     
     if (!user) {
       return res.status(401).json({ success: false, message: "Sai email hoặc mật khẩu" });
@@ -78,12 +95,10 @@ router.post('/login', async (req, res) => {
     }
     
     // Trả về thông tin user (không bao gồm password)
-    const { password: _, ...userInfo } = user;
-    
     res.json({
       success: true,
       message: "Đăng nhập thành công",
-      user: userInfo
+      user: sanitizeUser(user)
     });
     
   } catch (error) {
@@ -123,19 +138,49 @@ router.post('/login', async (req, res) => {
  */
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, name } = req.body;
+    const email = normalizeEmail(req.body.email);
+    const { password, name } = req.body;
     if (!email || !password || !name) {
       return res.status(400).json({ success: false, message: "Vui lòng nhập đủ thông tin" });
     }
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await findUserByEmail(email);
     if (existingUser) {
+      if (!existingUser.isVerified) {
+        const otp = createOtp();
+        await prisma.user.update({
+          where: { id: existingUser.id },
+          data: {
+            verificationCode: hashOtp(otp),
+            verificationCodeExpiry: getOtpExpiry(15),
+          },
+        });
+
+        const htmlContent = verifyAccountTemplate(otp, existingUser.name || name || 'bạn');
+        const mailResult = await sendMail(existingUser.email, "Xác thực tài khoản - EstateAI", htmlContent);
+
+        if (!mailResult.success) {
+          console.error("Gửi email xác thực cho tài khoản chưa kích hoạt thất bại", mailResult.error);
+          return res.status(502).json({
+            success: false,
+            message: "Tài khoản đã tồn tại nhưng chưa xác thực. Không gửi được email xác thực, vui lòng thử lại sau.",
+          });
+        }
+
+        return res.json({
+          success: true,
+          message: "Tài khoản đã tồn tại nhưng chưa xác thực. Mã xác thực mới đã được gửi đến email.",
+          requireVerification: true,
+          email: existingUser.email,
+        });
+      }
+
       return res.status(400).json({ success: false, message: "Email đã tồn tại" });
     }
 
-    // Sinh mã xác thực 6 số
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const verificationCodeExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 phút
+    const otp = createOtp();
+    const verificationCode = hashOtp(otp);
+    const verificationCodeExpiry = getOtpExpiry(15);
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await prisma.user.create({
@@ -151,12 +196,15 @@ router.post('/register', async (req, res) => {
       }
     });
 
-    // Gửi email
-    const htmlContent = verifyAccountTemplate(verificationCode, name);
+    const htmlContent = verifyAccountTemplate(otp, name);
     const mailResult = await sendMail(email, "Xác thực tài khoản - EstateAI", htmlContent);
     
     if (!mailResult.success) {
       console.error("Gửi email xác thực thất bại", mailResult.error);
+      return res.status(502).json({
+        success: false,
+        message: "Không gửi được email xác thực. Vui lòng kiểm tra cấu hình SMTP hoặc thử gửi lại sau.",
+      });
     }
 
     res.json({
@@ -180,12 +228,13 @@ router.post('/register', async (req, res) => {
  */
 router.post('/verify', async (req, res) => {
   try {
-    const { email, code } = req.body;
+    const email = normalizeEmail(req.body.email);
+    const code = normalizeOtp(req.body.code);
     if (!email || !code) {
       return res.status(400).json({ success: false, message: "Vui lòng nhập đủ thông tin" });
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await findUserByEmail(email);
     if (!user) {
       return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
     }
@@ -194,11 +243,11 @@ router.post('/verify', async (req, res) => {
       return res.status(400).json({ success: false, message: "Tài khoản đã được xác thực" });
     }
 
-    if (user.verificationCode !== code) {
+    if (!otpMatches(user.verificationCode, code)) {
       return res.status(400).json({ success: false, message: "Mã xác thực không chính xác" });
     }
 
-    if (user.verificationCodeExpiry < new Date()) {
+    if (!user.verificationCodeExpiry || user.verificationCodeExpiry < new Date()) {
       return res.status(400).json({ success: false, message: "Mã xác thực đã hết hạn" });
     }
 
@@ -227,23 +276,32 @@ router.post('/verify', async (req, res) => {
  */
 router.post('/resend-verification', async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = normalizeEmail(req.body.email);
     if (!email) return res.status(400).json({ success: false, message: "Thiếu email" });
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await findUserByEmail(email);
     if (!user) return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
     if (user.isVerified) return res.status(400).json({ success: false, message: "Tài khoản đã được xác thực" });
 
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const verificationCodeExpiry = new Date(Date.now() + 15 * 60 * 1000);
+    const otp = createOtp();
+    const verificationCode = hashOtp(otp);
+    const verificationCodeExpiry = getOtpExpiry(15);
 
     await prisma.user.update({
       where: { id: user.id },
       data: { verificationCode, verificationCodeExpiry }
     });
 
-    const htmlContent = verifyAccountTemplate(verificationCode, user.name || "bạn");
-    await sendMail(email, "Xác thực tài khoản - EstateAI", htmlContent);
+    const htmlContent = verifyAccountTemplate(otp, user.name || "bạn");
+    const mailResult = await sendMail(email, "Xác thực tài khoản - EstateAI", htmlContent);
+
+    if (!mailResult.success) {
+      console.error("Gửi lại email xác thực thất bại", mailResult.error);
+      return res.status(502).json({
+        success: false,
+        message: "Không gửi được email xác thực. Vui lòng thử lại sau.",
+      });
+    }
 
     res.json({ success: true, message: "Đã gửi lại mã xác thực" });
   } catch (error) {
@@ -261,26 +319,26 @@ router.post('/resend-verification', async (req, res) => {
  */
 router.post('/forgot-password', async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = normalizeEmail(req.body.email);
     if (!email) {
       return res.status(400).json({ success: false, message: "Vui lòng nhập email" });
     }
     
     // Tìm user trong DB để lấy tên
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await findUserByEmail(email);
     
     if (user) {
       // Sinh token ngẫu nhiên
       const resetToken = crypto.randomBytes(32).toString('hex');
       // Băm token (bảo mật hơn khi lưu ở DB)
-      const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+      const hashedToken = hashToken(resetToken);
       
       // Token có hiệu lực 1 giờ (3600000 ms)
       const resetTokenExpiry = new Date(Date.now() + 3600000);
       
       // Lưu vào DB
       await prisma.user.update({
-        where: { email },
+        where: { id: user.id },
         data: {
           resetToken: hashedToken,
           resetTokenExpiry,
@@ -288,11 +346,11 @@ router.post('/forgot-password', async (req, res) => {
       });
       
       // Gửi link chứa token chưa băm cho người dùng
-      const resetLink = `http://localhost:5173/reset-password?token=${resetToken}&email=${encodeURIComponent(email)}`;
+      const resetLink = `${env.frontendUrl.replace(/\/$/, '')}/reset-password?token=${resetToken}&email=${encodeURIComponent(user.email)}`;
       const htmlContent = forgotPasswordTemplate(resetLink, user.name || 'bạn');
       
       // Gửi email không chặn (fire-and-forget hoặc await tùy nhu cầu, ở đây ta await để dễ debug Ethereal)
-      const mailResult = await sendMail(email, "Khôi phục mật khẩu - EstateAI", htmlContent);
+      const mailResult = await sendMail(user.email, "Khôi phục mật khẩu - EstateAI", htmlContent);
       
       if (!mailResult.success) {
         console.error("Gửi email thất bại", mailResult.error);
@@ -319,18 +377,22 @@ router.post('/forgot-password', async (req, res) => {
  */
 router.post('/reset-password', async (req, res) => {
   try {
-    const { token, email, newPassword } = req.body;
+    const { token, newPassword } = req.body;
+    const email = normalizeEmail(req.body.email);
     
     if (!token || !email || !newPassword) {
       return res.status(400).json({ success: false, message: "Thông tin không hợp lệ" });
     }
     
     // Băm token do user gửi lên để so sánh với DB
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const hashedToken = hashToken(token);
     
     const user = await prisma.user.findFirst({
       where: {
-        email,
+        email: {
+          equals: email,
+          mode: 'insensitive',
+        },
         resetToken: hashedToken,
         resetTokenExpiry: {
           gt: new Date() // Token phải còn hạn (lớn hơn thời gian hiện tại)
@@ -428,19 +490,19 @@ router.put('/profile', async (req, res) => {
  */
 router.delete('/profile', async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = normalizeEmail(req.body.email);
     
     if (!email) {
       return res.status(400).json({ success: false, message: "Thiếu email để xác thực xóa" });
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await findUserByEmail(email);
     if (!user) {
       return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
     }
     
     // Xóa user
-    await prisma.user.delete({ where: { email } });
+    await prisma.user.delete({ where: { id: user.id } });
 
     res.json({ success: true, message: "Đã xóa tài khoản vĩnh viễn" });
   } catch (error) {
@@ -450,4 +512,3 @@ router.delete('/profile', async (req, res) => {
 });
 
 module.exports = router;
-

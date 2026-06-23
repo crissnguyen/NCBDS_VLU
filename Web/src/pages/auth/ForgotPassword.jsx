@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, Building2, Mail } from 'lucide-react';
-import { Field } from '../components/ui';
+import { Field } from '../../components/ui';
 
 export default function ForgotPassword({ setCurrentPage }) {
   const [email, setEmail] = useState('');

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { LayoutDashboard, FileText, PlusCircle, LogOut, User, Home, TrendingUp, Users, CheckCircle } from 'lucide-react';
-import { useToast, Toasts, StatCard, SidebarItem, PostPropertyForm } from '../components/DashboardShared';
+import { useToast, Toasts, StatCard, SidebarItem, PostPropertyForm } from '../../components/DashboardShared';
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function Dashboard({ currentUser, setCurrentPage, setUserRole, setCurrentUser }) {

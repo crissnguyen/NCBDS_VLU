@@ -1,15 +1,27 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const path = require('path');
+const { env } = require('./config/env');
+const prisma = require('./lib/prisma');
+const { closeMailTransporter } = require('./services/mail');
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = env.port;
 
-app.use(cors());
-app.use(express.json());
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || env.corsOrigins.length === 0 || env.corsOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS blocked origin: ${origin}`));
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '2mb' }));
 
 // Phục vụ thư mục tĩnh 'uploads' để lấy ảnh
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -28,8 +40,8 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:${PORT}`,
-        description: 'Local server'
+        url: process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`,
+        description: env.nodeEnv === 'production' ? 'Production server' : 'Local server'
       }
     ]
   },
@@ -49,15 +61,31 @@ app.use('/api/properties', propertiesRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/admin', adminRoute);
 
+app.get('/health', (req, res) => {
+  res.json({ success: true, status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // Default Route
 app.get('/', (req, res) => {
   res.send('Welcome to EstateAI Backend. Truy cập /api-docs để xem tài liệu API Swagger.');
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
   console.log(`📄 Swagger docs available at http://localhost:${PORT}/api-docs`);
 });
+
+const shutdown = async (signal) => {
+  console.log(`${signal} received. Shutting down gracefully...`);
+  server.close(async () => {
+    await closeMailTransporter();
+    await prisma.$disconnect();
+    process.exit(0);
+  });
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
 process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION', err);
@@ -68,4 +96,3 @@ process.on('unhandledRejection', (err) => {
 process.on('exit', (code) => {
   console.log('Process exiting with code:', code);
 });
-setInterval(() => {}, 1000 * 60 * 60);

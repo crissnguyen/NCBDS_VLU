@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { PrismaClient } = require('@prisma/client');
-
-const prisma = new PrismaClient();
+const bcrypt = require('bcryptjs');
+const prisma = require('../lib/prisma');
+const { normalizeEmail } = require('../utils/auth');
 
 /**
  * @swagger
@@ -276,16 +276,18 @@ router.put('/properties/:id/status', async (req, res) => {
  *         description: Tạo thành công
  */
 router.post('/users', async (req, res) => {
-  const bcrypt = require('bcryptjs');
   try {
-    const { name, email, password, title, performance } = req.body;
+    const email = normalizeEmail(req.body.email);
+    const { name, password, title, performance } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ success: false, message: "Vui lòng điền đủ Tên, Email và Mật khẩu" });
     }
 
     // Kiểm tra email trùng
-    const existing = await prisma.user.findUnique({ where: { email } });
+    const existing = await prisma.user.findFirst({
+      where: { email: { equals: email, mode: 'insensitive' } }
+    });
     if (existing) {
       return res.status(400).json({ success: false, message: "Email này đã được sử dụng" });
     }
@@ -444,5 +446,4 @@ router.delete('/users/:id', async (req, res) => {
 });
 
 module.exports = router;
-
 

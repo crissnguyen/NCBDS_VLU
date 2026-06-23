@@ -1,15 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
-import {
-  LayoutDashboard, Users, FileText, Settings, ShieldCheck,
-  LogOut, User, Check, X, Bell, Search, Image as ImageIcon,
-  TrendingUp, Home, MoreVertical, ShieldAlert,
-  PlusCircle, Eye, EyeOff, Trash2
-} from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Settings, LogOut, User, Home, Check, PlusCircle, Image as ImageIcon, Bell, X } from 'lucide-react';
 import {
   AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
-import { useToast, Toasts, StatCard, SidebarItem, IS, LabeledField, PostPropertyForm } from '../../components/DashboardShared';
+import { useToast, Toasts, SidebarItem } from '../../components/DashboardShared';
 
 import AddEmployeeModal from './components/AddEmployeeModal';
 import EditPropertyModal from './components/EditPropertyModal';
@@ -20,18 +15,6 @@ import PostPropertyTab from './tabs/PostPropertyTab';
 import AllPropertiesTab from './tabs/AllPropertiesTab';
 import SettingsTab from './tabs/SettingsTab';
 
-// ─── Chart Data ───────────────────────────────────────────────────────────────
-const revenueData = [
-  { month: 'T1', tinDang: 12 }, { month: 'T2', tinDang: 18 },
-  { month: 'T3', tinDang: 9 },  { month: 'T4', tinDang: 24 },
-  { month: 'T5', tinDang: 31 }, { month: 'T6', tinDang: 28 },
-];
-const propertyTypeData = [
-  { name: 'Căn hộ', value: 45, color: '#0f766e' },
-  { name: 'Nhà phố', value: 30, color: '#0f2a44' },
-  { name: 'Đất nền', value: 25, color: '#f59e0b' },
-];
-
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function AdminDashboard({ currentUser, setCurrentPage, setUserRole, setCurrentUser }) {
   const toast = useToast();
@@ -41,7 +24,6 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
   const [loading, setLoading] = useState(true);
 
   const users = data?.users || [];
-  const metrics = data?.metrics || {};
   const stats = data?.stats || {};
   const [activeTab, setActiveTab] = useState(0);
   const [confirmModal, setConfirmModal] = useState({ isOpen: false });
@@ -168,15 +150,8 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     }
   };
 
-  const filteredUsers = data?.users?.filter(u =>
-    u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.email.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
-
-  const statusColor = { Active: '#0f766e', Pending: '#f59e0b', Locked: '#ef4444' };
-  const statusBg    = { Active: '#d8f3ef', Pending: '#fef3c7', Locked: '#fee2e2' };
-  const statusLabel = { Active: '● Hoạt động', Pending: '● Chờ duyệt', Locked: '● Đã khóa' };
-
+  
+      
   const navItems = [
     { icon: LayoutDashboard, label: 'Tổng quan', tab: 0 },
     { icon: Users, label: 'Tài khoản', tab: 1 },
@@ -264,7 +239,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
         <main style={{ flex: 1, overflowY: 'auto', padding: '1.75rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
           
-          {activeTab === 0 && <OverviewTab stats={stats} revenueData={revenueData} propertyTypeData={propertyTypeData} currentUser={currentUser} pendingProperties={pendingProperties} allProperties={allProperties} metrics={metrics} />}
+          {activeTab === 0 && <OverviewTab stats={stats} currentUser={currentUser} pendingProperties={pendingProperties} allProperties={allProperties} metrics={metrics} />}
           {activeTab === 1 && <UserManagementTab users={users} currentUser={currentUser} handleRoleChange={handleRoleChange} handleToggleStatus={handleToggleStatus} handleDeleteUser={handleDeleteUser} setShowAddEmployee={setShowAddEmployee} />}
           {activeTab === 2 && <PendingPropertiesTab pendingProperties={pendingProperties} handleApproveProperty={handleApproveProperty} />}
           {activeTab === 3 && <PostPropertyTab currentUser={currentUser} toast={toast} fetchData={fetchData} />}

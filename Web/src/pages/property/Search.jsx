@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Building2, CheckCircle2, Filter, Map as MapIcon, Search as SearchIcon, SlidersHorizontal, Sparkles } from 'lucide-react';
-import PropertyCard from '../components/PropertyCard';
-import { Field } from '../components/ui';
+import PropertyCard from '../../components/PropertyCard';
+import { Field } from '../../components/ui';
 
 export default function Search({ setCurrentPage }) {
   const [allProperties, setAllProperties] = useState([]);

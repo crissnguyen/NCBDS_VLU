@@ -1,5 +1,3 @@
-import { Image as ImageIcon, Trash2, X, Check } from 'lucide-react';
-
 export default function AllPropertiesTab({ allProperties, setEditingProperty, handleDeleteProperty, handleApproveProperty }) {
   return (
     <>

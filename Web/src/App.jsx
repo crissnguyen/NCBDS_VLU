@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Home from './pages/Home';
-import Search from './pages/Search';
-import MapPage from './pages/MapPage';
-import Dashboard from './pages/Dashboard';
+import Search from './pages/property/Search';
+import MapPage from './pages/property/MapPage';
+import Dashboard from './pages/user/Dashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
-import VerifyAccount from './pages/VerifyAccount';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
+import VerifyAccount from './pages/auth/VerifyAccount';
 import ChatWidget from './components/ChatWidget';
 import Footer from './components/Footer';
-import PropertyDetail from './pages/PropertyDetail';
-import Profile from './pages/Profile';
+import PropertyDetail from './pages/property/PropertyDetail';
+import Profile from './pages/user/Profile';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(() => localStorage.getItem('currentPage') || 'home');

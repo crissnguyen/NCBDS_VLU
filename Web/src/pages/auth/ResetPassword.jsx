@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, Building2, Lock } from 'lucide-react';
-import { Field } from '../components/ui';
+import { Field } from '../../components/ui';
 
 export default function ResetPassword({ setCurrentPage }) {
   const [password, setPassword] = useState('');
