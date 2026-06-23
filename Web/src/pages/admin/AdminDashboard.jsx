@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Users, FileText, Settings, ShieldCheck,
   LogOut, User, Check, X, Bell, Search, Image as ImageIcon,
   TrendingUp, Home, MoreVertical, ShieldAlert,
-  PlusCircle, Eye, EyeOff
+  PlusCircle, Eye, EyeOff, Trash2
 } from 'lucide-react';
 import {
   AreaChart, Area, PieChart, Pie, Cell,
@@ -276,7 +276,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
         const data = await res.json();
         if (data.success) {
           toast.success(data.message);
-          fetchAdminData();
+          fetchData();
         } else {
           toast.error(data.message || 'Lỗi khi xóa tài khoản');
         }
@@ -616,7 +616,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
           {activeTab === 3 && (
             <>
               <div><h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>Đăng tin bất động sản mới</h2><p style={{ margin: '0.2rem 0 0', color: '#64748b', fontSize: '0.82rem' }}>Tin đăng từ Admin sẽ được phê duyệt tự động và hiển thị ngay lập tức.</p></div>
-              <PostPropertyForm currentUser={currentUser} toast={toast} onSuccess={fetchAdminData} />
+              <PostPropertyForm currentUser={currentUser} toast={toast} onSuccess={fetchData} />
             </>
           )}
           {/* TAB 4: Quản lý tất cả tin đăng */}
