@@ -64,8 +64,8 @@ export default function MapPage() {
           style={{ width: '100%', height: '100%', zIndex: 1 }}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://maps.google.com/">Google Maps</a>'
+            url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&hl=vi&gl=VN"
           />
 
           {/* Đánh dấu chủ quyền biển đảo Việt Nam */}
