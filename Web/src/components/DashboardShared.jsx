@@ -157,7 +157,7 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
       
       images.forEach(img => fd.append('images', img));
 
-      const res = await fetch('http://localhost:5001/api/properties', { method: 'POST', body: fd });
+      const res = await fetch('https://ncbds-vlu.onrender.com/api/properties', { method: 'POST', body: fd });
       const result = await res.json();
       if (result.success) {
         toast.success('Đăng tin thành công!', currentUser?.role === 'admin' ? `Tin "${autoTitle()}" đã được duyệt.` : `Tin "${autoTitle()}" đã được gửi và đang chờ Admin duyệt.`);

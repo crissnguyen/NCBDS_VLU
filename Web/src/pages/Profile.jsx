@@ -25,7 +25,7 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:5001/api/auth/profile', {
+      const res = await fetch('https://ncbds-vlu.onrender.com/api/auth/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

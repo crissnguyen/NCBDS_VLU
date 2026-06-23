@@ -21,7 +21,7 @@ export default function Search({ setCurrentPage }) {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:5001/api/properties')
+    fetch('https://ncbds-vlu.onrender.com/api/properties')
       .then(res => res.json())
       .then(data => {
         // Filter only approved ones (assuming 'status' field exists and represents approval state)
@@ -259,7 +259,7 @@ export default function Search({ setCurrentPage }) {
             ) : (
               properties.map((property, index) => {
                 const imgUrl = property.images && property.images.length > 0 
-                  ? `http://localhost:5001${property.images[0]}` 
+                  ? `https://ncbds-vlu.onrender.com${property.images[0]}` 
                   : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80';
                 
                 const typeMap = { apartment: 'Căn hộ', house: 'Nhà phố', land: 'Đất nền' };

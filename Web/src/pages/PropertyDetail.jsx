@@ -11,7 +11,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
     // Cuộn lên đầu trang
     window.scrollTo(0, 0);
 
-    fetch(`http://localhost:5001/api/properties/${id}`)
+    fetch(`https://ncbds-vlu.onrender.com/api/properties/${id}`)
       .then(res => res.json())
       .then(data => {
         setProperty(data);
@@ -43,7 +43,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
   }
 
   const images = property.images && property.images.length > 0 
-    ? property.images.map(img => `http://localhost:5001${img}`)
+    ? property.images.map(img => `https://ncbds-vlu.onrender.com${img}`)
     : ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80'];
 
   const openLightbox = (idx) => {

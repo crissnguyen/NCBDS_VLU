@@ -6,7 +6,7 @@ export default function PropertyCard({ id, images, image, title, price, location
 
   // Parse original images if passed
   const photoList = images && images.length > 0 
-    ? images.map(img => img.startsWith('http') ? img : `http://localhost:5001${img}`) 
+    ? images.map(img => img.startsWith('http') ? img : `https://ncbds-vlu.onrender.com${img}`) 
     : [image];
 
   const handlePrev = (e) => {

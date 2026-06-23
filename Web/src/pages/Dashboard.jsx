@@ -12,7 +12,7 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
   const fetchProperties = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5001/api/properties?authorId=${currentUser?.id}`);
+      const res = await fetch(`https://ncbds-vlu.onrender.com/api/properties?authorId=${currentUser?.id}`);
       const data = await res.json();
       if (Array.isArray(data)) {
         setProperties(data);

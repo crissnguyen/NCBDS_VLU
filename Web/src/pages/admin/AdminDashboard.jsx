@@ -38,7 +38,7 @@ function AddEmployeeModal({ onClose, onSuccess, toast }) {
     }
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5001/api/admin/users', {
+      const res = await fetch('https://ncbds-vlu.onrender.com/api/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -133,7 +133,7 @@ function EditPropertyModal({ property, onClose, onSuccess, toast }) {
     }
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5001/api/admin/properties/${property.id}`, {
+      const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/properties/${property.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -238,9 +238,9 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     try {
       setLoading(true);
       const [dRes, pRes, aRes] = await Promise.all([
-        fetch('http://localhost:5001/api/admin/dashboard'),
-        fetch('http://localhost:5001/api/admin/properties/pending'),
-        fetch('http://localhost:5001/api/admin/properties/all')
+        fetch('https://ncbds-vlu.onrender.com/api/admin/dashboard'),
+        fetch('https://ncbds-vlu.onrender.com/api/admin/properties/pending'),
+        fetch('https://ncbds-vlu.onrender.com/api/admin/properties/all')
       ]);
       const dr = await dRes.json();
       const pr = await pRes.json();
@@ -264,7 +264,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
 
   const handleRoleChange = async (userId, newRole) => {
     try {
-      const res = await fetch(`http://localhost:5001/api/admin/users/${userId}/role`, {
+      const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/users/${userId}/role`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: newRole })
       });
@@ -286,7 +286,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
 
     if (m.type === 'user') {
       try {
-        const res = await fetch(`http://localhost:5001/api/admin/users/${m.userId}/status`, {
+        const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/users/${m.userId}/status`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: m.newStatus })
         });
@@ -300,7 +300,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
 
     if (m.type === 'property') {
       try {
-        const res = await fetch(`http://localhost:5001/api/admin/properties/${m.propertyId}/status`, {
+        const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/properties/${m.propertyId}/status`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: m.action === 'approve' ? 'Approved' : 'Rejected' })
         });
@@ -317,7 +317,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
   const handleDeleteProperty = async (propertyId) => {
     if (!window.confirm("Bạn có chắc chắn muốn xóa tin đăng này?")) return;
     try {
-      const res = await fetch(`http://localhost:5001/api/admin/properties/${propertyId}`, { method: 'DELETE' });
+      const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/properties/${propertyId}`, { method: 'DELETE' });
       const result = await res.json();
       if (result.success) {
         toast.success("Thành công", "Đã xóa tin đăng.");
@@ -554,7 +554,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
                   {pendingProperties.map(p => (
                     <div key={p.id} style={{ background: 'white', borderRadius: 14, border: '1px solid #e2e8f0', padding: '1.25rem 1.5rem', display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
                       <div style={{ width: 140, height: 96, borderRadius: 10, overflow: 'hidden', background: '#f1f5f9', flexShrink: 0, position: 'relative' }}>
-                        {p.images?.length > 0 ? <img src={`http://localhost:5001${p.images[0]}`} alt="" style={{ width:'100%',height:'100%',objectFit:'cover' }}/> : <div style={{ width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:3 }}><ImageIcon size={22} color="#cbd5e1"/><span style={{fontSize:'0.68rem',color:'#cbd5e1'}}>Chưa có ảnh</span></div>}
+                        {p.images?.length > 0 ? <img src={`https://ncbds-vlu.onrender.com${p.images[0]}`} alt="" style={{ width:'100%',height:'100%',objectFit:'cover' }}/> : <div style={{ width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:3 }}><ImageIcon size={22} color="#cbd5e1"/><span style={{fontSize:'0.68rem',color:'#cbd5e1'}}>Chưa có ảnh</span></div>}
                         {p.images?.length > 1 && <div style={{ position:'absolute',top:5,right:5,background:'rgba(0,0,0,0.55)',color:'white',borderRadius:5,fontSize:'0.68rem',fontWeight:700,padding:'1px 6px' }}>+{p.images.length-1}</div>}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -610,7 +610,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
                         <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                           <td style={{ padding: '1rem' }}>
                             <div style={{ display:'flex', gap:'1rem', alignItems:'center' }}>
-                              <img src={p.images[0] ? `http://localhost:5001${p.images[0]}` : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80'} alt="" style={{ width: 64, height: 48, borderRadius: 8, objectFit: 'cover' }} />
+                              <img src={p.images[0] ? `https://ncbds-vlu.onrender.com${p.images[0]}` : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80'} alt="" style={{ width: 64, height: 48, borderRadius: 8, objectFit: 'cover' }} />
                               <div>
                                 <div style={{ fontWeight: 600, color: '#0f2a44', marginBottom: 4 }}>{p.title}</div>
                                 <div style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', gap: '0.5rem' }}><span>{p.price}</span>•<span>{p.location}</span></div>

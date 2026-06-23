@@ -51,7 +51,7 @@ export default function VerifyAccount({ setCurrentPage, userEmail }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5001/api/auth/verify', {
+      const response = await fetch('https://ncbds-vlu.onrender.com/api/auth/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail, code: fullCode }),
@@ -80,7 +80,7 @@ export default function VerifyAccount({ setCurrentPage, userEmail }) {
     setSuccess('');
     
     try {
-      const response = await fetch('http://localhost:5001/api/auth/resend-verification', {
+      const response = await fetch('https://ncbds-vlu.onrender.com/api/auth/resend-verification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail }),
