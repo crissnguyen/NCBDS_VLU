@@ -100,10 +100,10 @@ export default function MapPage() {
   }, []);
 
   return (
-    <main className="map-layout" style={{ display: 'flex', height: 'calc(100vh - 80px)', overflow: 'hidden' }}>
+    <main className="map-layout">
       
       {/* CỘT BÊN TRÁI: DANH SÁCH BẤT ĐỘNG SẢN */}
-      <aside className="map-sidebar" style={{ width: 400, background: '#f8fafc', borderRight: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', zIndex: 10 }}>
+      <aside className="map-sidebar">
         <div className="map-sidebar__top" style={{ padding: '1.5rem', background: 'white', borderBottom: '1px solid #e2e8f0' }}>
           <div className="search-box" style={{ display: 'flex', alignItems: 'center', background: '#f1f5f9', borderRadius: 12, padding: '0.75rem 1rem', gap: '0.75rem' }}>
             <Search size={18} color="#64748b" />
@@ -147,7 +147,7 @@ export default function MapPage() {
       </aside>
 
       {/* CỘT BÊN PHẢI: BẢN ĐỒ TƯƠNG TÁC LEAFLET */}
-      <section className="map-area" style={{ flex: 1, position: 'relative', height: '100%' }}>
+      <section className="map-area">
         
         {/* Bản đồ Leaflet */}
         <MapContainer 

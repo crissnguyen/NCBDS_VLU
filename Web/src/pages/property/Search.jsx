@@ -151,7 +151,7 @@ export default function Search({ setCurrentPage }) {
 
       <section className="container search-content">
         <div className="filters-layout search-layout">
-        <aside style={{ background: 'white', borderRadius: 24, padding: '1.75rem', border: '1px solid #e2e8f0', boxShadow: '0 20px 40px rgba(0,0,0,0.05)', display: 'flex', flexDirection: 'column', gap: '1.25rem', height: 'fit-content' }}>
+        <aside className="search-filter-aside">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800, fontSize: '1.25rem', color: '#0f2a44', marginBottom: '0.5rem' }}>
             <Filter size={20} color="#0f2a44" /> Bộ lọc thông minh
           </div>
