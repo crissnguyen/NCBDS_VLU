@@ -14,7 +14,7 @@ export default function News() {
   const [selectedArticle, setSelectedArticle] = useState(null);
 
   useEffect(() => {
-    fetch('https://ncbds-vlu.onrender.com/api/news')
+    fetch(`${API_BASE}/api/news`)
       .then(res => res.json())
       .then(data => {
         if (data.success) setNewsData(data.data);
