@@ -5,7 +5,7 @@ export default function Header({ currentPage, setCurrentPage, userRole, setUserR
   const navItems = [
     { id: 'home', label: 'Trang chủ' },
     { id: 'search', label: 'Mua bán' },
-    { id: 'map', label: 'Bản đồ' },
+    { id: 'news', label: 'Tin tức' },
   ];
 
   return (

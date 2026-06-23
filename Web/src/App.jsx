@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Home from './pages/Home';
 import Search from './pages/property/Search';
-import MapPage from './pages/property/MapPage';
+import News from './pages/News';
 import Dashboard from './pages/user/Dashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
@@ -57,7 +57,7 @@ function App() {
     switch (currentPage) {
       case 'home': return <Home setCurrentPage={setCurrentPage} />;
       case 'search': return <Search setCurrentPage={setCurrentPage} />;
-      case 'map': return <MapPage />;
+      case 'news': return <News setCurrentPage={setCurrentPage} />;
       case 'login': return <Login setUserRole={setUserRole} setCurrentUser={setCurrentUser} setCurrentPage={setCurrentPage} />;
       case 'register': return <Register setCurrentPage={setCurrentPage} />;
       case 'forgot_password': return <ForgotPassword setCurrentPage={setCurrentPage} />;
