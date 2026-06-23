@@ -28,6 +28,10 @@ const env = {
     pass: process.env.SMTP_PASS,
     from: process.env.SMTP_FROM || process.env.SMTP_USER || 'no-reply@estateai.vn',
   },
+  ai: {
+    geminiApiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY,
+    geminiModel: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+  },
 };
 
 module.exports = { env };

@@ -56,10 +56,12 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 const propertiesRoute = require('./routes/properties');
 const authRoute = require('./routes/auth');
 const adminRoute = require('./routes/admin');
+const aiRoute = require('./routes/ai');
 
 app.use('/api/properties', propertiesRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/admin', adminRoute);
+app.use('/api/ai', aiRoute);
 
 app.get('/health', (req, res) => {
   res.json({ success: true, status: 'ok', timestamp: new Date().toISOString() });

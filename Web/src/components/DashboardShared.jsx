@@ -140,6 +140,7 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
   const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
   const [provinces, setProvinces] = useState([]);
 
   useEffect(() => {
@@ -222,6 +223,42 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
       toast.error('Đăng tin thất bại', error.message || 'Không thể kết nối đến máy chủ.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGenerateAIDescription = async () => {
+    const currentDescription = form.description.trim();
+    if (!currentDescription) {
+      toast.warning('Cần mô tả gốc', 'Hãy nhập vài ý chính trước, AI sẽ viết lại cho hay hơn.');
+      return;
+    }
+    if (currentDescription.length < 12) {
+      toast.warning('Mô tả quá ngắn', 'Vui lòng nhập thêm thông tin về vị trí, tiện ích hoặc tình trạng bất động sản.');
+      return;
+    }
+
+    setAiLoading(true);
+    try {
+      const res = await fetch('https://ncbds-vlu.onrender.com/api/ai/rewrite-description', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          description: currentDescription,
+          property: form,
+        }),
+      });
+      const result = await res.json();
+
+      if (!res.ok || !result.success) {
+        throw new Error(result.message || 'AI chưa thể tạo nội dung lúc này.');
+      }
+
+      setForm(prev => ({ ...prev, description: result.description }));
+      toast.success('Đã tạo nội dung AI', 'Mô tả đã được viết lại hấp dẫn hơn.');
+    } catch (error) {
+      toast.error('Tạo nội dung thất bại', error.message || 'Không thể kết nối AI.');
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -341,9 +378,42 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
             )}
           </div>
 
-          <LabeledField label="Mô tả chi tiết">
-            <textarea name="description" rows={4} value={form.description} onChange={handleChange} placeholder="Mô tả về vị trí, tiện ích, nội thất, tiềm năng đầu tư..." style={{ ...IS, resize: 'vertical', lineHeight: 1.6 }} />
-          </LabeledField>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'center', marginBottom: '0.35rem' }}>
+              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569' }}>Mô tả chi tiết</label>
+              <button
+                type="button"
+                onClick={handleGenerateAIDescription}
+                disabled={aiLoading}
+                style={{
+                  border: '1px solid rgba(15,118,110,0.24)',
+                  background: aiLoading ? '#f1f5f9' : 'linear-gradient(135deg, #ecfdf5, #eff6ff)',
+                  color: aiLoading ? '#94a3b8' : '#0f766e',
+                  borderRadius: 9,
+                  padding: '0.42rem 0.68rem',
+                  fontSize: '0.74rem',
+                  fontWeight: 800,
+                  cursor: aiLoading ? 'not-allowed' : 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  whiteSpace: 'nowrap',
+                  boxShadow: aiLoading ? 'none' : '0 8px 18px rgba(15,118,110,0.08)'
+                }}
+              >
+                <Sparkles size={13} />
+                {aiLoading ? 'AI đang viết...' : 'Tạo nội dung AI'}
+              </button>
+            </div>
+            <textarea
+              name="description"
+              rows={4}
+              value={form.description}
+              onChange={handleChange}
+              placeholder="Nhập ý chính trước, ví dụ: vị trí, tiện ích, nội thất, pháp lý, điểm mạnh... Sau đó bấm Tạo nội dung AI."
+              style={{ ...IS, resize: 'vertical', lineHeight: 1.6 }}
+            />
+          </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid #f1f5f9' }}>
             <button style={{ padding: '0.6rem 1.25rem', borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', color: '#475569', fontWeight: 600, cursor: 'pointer', fontSize: '0.875rem' }}>💾 Lưu nháp</button>
