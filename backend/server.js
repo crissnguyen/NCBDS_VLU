@@ -10,9 +10,25 @@ const { closeMailTransporter } = require('./services/mail');
 const app = express();
 const PORT = env.port;
 
+const isLocalOrigin = (origin) => {
+  if (!origin) return false;
+
+  try {
+    const { hostname } = new URL(origin);
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1';
+  } catch {
+    return false;
+  }
+};
+
 const corsOptions = {
   origin(origin, callback) {
-    if (!origin || env.corsOrigins.length === 0 || env.corsOrigins.includes(origin)) {
+    if (
+      !origin
+      || env.corsOrigins.length === 0
+      || env.corsOrigins.includes(origin)
+      || (env.nodeEnv !== 'production' && isLocalOrigin(origin))
+    ) {
       return callback(null, true);
     }
     return callback(new Error(`CORS blocked origin: ${origin}`));
@@ -74,9 +90,20 @@ app.get('/', (req, res) => {
   res.send('Welcome to EstateAI Backend. Truy cập /api-docs để xem tài liệu API Swagger.');
 });
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT);
+
+server.on('listening', () => {
   console.log(`🚀 Server is running on port ${PORT}`);
   console.log(`📄 Swagger docs available at http://localhost:${PORT}/api-docs`);
+});
+
+server.on('error', (error) => {
+  if (error.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} đang bị chiếm. Hãy tắt process cũ hoặc đổi PORT trong backend/.env.local.`);
+  } else {
+    console.error('❌ Không thể khởi động server:', error);
+  }
+  process.exitCode = 1;
 });
 
 const shutdown = async (signal) => {

@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, X, Link2, FileText, ImagePlus, Star, Newspaper } from 'lucide-react';
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL
-  || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:5001'
-    : 'https://ncbds-vlu.onrender.com');
+import { dataService } from '../../../services/data/dataService';
+import { API_ORIGIN } from '../../../services/api';
 
 const inputStyle = {
   width: '100%',
@@ -73,9 +70,8 @@ export default function NewsTab({ toast }) {
   const fetchNews = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/api/news`);
-      const data = await res.json();
-      if (data.success) setNews(data.data);
+      const res = await dataService.getNews();
+      if (res.success) setNews(res.data);
     } catch (err) {
       toast.error('Lỗi', 'Không thể tải tin tức');
     } finally {
@@ -105,10 +101,7 @@ export default function NewsTab({ toast }) {
     }
 
     try {
-      const url = editingId ? `${API_BASE}/api/news/${editingId}` : `${API_BASE}/api/news`;
-      const method = editingId ? 'PUT' : 'POST';
       const dataToSend = new FormData();
-
       dataToSend.append('title', formData.title);
       dataToSend.append('excerpt', formData.excerpt);
       dataToSend.append('content', formData.content || '');
@@ -123,36 +116,30 @@ export default function NewsTab({ toast }) {
         dataToSend.append('image', formData.image);
       }
 
-      const res = await fetch(url, { method, body: dataToSend });
-      const responseText = await res.text();
-      let data;
-      try {
-        data = responseText ? JSON.parse(responseText) : {};
-      } catch (parseError) {
-        data = {
-          success: false,
-          message: `Máy chủ trả về phản hồi không hợp lệ (${res.status}). Kiểm tra backend đang chạy ở ${API_BASE}.`,
-        };
+      let res;
+      if (editingId) {
+        res = await dataService.updateNews(editingId, dataToSend);
+      } else {
+        res = await dataService.createNews(dataToSend);
       }
 
-      if (res.ok && data.success) {
+      if (res.success) {
         toast.success('Thành công', editingId ? 'Đã cập nhật tin tức' : 'Đã tạo tin tức mới');
         setShowModal(false);
         fetchNews();
       } else {
-        toast.error('Thất bại', data.message || `Không thể lưu bài viết (${res.status}).`);
+        toast.error('Thất bại', res.message || 'Không thể lưu bài viết.');
       }
     } catch (err) {
-      toast.error('Lỗi kết nối máy chủ', `Không gọi được API tại ${API_BASE}. Hãy kiểm tra backend đã chạy chưa.`);
+      toast.error('Lỗi', 'Có lỗi xảy ra khi thực hiện yêu cầu.');
     }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Bạn có chắc muốn xóa tin này?')) return;
     try {
-      const res = await fetch(`${API_BASE}/api/news/${id}`, { method: 'DELETE' });
-      const data = await res.json();
-      if (data.success) {
+      const res = await dataService.deleteNews(id);
+      if (res.success) {
         toast.success('Thành công', 'Đã xóa tin tức');
         fetchNews();
       }
@@ -187,7 +174,7 @@ export default function NewsTab({ toast }) {
 
   return (
     <div style={{ animation: 'fadeInScale 0.3s ease' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.35rem' }}>Quản lý tin tức</h2>
           <p style={{ color: '#64748b', fontSize: '0.88rem', margin: 0 }}>Tạo bài viết tự biên soạn hoặc gắn URL bài báo nguồn cho khách hàng đọc chi tiết.</p>
@@ -201,42 +188,44 @@ export default function NewsTab({ toast }) {
       </div>
 
       <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-          <thead>
-            <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-              {['Bài viết', 'Chuyên mục', 'Nguồn', 'Ngày tạo', 'Thao tác'].map(label => (
-                <th key={label} style={{ padding: '0.9rem 1rem', color: '#475569', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>{label}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {news.map(item => (
-              <tr key={item.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                <td style={{ padding: '1rem' }}>
-                  <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
-                    <img src={item.image} alt="" style={{ width: 78, height: 54, objectFit: 'cover', borderRadius: 10, border: '1px solid #e2e8f0' }} />
-                    <div>
-                      <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.9rem', marginBottom: 5 }}>{item.title}</div>
-                      <div style={{ color: '#64748b', fontSize: '0.78rem', maxWidth: 420, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.excerpt}</div>
-                    </div>
-                  </div>
-                </td>
-                <td style={{ padding: '1rem', color: '#475569', fontSize: '0.85rem' }}>
-                  <span style={{ background: '#e6f7f4', color: '#0f766e', padding: '0.32rem 0.58rem', borderRadius: 999, fontWeight: 700 }}>{item.category}</span>
-                </td>
-                <td style={{ padding: '1rem', color: '#475569', fontSize: '0.85rem' }}>
-                  {item.sourceUrl ? <span style={{ color: '#0f766e', fontWeight: 700 }}>URL nguồn</span> : <span>Tự viết</span>}
-                  {item.featured && <div style={{ color: '#f59e0b', fontSize: '0.76rem', marginTop: 5, fontWeight: 700 }}>Nổi bật</div>}
-                </td>
-                <td style={{ padding: '1rem', color: '#475569', fontSize: '0.85rem' }}>{new Date(item.createdAt).toLocaleDateString('vi-VN')}</td>
-                <td style={{ padding: '1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                  <button onClick={() => openModal(item)} style={{ background: '#eef6ff', border: 'none', padding: 8, borderRadius: 8, color: '#2563eb', cursor: 'pointer', marginRight: 8 }}><Edit size={16} /></button>
-                  <button onClick={() => handleDelete(item.id)} style={{ background: '#fee2e2', border: 'none', padding: 8, borderRadius: 8, color: '#ef4444', cursor: 'pointer' }}><Trash2 size={16} /></button>
-                </td>
+        <div className="responsive-table-wrapper">
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <thead>
+              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                {['Bài viết', 'Chuyên mục', 'Nguồn', 'Ngày tạo', 'Thao tác'].map(label => (
+                  <th key={label} style={{ padding: '0.9rem 1rem', color: '#475569', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>{label}</th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {news.map(item => (
+                <tr key={item.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                  <td style={{ padding: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
+                      <img src={item.image} alt="" style={{ width: 78, height: 54, objectFit: 'cover', borderRadius: 10, border: '1px solid #e2e8f0' }} />
+                      <div>
+                        <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.9rem', marginBottom: 5 }}>{item.title}</div>
+                        <div style={{ color: '#64748b', fontSize: '0.78rem', maxWidth: 420, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.excerpt}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td style={{ padding: '1rem', color: '#475569', fontSize: '0.85rem' }}>
+                    <span style={{ background: '#e6f7f4', color: '#0f766e', padding: '0.32rem 0.58rem', borderRadius: 999, fontWeight: 700 }}>{item.category}</span>
+                  </td>
+                  <td style={{ padding: '1rem', color: '#475569', fontSize: '0.85rem' }}>
+                    {item.sourceUrl ? <span style={{ color: '#0f766e', fontWeight: 700 }}>URL nguồn</span> : <span>Tự viết</span>}
+                    {item.featured && <div style={{ color: '#f59e0b', fontSize: '0.76rem', marginTop: 5, fontWeight: 700 }}>Nổi bật</div>}
+                  </td>
+                  <td style={{ padding: '1rem', color: '#475569', fontSize: '0.85rem' }}>{new Date(item.createdAt).toLocaleDateString('vi-VN')}</td>
+                  <td style={{ padding: '1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    <button onClick={() => openModal(item)} style={{ background: '#eef6ff', border: 'none', padding: 8, borderRadius: 8, color: '#2563eb', cursor: 'pointer', marginRight: 8 }}><Edit size={16} /></button>
+                    <button onClick={() => handleDelete(item.id)} style={{ background: '#fee2e2', border: 'none', padding: 8, borderRadius: 8, color: '#ef4444', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         {news.length === 0 && <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>Chưa có tin tức nào</div>}
       </div>
 
@@ -254,7 +243,7 @@ export default function NewsTab({ toast }) {
               <button onClick={() => setShowModal(false)} style={{ background: 'white', border: '1px solid #e2e8f0', cursor: 'pointer', color: '#64748b', width: 34, height: 34, borderRadius: 10 }}><X size={18} /></button>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 300px', gap: '1.25rem', padding: '1.5rem', overflowY: 'auto', maxHeight: 'calc(92vh - 88px)' }}>
+            <form onSubmit={handleSubmit} className="news-form-grid" style={{ padding: '1.5rem', overflowY: 'auto', maxHeight: 'calc(92vh - 88px)' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.7rem', padding: '0.32rem', background: '#f1f5f9', borderRadius: 12 }}>
                   {[

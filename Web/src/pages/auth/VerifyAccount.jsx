@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Building2, ArrowRight, ShieldCheck, Mail } from 'lucide-react';
+import { apiUrl } from '../../services/api';
 
 export default function VerifyAccount({ setCurrentPage, userEmail }) {
   const [code, setCode] = useState(['', '', '', '', '', '']);
@@ -51,7 +52,7 @@ export default function VerifyAccount({ setCurrentPage, userEmail }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://ncbds-vlu.onrender.com/api/auth/verify', {
+      const response = await fetch(apiUrl('auth/verify'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail, code: fullCode }),
@@ -80,7 +81,7 @@ export default function VerifyAccount({ setCurrentPage, userEmail }) {
     setSuccess('');
     
     try {
-      const response = await fetch('https://ncbds-vlu.onrender.com/api/auth/resend-verification', {
+      const response = await fetch(apiUrl('auth/resend-verification'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail }),

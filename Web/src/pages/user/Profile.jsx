@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { UserCircle2, Mail, Calendar, ShieldCheck, MapPin, LogOut } from 'lucide-react';
 import { Field } from '../../components/ui';
+import { apiUrl } from '../../services/api';
 
 export default function Profile({ currentUser, setCurrentPage, setCurrentUser }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -15,7 +16,7 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
       const secondConfirm = window.prompt('Gõ chữ "XOA" để xác nhận xóa tài khoản:');
       if (secondConfirm === 'XOA') {
         try {
-          const res = await fetch('https://ncbds-vlu.onrender.com/api/auth/profile', {
+          const res = await fetch(apiUrl('auth/profile'), {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: currentUser.email })
@@ -57,7 +58,7 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
     setLoading(true);
 
     try {
-      const res = await fetch('https://ncbds-vlu.onrender.com/api/auth/profile', {
+      const res = await fetch(apiUrl('auth/profile'), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

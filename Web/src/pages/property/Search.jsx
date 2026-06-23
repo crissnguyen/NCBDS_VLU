@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Building2, CheckCircle2, Filter, Map as MapIcon, Search as SearchIcon, SlidersHorizontal, Sparkles } from 'lucide-react';
 import PropertyCard from '../../components/PropertyCard';
 import { Field } from '../../components/ui';
+import { mediaUrl } from '../../services/api';
+import { dataService } from '../../services/data/dataService';
 
 export default function Search({ setCurrentPage }) {
   const [allProperties, setAllProperties] = useState([]);
@@ -21,8 +23,7 @@ export default function Search({ setCurrentPage }) {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
 
   useEffect(() => {
-    fetch('https://ncbds-vlu.onrender.com/api/properties')
-      .then(res => res.json())
+    dataService.getProperties()
       .then(data => {
         // Filter only approved ones (assuming 'status' field exists and represents approval state)
         // Adjust condition based on your actual backend schema
@@ -259,7 +260,7 @@ export default function Search({ setCurrentPage }) {
             ) : (
               properties.map((property, index) => {
                 const imgUrl = property.images && property.images.length > 0 
-                  ? (property.images[0].startsWith('http') || property.images[0].startsWith('data:image') ? property.images[0] : `https://ncbds-vlu.onrender.com${property.images[0]}`) 
+                  ? mediaUrl(property.images[0])
                   : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80';
                 
                 const typeMap = { apartment: 'Căn hộ', house: 'Nhà phố', land: 'Đất nền' };

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { LayoutDashboard, FileText, PlusCircle, LogOut, User, Home, TrendingUp, Users, CheckCircle, Menu } from 'lucide-react';
 import { useToast, Toasts, StatCard, SidebarItem, PostPropertyForm } from '../../components/DashboardShared';
+import { dataService } from '../../services/data/dataService';
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function Dashboard({ currentUser, setCurrentPage, setUserRole, setCurrentUser }) {
@@ -13,8 +14,7 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
   const fetchProperties = async (silent = false) => {
     try {
       if (!silent) setLoading(true);
-      const res = await fetch(`https://ncbds-vlu.onrender.com/api/properties?authorId=${currentUser?.id}`);
-      const data = await res.json();
+      const data = await dataService.getProperties({ authorId: currentUser?.id });
       if (Array.isArray(data)) {
         setProperties(data);
       }

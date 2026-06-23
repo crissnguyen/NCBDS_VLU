@@ -1,3 +1,5 @@
+import { mediaUrl } from '../../../services/api';
+
 export default function AllPropertiesTab({ allProperties, setEditingProperty, handleDeleteProperty, handleApproveProperty }) {
   return (
     <>
@@ -23,7 +25,7 @@ export default function AllPropertiesTab({ allProperties, setEditingProperty, ha
                         <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                           <td style={{ padding: '1rem' }}>
                             <div style={{ display:'flex', gap:'1rem', alignItems:'center' }}>
-                              <img src={p.images[0] ? (p.images[0].startsWith('http') || p.images[0].startsWith('data:image') ? p.images[0] : `https://ncbds-vlu.onrender.com${p.images[0]}`) : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80'} alt="" style={{ width: 64, height: 48, borderRadius: 8, objectFit: 'cover' }} />
+                              <img src={p.images[0] ? mediaUrl(p.images[0]) : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80'} alt="" style={{ width: 64, height: 48, borderRadius: 8, objectFit: 'cover' }} />
                               <div>
                                 <div style={{ fontWeight: 600, color: '#0f2a44', marginBottom: 4 }}>{p.title}</div>
                                 <div style={{ fontSize: '0.8rem', color: '#64748b', display: 'flex', gap: '0.5rem' }}><span>{p.price}</span>•<span>{p.location}</span></div>

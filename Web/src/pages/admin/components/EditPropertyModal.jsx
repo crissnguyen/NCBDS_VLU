@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { LabeledField, IS } from '../../../components/DashboardShared';
+import { apiUrl } from '../../../services/api';
 
 export default function EditPropertyModal({ property, onClose, onSuccess, toast }) {
   const [form, setForm] = useState({
@@ -27,7 +28,7 @@ export default function EditPropertyModal({ property, onClose, onSuccess, toast 
     }
     setLoading(true);
     try {
-      const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/properties/${property.id}`, {
+      const res = await fetch(apiUrl(`admin/properties/${property.id}`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -114,4 +115,3 @@ export default function EditPropertyModal({ property, onClose, onSuccess, toast 
     </div>
   );
 }
-

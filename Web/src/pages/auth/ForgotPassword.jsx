@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, ArrowRight, Building2, Mail } from 'lucide-react';
 import { Field } from '../../components/ui';
+import { apiUrl } from '../../services/api';
 
 export default function ForgotPassword({ setCurrentPage }) {
   const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ export default function ForgotPassword({ setCurrentPage }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://ncbds-vlu.onrender.com/api/auth/forgot-password', {
+      const response = await fetch(apiUrl('auth/forgot-password'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,4 +1,5 @@
 import { Check, X, ShieldCheck, Image as ImageIcon } from 'lucide-react';
+import { mediaUrl } from '../../../services/api';
 
 export default function PendingPropertiesTab({ pendingProperties, handleApproveProperty }) {
   return (
@@ -16,7 +17,7 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
                   {pendingProperties.map(p => (
                     <div key={p.id} className="pending-property-card">
                       <div style={{ width: 140, height: 96, borderRadius: 10, overflow: 'hidden', background: '#f1f5f9', flexShrink: 0, position: 'relative' }}>
-                        {p.images?.length > 0 ? <img src={(p.images[0].startsWith('http') || p.images[0].startsWith('data:image') ? p.images[0] : `https://ncbds-vlu.onrender.com${p.images[0]}`)} alt="" style={{ width:'100%',height:'100%',objectFit:'cover' }}/> : <div style={{ width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:3 }}><ImageIcon size={22} color="#cbd5e1"/><span style={{fontSize:'0.68rem',color:'#cbd5e1'}}>Chưa có ảnh</span></div>}
+                        {p.images?.length > 0 ? <img src={mediaUrl(p.images[0])} alt="" style={{ width:'100%',height:'100%',objectFit:'cover' }}/> : <div style={{ width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:3 }}><ImageIcon size={22} color="#cbd5e1"/><span style={{fontSize:'0.68rem',color:'#cbd5e1'}}>Chưa có ảnh</span></div>}
                         {p.images?.length > 1 && <div style={{ position:'absolute',top:5,right:5,background:'rgba(0,0,0,0.55)',color:'white',borderRadius:5,fontSize:'0.68rem',fontWeight:700,padding:'1px 6px' }}>+{p.images.length-1}</div>}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>

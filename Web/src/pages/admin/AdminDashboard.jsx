@@ -15,6 +15,7 @@ import PostPropertyTab from './tabs/PostPropertyTab';
 import AllPropertiesTab from './tabs/AllPropertiesTab';
 import SettingsTab from './tabs/SettingsTab';
 import NewsTab from './tabs/NewsTab';
+import { apiUrl } from '../../services/api';
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function AdminDashboard({ currentUser, setCurrentPage, setUserRole, setCurrentUser }) {
@@ -36,9 +37,9 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     try {
       if (!silent) setLoading(true);
       const [dRes, pRes, aRes] = await Promise.all([
-        fetch('https://ncbds-vlu.onrender.com/api/admin/dashboard'),
-        fetch('https://ncbds-vlu.onrender.com/api/admin/properties/pending'),
-        fetch('https://ncbds-vlu.onrender.com/api/admin/properties/all')
+        fetch(apiUrl('admin/dashboard')),
+        fetch(apiUrl('admin/properties/pending')),
+        fetch(apiUrl('admin/properties/all'))
       ]);
       const dr = await dRes.json();
       const pr = await pRes.json();
@@ -75,7 +76,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     }
     if (window.confirm('Bạn có chắc chắn muốn xóa vĩnh viễn người dùng này? Các bài đăng của họ sẽ bị gỡ tên tác giả nhưng vẫn tồn tại trên hệ thống.')) {
       try {
-        const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/users/${userId}`, {
+        const res = await fetch(apiUrl(`admin/users/${userId}`), {
           method: 'DELETE'
         });
         const data = await res.json();
@@ -95,7 +96,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
   const handleRoleChange = async (userId, newRole) => {
 
     try {
-      const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/users/${userId}/role`, {
+      const res = await fetch(apiUrl(`admin/users/${userId}/role`), {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: newRole })
       });
@@ -117,7 +118,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
 
     if (m.type === 'user') {
       try {
-        const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/users/${m.userId}/status`, {
+        const res = await fetch(apiUrl(`admin/users/${m.userId}/status`), {
           method: 'PUT', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: m.newStatus })
         });
@@ -131,7 +132,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
 
     if (m.type === 'property') {
       try {
-        const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/properties/${m.propertyId}/status`, {
+        const res = await fetch(apiUrl(`admin/properties/${m.propertyId}/status`), {
           method: 'PUT', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ status: m.action === 'approve' ? 'Approved' : 'Rejected' })
         });
@@ -148,7 +149,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
   const handleDeleteProperty = async (propertyId) => {
     if (!window.confirm("Bạn có chắc chắn muốn xóa tin đăng này?")) return;
     try {
-      const res = await fetch(`https://ncbds-vlu.onrender.com/api/admin/properties/${propertyId}`, { method: 'DELETE' });
+      const res = await fetch(apiUrl(`admin/properties/${propertyId}`), { method: 'DELETE' });
       const result = await res.json();
       if (result.success) {
         toast.success("Thành công", "Đã xóa tin đăng.");

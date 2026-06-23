@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowRight, Building2, Lock, Mail, User } from 'lucide-react';
 import { Field } from '../../components/ui';
+import { apiUrl } from '../../services/api';
 
 export default function Register({ setCurrentPage }) {
   const [name, setName] = useState('');
@@ -25,7 +26,7 @@ export default function Register({ setCurrentPage }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://ncbds-vlu.onrender.com/api/auth/register', {
+      const response = await fetch(apiUrl('auth/register'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

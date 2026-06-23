@@ -3,13 +3,14 @@ import { ArrowRight, Bot, Search, ShieldCheck } from 'lucide-react';
 import Hero from '../components/Hero';
 import PropertyCard from '../components/PropertyCard';
 import { SectionHeader } from '../components/ui';
+import { mediaUrl } from '../services/api';
+import { dataService } from '../services/data/dataService';
 
 export default function Home({ setCurrentPage }) {
   const [featuredProperties, setFeaturedProperties] = useState([]);
 
   useEffect(() => {
-    fetch('https://ncbds-vlu.onrender.com/api/properties')
-      .then(r => r.json())
+    dataService.getProperties()
       .then(d => {
         if (Array.isArray(d)) {
           // Lấy 6 tin mới nhất đã duyệt
@@ -21,9 +22,24 @@ export default function Home({ setCurrentPage }) {
   }, []);
 
   const features = [
-    { icon: Search, title: 'Nhập nhu cầu', desc: 'Nói ngân sách, khu vực, mục tiêu.' },
-    { icon: Bot, title: 'AI phân tích', desc: 'So giá, vị trí, pháp lý, độ phù hợp.' },
-    { icon: ShieldCheck, title: 'Chọn an toàn', desc: 'Ưu tiên tin đáng tin và ít rủi ro.' },
+    { 
+      icon: Search, 
+      title: 'Nhập nhu cầu', 
+      desc: 'Nói ngân sách, khu vực, mục tiêu.',
+      theme: { color: 'var(--secondary)', bg: 'var(--secondary-soft)' }
+    },
+    { 
+      icon: Bot, 
+      title: 'AI phân tích', 
+      desc: 'So giá, vị trí, pháp lý, độ phù hợp.',
+      theme: { color: 'var(--primary-light)', bg: 'var(--primary-soft)' }
+    },
+    { 
+      icon: ShieldCheck, 
+      title: 'Chọn an toàn', 
+      desc: 'Ưu tiên tin đáng tin và ít rủi ro.',
+      theme: { color: 'var(--accent)', bg: 'var(--accent-soft)' }
+    },
   ];
 
   return (
@@ -51,7 +67,11 @@ export default function Home({ setCurrentPage }) {
               <article
                 className="landing-step-card"
                 key={feature.title}
-                style={{ '--animation-order': index }}
+                style={{ 
+                  '--animation-order': index,
+                  '--card-theme-color': feature.theme.color,
+                  '--card-theme-bg': feature.theme.bg
+                }}
               >
                 <span className="step-number">0{index + 1}</span>
                 <div className="bento-card__icon"><feature.icon size={24} /></div>
@@ -77,7 +97,7 @@ export default function Home({ setCurrentPage }) {
                   const mappedProperty = {
                     ...property,
                     image: property.images && property.images.length > 0
-                      ? (property.images[0].startsWith('http') || property.images[0].startsWith('data:image') ? property.images[0] : `https://ncbds-vlu.onrender.com${property.images[0]}`)
+                      ? mediaUrl(property.images[0])
                       : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80',
                     type: property.transactionType === 'sale' ? 'Bán' : 'Cho thuê',
                     intent: property.propertyType === 'apartment' ? 'Căn hộ' : property.propertyType === 'house' ? 'Nhà phố' : 'Đất nền'

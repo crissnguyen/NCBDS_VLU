@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Eye, EyeOff } from 'lucide-react';
 import { LabeledField, IS } from '../../../components/DashboardShared';
+import { apiUrl } from '../../../services/api';
 
 export default function AddEmployeeModal({ onClose, onSuccess, toast }) {
   const [form, setForm] = useState({ name: '', email: '', password: '', title: 'Chuyên viên Môi giới', performance: '' });
@@ -16,7 +17,7 @@ export default function AddEmployeeModal({ onClose, onSuccess, toast }) {
     }
     setLoading(true);
     try {
-      const res = await fetch('https://ncbds-vlu.onrender.com/api/admin/users', {
+      const res = await fetch(apiUrl('admin/users'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -84,4 +85,3 @@ export default function AddEmployeeModal({ onClose, onSuccess, toast }) {
     </div>
   );
 }
-

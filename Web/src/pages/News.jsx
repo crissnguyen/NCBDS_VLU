@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Clock, ChevronRight, X, ExternalLink, Newspaper } from 'lucide-react';
+import { dataService } from '../services/data/dataService';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL
-  || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:5001'
-    : 'https://ncbds-vlu.onrender.com');
 const fallbackImage = 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80';
 
 export default function News() {
@@ -14,8 +11,7 @@ export default function News() {
   const [selectedArticle, setSelectedArticle] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/news`)
-      .then(res => res.json())
+    dataService.getNews()
       .then(data => {
         if (data.success) setNewsData(data.data);
         setLoading(false);

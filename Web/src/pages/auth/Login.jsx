@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowRight, Building2, Lock, Mail } from 'lucide-react';
 import { Field } from '../../components/ui';
+import { apiUrl } from '../../services/api';
 
 export default function Login({ setUserRole, setCurrentUser, setCurrentPage }) {
   const [email, setEmail] = useState('');
@@ -15,7 +16,7 @@ export default function Login({ setUserRole, setCurrentUser, setCurrentPage }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://ncbds-vlu.onrender.com/api/auth/login', {
+      const response = await fetch(apiUrl('auth/login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

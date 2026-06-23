@@ -1,5 +1,20 @@
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
+const fs = require('fs');
+const dotenv = require('dotenv');
+
+const rootDir = path.join(__dirname, '..');
+const nodeEnv = process.env.NODE_ENV || 'development';
+const envFiles = [
+  path.join(rootDir, `.env.${nodeEnv}.local`),
+  path.join(rootDir, '.env.local'),
+  path.join(rootDir, '.env'),
+];
+
+for (const envFile of envFiles) {
+  if (fs.existsSync(envFile)) {
+    dotenv.config({ path: envFile });
+  }
+}
 
 const toBool = (value, fallback = false) => {
   if (value === undefined || value === null || value === '') return fallback;
@@ -12,7 +27,7 @@ const toInt = (value, fallback) => {
 };
 
 const env = {
-  nodeEnv: process.env.NODE_ENV || 'development',
+  nodeEnv,
   port: toInt(process.env.PORT, 5001),
   databaseUrl: process.env.DATABASE_URL,
   frontendUrl: process.env.FRONTEND_URL || process.env.CLIENT_URL || process.env.PUBLIC_APP_URL || 'http://localhost:5173',

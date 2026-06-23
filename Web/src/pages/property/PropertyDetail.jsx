@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin, Bed, Bath, Maximize, ShieldCheck, Sparkles, Phone, MessageCircle, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { mediaUrl } from '../../services/api';
+import { dataService } from '../../services/data/dataService';
 
 export default function PropertyDetail({ id, setCurrentPage }) {
   const [property, setProperty] = useState(null);
@@ -11,8 +13,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
     // Cuộn lên đầu trang
     window.scrollTo(0, 0);
 
-    fetch(`https://ncbds-vlu.onrender.com/api/properties/${id}`)
-      .then(res => res.json())
+    dataService.getProperty(id)
       .then(data => {
         setProperty(data);
         setLoading(false);
@@ -43,7 +44,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
   }
 
   const images = property.images && property.images.length > 0 
-    ? property.images.map(img => (img.startsWith('http') || img.startsWith('data:image') ? img : `https://ncbds-vlu.onrender.com${img}`))
+    ? property.images.map(img => mediaUrl(img))
     : ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80'];
 
   const openLightbox = (idx) => {

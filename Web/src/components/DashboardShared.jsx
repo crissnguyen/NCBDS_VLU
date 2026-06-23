@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { CheckCircle, AlertCircle, Info, X, ImagePlus, Sparkles } from 'lucide-react';
+import { apiUrl } from '../services/api';
+import { dataService } from '../services/data/dataService';
 
 // ─── Toast System ─────────────────────────────────────────────────────────────
 export function useToast() {
@@ -209,8 +211,7 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
       const compressedImages = await Promise.all(images.map(img => compressImage(img)));
       compressedImages.forEach(img => fd.append('images', img));
 
-      const res = await fetch('https://ncbds-vlu.onrender.com/api/properties', { method: 'POST', body: fd });
-      const result = await res.json();
+      const result = await dataService.createProperty(fd);
       if (result.success) {
         toast.success('Đăng tin thành công!', currentUser?.role === 'admin' ? `Tin "${autoTitle()}" đã được duyệt.` : `Tin "${autoTitle()}" đã được gửi và đang chờ Admin duyệt.`);
         setForm({ transactionType: 'sale', propertyType: 'apartment', location: '', price: '', area: '', beds: '', baths: '', legalStatus: 'pink-book', description: '', title: '' });
@@ -239,7 +240,7 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
 
     setAiLoading(true);
     try {
-      const res = await fetch('https://ncbds-vlu.onrender.com/api/ai/rewrite-description', {
+      const res = await fetch(apiUrl('ai/rewrite-description'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { MapPin, Bed, Bath, Maximize, ShieldCheck, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { mediaUrl } from '../services/api';
 
 export default function PropertyCard({ id, images, image, title, price, location, beds, baths, area, match, trust, badge, type, intent, onClick }) {
   const [currentIdx, setCurrentIdx] = useState(0);
 
   // Parse original images if passed
   const photoList = images && images.length > 0 
-    ? images.map(img => img.startsWith('http') || img.startsWith('data:image') ? img : `https://ncbds-vlu.onrender.com${img}`) 
+    ? images.map(img => mediaUrl(img))
     : [image];
 
   const handlePrev = (e) => {
