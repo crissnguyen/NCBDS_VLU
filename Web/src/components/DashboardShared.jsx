@@ -97,6 +97,39 @@ export function LabeledField({ label, required, children }) {
   );
 }
 
+const compressImage = (file, maxWidth = 1600, quality = 0.82) => new Promise((resolve, reject) => {
+  if (!file.type.startsWith('image/')) {
+    reject(new Error('File không phải hình ảnh'));
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxWidth / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error('Không thể nén ảnh'));
+          return;
+        }
+        const outputName = file.name.replace(/\.[^.]+$/, '.jpg');
+        resolve(new File([blob], outputName, { type: 'image/jpeg' }));
+      }, 'image/jpeg', quality);
+    };
+    img.onerror = () => reject(new Error('Không thể đọc ảnh'));
+    img.src = reader.result;
+  };
+  reader.onerror = () => reject(new Error('Không thể đọc file'));
+  reader.readAsDataURL(file);
+});
+
 // ─── PostPropertyForm ─────────────────────────────────────────────────────────
 export function PostPropertyForm({ currentUser, toast, onSuccess }) {
   const [form, setForm] = useState({
@@ -119,9 +152,21 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
   const handleChange = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleImages = e => {
-    const files = Array.from(e.target.files);
-    setImages(p => [...p, ...files]);
-    setPreviews(p => [...p, ...files.map(f => URL.createObjectURL(f))]);
+    const files = Array.from(e.target.files || []).filter(file => file.type.startsWith('image/'));
+    if (files.length === 0) return;
+
+    setImages(prev => {
+      const next = [...prev, ...files].slice(0, 10);
+      if (prev.length + files.length > 10) {
+        toast.warning('Giới hạn ảnh', 'Bạn chỉ có thể tải tối đa 10 ảnh cho một tin đăng.');
+      }
+      return next;
+    });
+    setPreviews(prev => {
+      const urls = files.map(f => URL.createObjectURL(f));
+      return [...prev, ...urls].slice(0, 10);
+    });
+    e.target.value = '';
   };
 
   const removeImage = idx => {
@@ -138,6 +183,10 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
   const handleSubmit = async () => {
     if (!form.location || !form.price) {
       toast.warning('Thiếu thông tin', 'Cần nhập ít nhất Vị trí và Giá.');
+      return;
+    }
+    if (images.length < 2) {
+      toast.warning('Thiếu hình ảnh', 'Vui lòng tải lên ít nhất 2 ảnh để đăng bài.');
       return;
     }
     setLoading(true);
@@ -169,15 +218,15 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
       } else {
         toast.error('Đăng tin thất bại', result.message);
       }
-    } catch {
-      toast.error('Lỗi kết nối', 'Không thể kết nối đến máy chủ.');
+    } catch (error) {
+      toast.error('Đăng tin thất bại', error.message || 'Không thể kết nối đến máy chủ.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '1.5rem', alignItems: 'start' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 320px', gap: '1.5rem', alignItems: 'start' }}>
       <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e2e8f0', overflow: 'hidden' }}>
         <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #f1f5f9', background: 'linear-gradient(135deg, #0f2a44, #0f766e)' }}>
           <h3 style={{ margin: 0, color: 'white', fontWeight: 700, fontSize: '1rem' }}>📋 Thông tin bất động sản</h3>
@@ -242,22 +291,50 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
 
           <div>
             <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '0.35rem' }}>Hình ảnh</label>
-            <div style={{ position: 'relative', border: '2px dashed #cbd5e1', borderRadius: 10, padding: '1.5rem', textAlign: 'center', cursor: 'pointer', background: '#fafafa' }}
+            <div style={{
+              position: 'relative',
+              minHeight: 260,
+              border: images.length >= 2 ? '2px solid rgba(15,118,110,0.45)' : '2px dashed #b6c5d5',
+              borderRadius: 18,
+              padding: '2.25rem',
+              textAlign: 'center',
+              cursor: 'pointer',
+              background: 'linear-gradient(135deg, #f8fafc 0%, #eef8f7 100%)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              overflow: 'hidden'
+            }}
               onMouseOver={e => e.currentTarget.style.borderColor = '#0f766e'}
-              onMouseOut={e => e.currentTarget.style.borderColor = '#cbd5e1'}
+              onMouseOut={e => e.currentTarget.style.borderColor = images.length >= 2 ? 'rgba(15,118,110,0.45)' : '#b6c5d5'}
             >
               <input type="file" multiple accept="image/*" onChange={handleImages} style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
-              <ImagePlus size={28} color="#94a3b8" style={{ margin: '0 auto 0.5rem' }} />
-              <p style={{ margin: 0, fontSize: '0.82rem', color: '#64748b', fontWeight: 500 }}>Kéo thả hoặc click để chọn ảnh</p>
-              <p style={{ margin: '0.2rem 0 0', fontSize: '0.73rem', color: '#94a3b8' }}>JPG, PNG, WEBP · Tối đa 10 ảnh</p>
+              <div style={{ width: 72, height: 72, borderRadius: 20, background: 'white', border: '1px solid #dbe7ee', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 14px 34px rgba(15,42,68,0.08)', marginBottom: '1rem' }}>
+                <ImagePlus size={34} color="#0f766e" />
+              </div>
+              <p style={{ margin: 0, fontSize: '1rem', color: '#0f172a', fontWeight: 800 }}>Tải ảnh bất động sản</p>
+              <p style={{ margin: '0.35rem 0 0', fontSize: '0.82rem', color: '#64748b', fontWeight: 600 }}>Cần tối thiểu 2 ảnh, ảnh đầu tiên sẽ là ảnh đại diện</p>
+              <p style={{ margin: '0.35rem 0 0', fontSize: '0.75rem', color: '#94a3b8' }}>JPG, PNG, WEBP · Tối đa 10 ảnh · Mỗi ảnh dưới 10MB</p>
+              <div style={{ marginTop: '1rem', padding: '0.45rem 0.8rem', borderRadius: 999, background: images.length >= 2 ? '#d8f3ef' : '#fff7ed', color: images.length >= 2 ? '#0f766e' : '#c2410c', fontSize: '0.78rem', fontWeight: 800 }}>
+                {images.length}/10 ảnh đã chọn · {images.length >= 2 ? 'Đủ điều kiện đăng' : 'Cần thêm ảnh'}
+              </div>
             </div>
             {previews.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginTop: '0.75rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.35fr 1fr 1fr', gap: '0.75rem', marginTop: '0.9rem' }}>
                 {previews.map((url, i) => (
-                  <div key={i} style={{ position: 'relative', width: 80, height: 80, borderRadius: 8, overflow: 'hidden', border: i === 0 ? '2px solid #0f766e' : '1px solid #e2e8f0' }}>
+                  <div key={i} style={{
+                    position: 'relative',
+                    minHeight: i === 0 ? 190 : 92,
+                    gridRow: i === 0 ? 'span 2' : 'span 1',
+                    borderRadius: 14,
+                    overflow: 'hidden',
+                    border: i === 0 ? '2px solid #0f766e' : '1px solid #e2e8f0',
+                    boxShadow: i === 0 ? '0 16px 38px rgba(15,118,110,0.16)' : 'none'
+                  }}>
                     <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <button onClick={() => removeImage(i)} style={{ position: 'absolute', top: 3, right: 3, width: 18, height: 18, borderRadius: '50%', background: 'rgba(0,0,0,0.65)', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={10} /></button>
-                    {i === 0 && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(15,118,110,0.85)', color: 'white', fontSize: '0.6rem', fontWeight: 700, textAlign: 'center' }}>Ảnh chính</div>}
+                    <button type="button" onClick={() => removeImage(i)} style={{ position: 'absolute', top: 7, right: 7, width: 24, height: 24, borderRadius: '50%', background: 'rgba(7,24,39,0.76)', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={13} /></button>
+                    {i === 0 && <div style={{ position: 'absolute', bottom: 8, left: 8, background: 'rgba(15,118,110,0.92)', color: 'white', fontSize: '0.72rem', fontWeight: 800, borderRadius: 999, padding: '0.28rem 0.6rem' }}>Ảnh đại diện</div>}
                   </div>
                 ))}
               </div>
@@ -300,7 +377,7 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
           {[
             [!!form.location, 'Đã nhập vị trí'],
             [!!form.price, 'Đã nhập giá'],
-            [previews.length > 0, `${previews.length} hình ảnh`],
+            [previews.length >= 2, `${previews.length} hình ảnh (tối thiểu 2)`],
             [form.description.length > 50, 'Mô tả chi tiết'],
             [!!form.area, 'Đã nhập diện tích'],
           ].map(([ok, txt], i) => (

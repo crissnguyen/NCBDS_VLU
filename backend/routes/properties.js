@@ -203,6 +203,13 @@ router.post('/', (req, res, next) => {
       return `data:${file.mimetype};base64,${base64Data}`;
     }) : [];
 
+    if (imagePaths.length < 2) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng tải lên ít nhất 2 ảnh cho tin đăng.',
+      });
+    }
+
     const property = await prisma.property.create({
       data: {
         title,
