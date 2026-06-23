@@ -119,7 +119,7 @@ export default function News() {
           >
             <style>{`
               .featured-img-wrapper { flex: 1; min-width: 300px; min-height: 350px; position: relative; overflow: hidden; }
-              .featured-content { flex: 1; min-width: 300px; padding: 3.5rem; display: flex; flexDirection: column; justifyContent: center; }
+              .featured-content { flex: 1; min-width: 300px; padding: 3.5rem; display: flex; flex-direction: column; justify-content: center; }
               @media (max-width: 768px) { .featured-content { padding: 2rem; } }
             `}</style>
             <div className="featured-img-wrapper">
