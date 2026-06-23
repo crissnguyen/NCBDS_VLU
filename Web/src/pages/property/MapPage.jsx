@@ -1,5 +1,5 @@
+import { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
-import { properties } from '../../data/properties';
 import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -12,9 +12,63 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+// Hàm tạo tọa độ giả lập ổn định dựa trên ID của bài đăng (do database hiện tại chưa có cột lat/lng)
+const generateCoordinate = (idString) => {
+  let hash = 0;
+  for (let i = 0; i < idString.length; i++) {
+    hash = idString.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  // Tọa độ trung tâm Nha Trang: 12.245, 109.18
+  // Tạo độ lệch ngẫu nhiên nhưng cố định theo ID trong khoảng bán kính nhất định
+  const latOffset = ((Math.abs(hash) % 100) / 1000) - 0.05;
+  const lngOffset = ((Math.abs(hash >> 2) % 100) / 1000) - 0.05;
+  
+  return {
+    lat: 12.245 + latOffset,
+    lng: 109.18 + lngOffset
+  };
+};
+
 export default function MapPage() {
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
   // Trọng tâm toàn bộ lãnh thổ Việt Nam để bao quát cả Hoàng Sa & Trường Sa
   const vietnamCenter = [14.0, 108.0];
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        setLoading(true);
+        // Lấy danh sách bất động sản từ API thực tế
+        const res = await fetch('https://ncbds-vlu.onrender.com/api/properties');
+        const data = await res.json();
+        
+        if (Array.isArray(data)) {
+          // Chỉ lấy các tin đã duyệt (Approved), và gán tọa độ giả lập cho chúng
+          const propertiesWithCoords = data.filter(p => p.status === 'Approved').map(p => {
+            const coords = generateCoordinate(p.id);
+            return {
+              ...p,
+              lat: coords.lat,
+              lng: coords.lng,
+              // Xử lý đường dẫn ảnh giống như các trang khác
+              image: p.images && p.images.length > 0 
+                ? (p.images[0].startsWith('http') || p.images[0].startsWith('data:image') ? p.images[0] : `https://ncbds-vlu.onrender.com${p.images[0]}`)
+                : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80'
+            };
+          });
+          setProperties(propertiesWithCoords);
+        }
+      } catch (err) {
+        console.error("Lỗi khi tải dữ liệu bản đồ:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProperties();
+  }, []);
 
   return (
     <main className="map-layout" style={{ display: 'flex', height: 'calc(100vh - 80px)', overflow: 'hidden' }}>
@@ -38,19 +92,28 @@ export default function MapPage() {
         </div>
 
         <div className="map-list" style={{ overflowY: 'auto', flex: 1, padding: '1.5rem' }}>
-          {properties.map((property) => (
-            <article key={property.id} className="map-result" style={{ marginBottom: '1.25rem', padding: '1rem', background: 'white', borderRadius: 16, boxShadow: '0 4px 15px rgba(0,0,0,0.03)', border: '1px solid #f1f5f9', cursor: 'pointer', transition: 'all 0.2s' }}>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <img src={property.image} alt={property.title} style={{ width: 110, height: 90, borderRadius: 10, objectFit: 'cover' }} />
-                <div style={{ flex: 1 }}>
-                  <strong style={{ color: '#0f766e', display: 'block', fontSize: '1.1rem', marginBottom: '0.2rem' }}>{property.price}</strong>
-                  <h3 style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.4, color: '#0f172a' }}>{property.title}</h3>
-                  <p style={{ margin: '0.4rem 0 0', fontSize: '0.82rem', color: '#64748b' }}>{property.area} m² · {property.beds} PN</p>
-                  <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#0284c7', background: '#e0f2fe', display: 'inline-block', padding: '2px 8px', borderRadius: 6, fontWeight: 600 }}>{property.location}</div>
+          {loading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+              <div style={{ width: 30, height: 30, border: '3px solid #e2e8f0', borderTopColor: '#0f766e', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+              <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            </div>
+          ) : properties.length === 0 ? (
+            <div style={{ textAlign: 'center', color: '#94a3b8', padding: '2rem' }}>Không tìm thấy bất động sản nào đang mở bán.</div>
+          ) : (
+            properties.map((property) => (
+              <article key={property.id} className="map-result" style={{ marginBottom: '1.25rem', padding: '1rem', background: 'white', borderRadius: 16, boxShadow: '0 4px 15px rgba(0,0,0,0.03)', border: '1px solid #f1f5f9', cursor: 'pointer', transition: 'all 0.2s' }}>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <img src={property.image} alt={property.title} style={{ width: 110, height: 90, borderRadius: 10, objectFit: 'cover' }} />
+                  <div style={{ flex: 1 }}>
+                    <strong style={{ color: '#0f766e', display: 'block', fontSize: '1.1rem', marginBottom: '0.2rem' }}>{property.price}</strong>
+                    <h3 style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.4, color: '#0f172a' }}>{property.title}</h3>
+                    <p style={{ margin: '0.4rem 0 0', fontSize: '0.82rem', color: '#64748b' }}>{property.area} m² · {property.beds || 0} PN</p>
+                    <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#0284c7', background: '#e0f2fe', display: 'inline-block', padding: '2px 8px', borderRadius: 6, fontWeight: 600 }}>{property.location}</div>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            ))
+          )}
         </div>
       </aside>
 
@@ -80,7 +143,7 @@ export default function MapPage() {
             </Tooltip>
           </Marker>
           
-          {properties.map((property) => (
+          {!loading && properties.map((property) => (
             property.lat && property.lng && (
               <Marker key={property.id} position={[property.lat, property.lng]}>
                 <Popup className="custom-popup">
@@ -103,7 +166,7 @@ export default function MapPage() {
             <strong style={{ color: '#0ea5e9', fontSize: '1rem' }}>AI phân tích khu vực</strong>
           </div>
           <p style={{ fontSize: '0.9rem', marginBottom: '1.25rem', color: '#475569', lineHeight: 1.6 }}>
-            Khu vực <strong>Lộc Thọ</strong> và <strong>Vĩnh Hải</strong> đang có thanh khoản tốt. Giá trị trung bình tăng <strong>4.2%</strong> trong quý này. Phù hợp đầu tư dài hạn.
+            Khu vực Nha Trang đang có thanh khoản rất tốt. Mức giá trung bình tăng <strong>4.2%</strong> so với tháng trước.
           </p>
           <button style={{ width: '100%', padding: '0.75rem', borderRadius: 10, background: '#f8fafc', color: '#0f172a', fontWeight: 700, border: '1px solid #e2e8f0', cursor: 'pointer', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = '#e2e8f0'} onMouseOut={e => e.currentTarget.style.background = '#f8fafc'}>
             Xem báo cáo chi tiết
