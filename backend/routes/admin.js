@@ -183,11 +183,19 @@ router.get('/properties/pending', async (req, res) => {
       include: {
         author: {
           select: { name: true, email: true }
-        }
+        },
+        images: true
       },
       orderBy: { createdAt: 'desc' }
     });
-    res.json({ success: true, data: pendingProperties });
+    
+    // Format response
+    const formatted = pendingProperties.map(p => ({
+      ...p,
+      images: p.images.map(img => img.url)
+    }));
+    
+    res.json({ success: true, data: formatted });
   } catch (error) {
     console.error("Lỗi lấy danh sách chờ duyệt:", error);
     res.status(500).json({ success: false, message: "Lỗi máy chủ" });
@@ -317,11 +325,19 @@ router.get('/properties/all', async (req, res) => {
   try {
     const allProps = await prisma.property.findMany({
       include: {
-        author: { select: { name: true, email: true } }
+        author: { select: { name: true, email: true } },
+        images: true
       },
       orderBy: { createdAt: 'desc' }
     });
-    res.json({ success: true, data: allProps });
+    
+    // Format response
+    const formatted = allProps.map(p => ({
+      ...p,
+      images: p.images.map(img => img.url)
+    }));
+    
+    res.json({ success: true, data: formatted });
   } catch (error) {
     console.error("Lỗi lấy danh sách bài viết:", error);
     res.status(500).json({ success: false, message: "Lỗi máy chủ" });

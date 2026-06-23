@@ -77,9 +77,17 @@ router.get('/', async (req, res) => {
 
     const properties = await prisma.property.findMany({
       where: whereClause,
+      include: { images: true },
       orderBy: { createdAt: 'desc' }
     });
-    res.json(properties);
+    
+    // Map PropertyImage objects back to array of base64 strings for frontend compatibility
+    const formatted = properties.map(p => ({
+      ...p,
+      images: p.images.map(img => img.url)
+    }));
+    
+    res.json(formatted);
   } catch (error) {
     console.error("Error fetching properties:", error);
     res.status(500).json({ error: "Lỗi máy chủ khi lấy danh sách bất động sản" });
@@ -112,14 +120,21 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const property = await prisma.property.findUnique({
-      where: { id: req.params.id }
+      where: { id: req.params.id },
+      include: { images: true }
     });
     
     if (!property) {
       return res.status(404).json({ error: "Không tìm thấy bất động sản" });
     }
     
-    res.json(property);
+    // Format images to string array
+    const formatted = {
+      ...property,
+      images: property.images.map(img => img.url)
+    };
+    
+    res.json(formatted);
   } catch (error) {
     console.error("Error fetching property:", error);
     res.status(500).json({ error: "Lỗi máy chủ" });
@@ -202,11 +217,21 @@ router.post('/', (req, res, next) => {
         propertyType,
         legalStatus,
         authorId,
-        images: imagePaths,
+        images: {
+          create: imagePaths.map(url => ({ url }))
+        },
         status: req.body.status || 'Pending' // Admin tin tự duyệt truyền vào 'Approved'
-      }
+      },
+      include: { images: true }
     });
-    res.status(201).json({ success: true, data: property });
+    
+    // Format for response
+    const formatted = {
+      ...property,
+      images: property.images.map(img => img.url)
+    };
+    
+    res.status(201).json({ success: true, data: formatted });
   } catch (error) {
     console.error("Lỗi tạo property:", error);
     res.status(500).json({ success: false, message: 'Lỗi máy chủ', error: error.message });
