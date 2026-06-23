@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { LayoutDashboard, FileText, PlusCircle, LogOut, User, Home, TrendingUp, Users, CheckCircle } from 'lucide-react';
+import { LayoutDashboard, FileText, PlusCircle, LogOut, User, Home, TrendingUp, Users, CheckCircle, Menu } from 'lucide-react';
 import { useToast, Toasts, StatCard, SidebarItem, PostPropertyForm } from '../../components/DashboardShared';
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -8,6 +8,7 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const fetchProperties = async (silent = false) => {
     try {
@@ -55,7 +56,7 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
       <Toasts toasts={toast.toasts} remove={toast.remove} />
 
       {/* SIDEBAR */}
-      <aside className="dashboard-sidebar">
+      <aside className={`dashboard-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
         <div className="dashboard-sidebar-logo">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', cursor: 'pointer' }} onClick={() => setCurrentPage('home')}>
             <div style={{ width: 38, height: 38, borderRadius: 10, background: 'linear-gradient(135deg, #0f766e, #0891b2)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 3px 10px rgba(8,145,178,0.4)' }}>
@@ -69,7 +70,7 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
         </div>
         <nav className="dashboard-sidebar-nav">
           {navItems.map(item => (
-            <SidebarItem key={item.tab} icon={item.icon} label={item.label} active={activeTab === item.tab} onClick={() => setActiveTab(item.tab)} />
+            <SidebarItem key={item.tab} icon={item.icon} label={item.label} active={activeTab === item.tab} onClick={() => { setActiveTab(item.tab); setIsMobileMenuOpen(false); }} />
           ))}
         </nav>
         <div className="dashboard-sidebar-user">
@@ -91,9 +92,14 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
       {/* MAIN */}
       <div className="dashboard-main-area">
         <header className="dashboard-header">
-          <div>
-            <h2 style={{ margin: 0, fontWeight: 700, fontSize: '1rem', color: '#0f172a' }}>{navItems.find(n => n.tab === activeTab)?.label}</h2>
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 1 }}>{new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button className="dashboard-header-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} style={{ padding: 0 }}>
+              <Menu size={24} color="#0f172a" />
+            </button>
+            <div>
+              <h2 style={{ margin: 0, fontWeight: 700, fontSize: '1rem', color: '#0f172a' }}>{navItems.find(n => n.tab === activeTab)?.label}</h2>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 1 }}>{new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
+            </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

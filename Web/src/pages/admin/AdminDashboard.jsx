@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { LayoutDashboard, Users, FileText, Settings, LogOut, User, Home, Check, PlusCircle, Image as ImageIcon, Bell, X } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Settings, LogOut, User, Home, Check, PlusCircle, Image as ImageIcon, Bell, X, Menu } from 'lucide-react';
 import {
   AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -29,6 +29,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
   const [confirmModal, setConfirmModal] = useState({ isOpen: false });
   const [showAddEmployee, setShowAddEmployee] = useState(false);
   const [editingProperty, setEditingProperty] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const fetchData = useCallback(async (silent = false) => {
     try {
@@ -184,7 +185,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
       <Toasts toasts={toast.toasts} remove={toast.remove} />
 
       {/* SIDEBAR */}
-      <aside className="dashboard-sidebar">
+      <aside className={`dashboard-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
         {/* Logo */}
         <div className="dashboard-sidebar-logo">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
@@ -200,7 +201,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
         {/* Nav */}
         <nav className="dashboard-sidebar-nav">
           {navItems.map(item => (
-            <SidebarItem key={item.tab} icon={item.icon} label={item.label} active={activeTab === item.tab} badge={item.badge || 0} onClick={() => setActiveTab(item.tab)} />
+            <SidebarItem key={item.tab} icon={item.icon} label={item.label} active={activeTab === item.tab} badge={item.badge || 0} onClick={() => { setActiveTab(item.tab); setIsMobileMenuOpen(false); }} />
           ))}
         </nav>
         {/* User */}
@@ -224,9 +225,14 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
       <div className="dashboard-main-area">
         {/* Topbar */}
         <header className="dashboard-header">
-          <div>
-            <h2 style={{ margin: 0, fontWeight: 700, fontSize: '1rem', color: '#0f172a' }}>{navItems.find(n => n.tab === activeTab)?.label}</h2>
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 1 }}>{new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button className="dashboard-header-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} style={{ padding: 0 }}>
+              <Menu size={24} color="#0f172a" />
+            </button>
+            <div>
+              <h2 style={{ margin: 0, fontWeight: 700, fontSize: '1rem', color: '#0f172a' }}>{navItems.find(n => n.tab === activeTab)?.label}</h2>
+              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 1 }}>{new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
+            </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setActiveTab(2)}>
