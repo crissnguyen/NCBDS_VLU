@@ -16,7 +16,7 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 3 * 1024 * 1024 // Giới hạn 3MB mỗi ảnh để tránh tràn Database
+    fileSize: 10 * 1024 * 1024 // Tăng giới hạn lên 10MB mỗi ảnh
   }
 });
 

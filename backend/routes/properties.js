@@ -170,7 +170,17 @@ router.get('/:id', async (req, res) => {
  *       201:
  *         description: Đã tạo thành công
  */
-router.post('/', upload.array('images', 10), async (req, res) => {
+router.post('/', (req, res, next) => {
+  upload.array('images', 10)(req, res, function (err) {
+    if (err) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ success: false, message: 'File ảnh quá lớn. Vui lòng chọn ảnh dưới 10MB.' });
+      }
+      return res.status(400).json({ success: false, message: err.message });
+    }
+    next();
+  });
+}, async (req, res) => {
   try {
     const { title, price, location, beds, baths, area, description, transactionType, propertyType, legalStatus, authorId } = req.body;
     // Mã hoá các file ảnh thành chuỗi Base64 để lưu thẳng vào DB
