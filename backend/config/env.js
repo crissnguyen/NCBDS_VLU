@@ -6,6 +6,7 @@ const rootDir = path.join(__dirname, '..');
 const nodeEnv = process.env.NODE_ENV || 'development';
 const envFiles = [
   path.join(rootDir, `.env.${nodeEnv}.local`),
+  path.join(rootDir, `.env.${nodeEnv}`),
   path.join(rootDir, '.env.local'),
   path.join(rootDir, '.env'),
 ];

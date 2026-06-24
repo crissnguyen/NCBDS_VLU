@@ -118,6 +118,120 @@ export default function PropertyDetail({ id, setCurrentPage }) {
 
   return (
     <main style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '4rem' }}>
+      {/* Custom Responsive Styles for Property Detail Page */}
+      <style>{`
+        .detail-banner-container {
+          width: 100%; 
+          height: 50vh; 
+          border-radius: 24px; 
+          overflow: hidden; 
+          position: relative; 
+          box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+          transition: height 0.3s;
+        }
+        .detail-banner-content {
+          position: absolute; 
+          bottom: 2rem; 
+          left: 2rem; 
+          right: 2rem; 
+          display: flex; 
+          justify-content: space-between; 
+          align-items: flex-end; 
+          pointer-events: none;
+        }
+        .detail-grid-layout {
+          display: grid; 
+          grid-template-columns: 2.5fr 1fr; 
+          gap: 2rem; 
+          margin-top: 2rem;
+        }
+        .detail-header-row {
+          display: flex; 
+          align-items: flex-start; 
+          justify-content: space-between; 
+          gap: 2rem;
+        }
+        .detail-title-h1 {
+          margin: 0 0 1rem 0; 
+          font-size: 2rem; 
+          fontWeight: 800; 
+          color: #0f2a44; 
+          line-height: 1.3;
+          transition: font-size 0.2s;
+        }
+        .detail-price-text {
+          font-size: 2.25rem; 
+          font-weight: 800; 
+          color: #0f766e; 
+          line-height: 1;
+        }
+        .detail-specs-row {
+          display: flex; 
+          gap: 2rem; 
+          margin-top: 2rem; 
+          padding-top: 2rem; 
+          border-top: 1px solid #f1f5f9;
+        }
+        .detail-contact-card {
+          position: sticky; 
+          top: 7rem; 
+          background: white; 
+          border-radius: 24px; 
+          padding: 2rem; 
+          box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+          border: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 991px) {
+          .detail-grid-layout {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+          }
+          .detail-contact-card {
+            position: static;
+            margin-top: 1rem;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .detail-banner-container {
+            height: 35vh;
+            border-radius: 16px;
+          }
+          .detail-banner-content {
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+          }
+          .detail-banner-content > div {
+            flex-wrap: wrap;
+          }
+          .detail-header-row {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1rem;
+          }
+          .detail-header-row > div:last-child {
+            text-align: left !important;
+          }
+          .detail-title-h1 {
+            font-size: 1.45rem;
+          }
+          .detail-price-text {
+            font-size: 1.75rem;
+          }
+          .detail-specs-row {
+            flex-direction: column;
+            gap: 1.25rem;
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+          }
+        }
+      `}</style>
+
       {/* Nút Quay Lại */}
       <div className="container" style={{ paddingTop: '6rem', paddingBottom: '1rem' }}>
         <button 
@@ -130,10 +244,10 @@ export default function PropertyDetail({ id, setCurrentPage }) {
 
       {/* Ảnh Cover */}
       <div className="container">
-        <div style={{ width: '100%', height: '50vh', borderRadius: 24, overflow: 'hidden', position: 'relative', boxShadow: '0 20px 40px rgba(0,0,0,0.08)' }}>
+        <div className="detail-banner-container">
           {renderImages()}
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,42,68,0.8) 0%, transparent 50%)', pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', bottom: '2rem', left: '2rem', right: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', pointerEvents: 'none' }}>
+          <div className="detail-banner-content">
             <div style={{ display: 'flex', gap: '0.75rem' }}>
               <span style={{ background: '#0f766e', color: 'white', padding: '0.4rem 1rem', borderRadius: 99, fontSize: '0.8rem', fontWeight: 700 }}>{transDisplay}</span>
               <span style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', color: 'white', padding: '0.4rem 1rem', borderRadius: 99, fontSize: '0.8rem', fontWeight: 600, border: '1px solid rgba(255,255,255,0.3)' }}>{typeDisplay}</span>
@@ -148,25 +262,25 @@ export default function PropertyDetail({ id, setCurrentPage }) {
       </div>
 
       {/* Nội dung chi tiết */}
-      <div className="container" style={{ display: 'grid', gridTemplateColumns: '2.5fr 1fr', gap: '2rem', marginTop: '2rem' }}>
+      <div className="container detail-grid-layout">
         {/* Cột trái */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           
           <div style={{ background: 'white', borderRadius: 24, padding: '2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid #e2e8f0' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '2rem' }}>
+            <div className="detail-header-row">
               <div>
-                <h1 style={{ margin: '0 0 1rem 0', fontSize: '2rem', fontWeight: 800, color: '#0f2a44', lineHeight: 1.3 }}>{property.title}</h1>
+                <h1 className="detail-title-h1">{property.title}</h1>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '1rem' }}>
                   <MapPin size={18} color="#0f766e" /> {property.location}
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '2.25rem', fontWeight: 800, color: '#0f766e', lineHeight: 1 }}>{property.price}</div>
+                <div className="detail-price-text">{property.price}</div>
                 <div style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '0.5rem' }}>Đã xác minh giá AI</div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '2rem', marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #f1f5f9' }}>
+            <div className="detail-specs-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Bed size={20} color="#2563eb" /></div>
                 <div><div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>Phòng ngủ</div><div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>{property.beds || '-'}</div></div>
@@ -195,7 +309,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
 
         {/* Cột phải - Liên hệ */}
         <div>
-          <div style={{ position: 'sticky', top: '7rem', background: 'white', borderRadius: 24, padding: '2rem', boxShadow: '0 20px 40px rgba(0,0,0,0.08)', border: '1px solid #e2e8f0' }}>
+          <div className="detail-contact-card">
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
               <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.5rem' }}>
                 {property.author?.name ? property.author.name[0] : 'S'}

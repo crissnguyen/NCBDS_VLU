@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
+
 
 :root {
   --primary: #0f2a44;
@@ -2739,9 +2740,10 @@ tr:last-child td {
   display: flex;
   height: 100vh;
   background: #f1f5f9;
-  font-family: var(--font-family);
+  font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   overflow: hidden;
 }
+
 
 .dashboard-sidebar {
   width: 250px;
@@ -2985,3 +2987,86 @@ tr:last-child td {
     grid-template-columns: 1fr;
   }
 }
+
+/* MOBILE RESPONSIVE ENHANCEMENTS FOR ADMIN DASHBOARD */
+@media (max-width: 768px) {
+  /* Dashboard Header */
+  .dashboard-header {
+    padding: 0 1rem !important;
+  }
+  
+  .dashboard-header > div:last-child {
+    gap: 0.5rem !important;
+  }
+  
+  /* Hide Admin Name / Role text on small screen to avoid overflow */
+  .dashboard-header span {
+    display: none !important;
+  }
+  
+  .dashboard-header .dashboard-header-menu-btn + div h2 {
+    font-size: 0.9rem !important;
+  }
+  
+  .dashboard-header .dashboard-header-menu-btn + div div {
+    font-size: 0.65rem !important;
+  }
+
+  /* Flex containers in tabs (e.g. headers with action buttons) */
+  .dashboard-content > div[style*="display: flex"][style*="justify-content: space-between"],
+  .dashboard-content > div[style*="display:flex"][style*="justify-content:space-between"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.85rem !important;
+    width: 100% !important;
+  }
+  
+  .dashboard-content > div[style*="display: flex"][style*="justify-content: space-between"] > button,
+  .dashboard-content > div[style*="display:flex"][style*="justify-content:space-between"] > button {
+    width: 100% !important;
+    justify-content: center !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Search & Filter Containers */
+  .dashboard-content > div[style*="display: flex"][style*="align-items: center"][style*="gap:"],
+  .dashboard-content > div[style*="display:flex"][style*="align-items:center"][style*="gap:"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Modal responsive adjustment */
+  .modal-content-card {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+  }
+  
+  .modal-content-card > div {
+    border-radius: 0 !important;
+  }
+
+  /* Spec grid in Modal (Beds, Baths, Area, Price) */
+  .modal-content-card div[style*="grid-template-columns: repeat(4, 1fr)"],
+  .modal-content-card div[style*="grid-template-columns:repeat(4,1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+
+  /* Meta grid in Modal (Classification / Legal) */
+  .modal-content-card div[style*="grid-template-columns: 1fr 1fr"],
+  .modal-content-card div[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+  
+  /* Tables wrapper scroll indicator */
+  .responsive-table-wrapper {
+    border-radius: 8px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.03);
+  }
+}
+
