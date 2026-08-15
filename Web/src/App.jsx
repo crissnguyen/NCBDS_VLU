@@ -18,7 +18,12 @@ import Profile from './pages/user/Profile';
 import Contact from './pages/Contact';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState(() => localStorage.getItem('currentPage') || 'home');
+  const [currentPage, setCurrentPage] = useState(() => {
+    if (typeof window !== 'undefined' && (window.location.pathname.includes('/reset-password') || window.location.search.includes('token='))) {
+      return 'reset_password';
+    }
+    return localStorage.getItem('currentPage') || 'home';
+  });
   const [userRole, setUserRole] = useState(() => localStorage.getItem('userRole') || null); // null (guest), 'sale', 'admin'
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem('currentUser');
@@ -27,9 +32,8 @@ function App() {
 
   useEffect(() => {
     // Nếu truy cập từ URL trực tiếp (từ email)
-    if (window.location.pathname === '/reset-password') {
+    if (window.location.pathname.includes('/reset-password') || window.location.search.includes('token=')) {
       setCurrentPage('reset_password');
-      // Tránh việc ghi đè lại localstorage ngay lập tức thành trang cũ
     } else {
       localStorage.setItem('currentPage', currentPage);
     }
