@@ -21,7 +21,24 @@ export default function Search({ setCurrentPage }) {
   const [priceRange, setPriceRange] = useState('all');
   const [minTrust, setMinTrust] = useState(70);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
-  const [sortMethod, setSortMethod] = useState('match');
+  const [sortMethod, setSortMethod] = useState(() => localStorage.getItem('estateai_sort_method') || 'match');
+
+  const parsePriceToMillion = (priceValue) => {
+    if (priceValue === null || priceValue === undefined) return Number.POSITIVE_INFINITY;
+    const text = String(priceValue).trim().toLocaleLowerCase('vi-VN');
+    if (!text || text.includes('liên hệ')) return Number.POSITIVE_INFINITY;
+
+    // Hỗ trợ cả dạng 2.5 tỷ, 2,5 tỷ, 2 tỷ và 10 triệu/tháng.
+    const numericText = text.match(/[\d.,]+/)?.[0];
+    if (!numericText) return Number.POSITIVE_INFINITY;
+    const normalizedNumber = numericText.includes(',')
+      ? numericText.replace(/\./g, '').replace(',', '.')
+      : numericText;
+    const value = Number.parseFloat(normalizedNumber);
+    if (!Number.isFinite(value)) return Number.POSITIVE_INFINITY;
+    if (text.includes('tỷ') || text.includes('tỉ') || text.includes('ty')) return value * 1000;
+    return value;
+  };
 
   useEffect(() => {
     dataService.getProperties()
@@ -46,7 +63,7 @@ export default function Search({ setCurrentPage }) {
       .catch(err => console.error("Lỗi lấy khu vực:", err));
   }, []);
 
-  const applyFilters = () => {
+  const applyFilters = (sortOverride = sortMethod) => {
     let filtered = [...allProperties];
 
     // Lọc theo Tab (Dự án/Mua/Thuê)
@@ -80,7 +97,11 @@ export default function Search({ setCurrentPage }) {
 
     // Lọc theo Khu vực
     if (location !== 'all') {
-      filtered = filtered.filter(p => p.location && p.location.includes(location));
+      const normalizedLocation = location.toLocaleLowerCase('vi-VN').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      filtered = filtered.filter(p => {
+        const propertyLocation = String(p.location || '').toLocaleLowerCase('vi-VN').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        return propertyLocation.includes(normalizedLocation);
+      });
     }
 
     // Lọc theo Khoảng giá (Ước lượng đơn giản dựa trên chuỗi)
@@ -108,30 +129,12 @@ export default function Search({ setCurrentPage }) {
     }
 
     // Định nghĩa hàm parse giá thành số để phục vụ sắp xếp
-    const parsePrice = (priceStr) => {
-      if (!priceStr) return Infinity;
-      const pStr = String(priceStr).toLowerCase().replace(/\s+/g, '');
-      if (pStr === 'liênhệ' || pStr === 'liên hệ' || pStr === '') return Infinity;
-      
-      let val = 0;
-      const matches = pStr.match(/[\d.]+/);
-      if (!matches) return Infinity;
-      
-      val = parseFloat(matches[0]);
-      if (pStr.includes('tỷ') || pStr.includes('ty') || pStr.includes('tỉ')) {
-        return val * 1000;
-      } else if (pStr.includes('triệu') || pStr.includes('trieu') || pStr.includes('tr')) {
-        return val;
-      }
-      return val;
-    };
-
     // Thực hiện sắp xếp
-    if (sortMethod === 'priceAsc') {
-      filtered.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
-    } else if (sortMethod === 'trust') {
+    if (sortOverride === 'priceAsc') {
+      filtered.sort((a, b) => parsePriceToMillion(a.price) - parsePriceToMillion(b.price));
+    } else if (sortOverride === 'trust') {
       filtered.sort((a, b) => (b.trustScore || 90) - (a.trustScore || 90));
-    } else if (sortMethod === 'match') {
+    } else if (sortOverride === 'match') {
       filtered.sort((a, b) => (b.aiScore || 85) - (a.aiScore || 85));
     }
 
@@ -155,19 +158,13 @@ export default function Search({ setCurrentPage }) {
     }
   };
 
-  // Tự động lọc khi đổi Tab
+  // Tự động lọc ngay khi người dùng thay đổi bất kỳ bộ lọc nào.
+  // Nút “Áp dụng lọc” vẫn được giữ để người dùng có thể chủ động xác nhận.
   useEffect(() => {
     if (allProperties.length > 0) {
       applyFilters();
     }
-  }, [tab]);
-
-  // Tự động lọc/sắp xếp khi thay đổi tiêu chí sắp xếp
-  useEffect(() => {
-    if (allProperties.length > 0) {
-      applyFilters();
-    }
-  }, [sortMethod, allProperties]);
+  }, [tab, query, transactionType, propertyType, location, priceRange, minTrust, verifiedOnly, sortMethod, allProperties]);
 
   return (
     <main className="search-page">
@@ -274,7 +271,17 @@ export default function Search({ setCurrentPage }) {
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal size={18} color="var(--text-secondary)" />
-                <select style={{ width: 'auto' }} value={sortMethod} onChange={e => setSortMethod(e.target.value)}>
+                <select
+                  aria-label="Sắp xếp kết quả"
+                  style={{ width: 'auto' }}
+                  value={sortMethod}
+                  onChange={e => {
+                    const nextSort = e.target.value;
+                    setSortMethod(nextSort);
+                    localStorage.setItem('estateai_sort_method', nextSort);
+                    applyFilters(nextSort);
+                  }}
+                >
                   <option value="match">Phù hợp nhất</option>
                   <option value="priceAsc">Giá thấp nhất</option>
                   <option value="trust">Tin cậy cao nhất</option>

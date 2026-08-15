@@ -16,7 +16,7 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
   const fetchProperties = async (silent = false) => {
     try {
       if (!silent) setLoading(true);
-      const data = await dataService.getProperties({ authorId: currentUser?.id });
+      const data = await dataService.getProperties({ authorId: currentUser?.id, refresh: Date.now() });
       if (Array.isArray(data)) {
         setProperties(data);
       }

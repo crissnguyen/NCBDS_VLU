@@ -77,6 +77,13 @@ router.post('/login', async (req, res) => {
     if (!user) {
       return res.status(401).json({ success: false, message: "Sai email hoặc mật khẩu" });
     }
+
+    if (user.status === 'Locked') {
+      return res.status(403).json({
+        success: false,
+        message: "Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.",
+      });
+    }
     
     // Kiểm tra xác thực email
     if (user.isVerified === false) {
@@ -88,8 +95,27 @@ router.post('/login', async (req, res) => {
       });
     }
     
-    // Kiểm tra mật khẩu
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Kiểm tra mật khẩu (hỗ trợ cả mật khẩu chưa mã hoá/plaintext)
+    let isMatch = false;
+    if (user.password === password) {
+      isMatch = true;
+      try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { password: hashedPassword }
+        });
+      } catch (e) {
+        console.error("Auto-hash password error:", e);
+      }
+    } else {
+      try {
+        isMatch = await bcrypt.compare(password, user.password);
+      } catch (err) {
+        isMatch = false;
+      }
+    }
+
     if (!isMatch) {
       return res.status(401).json({ success: false, message: "Sai email hoặc mật khẩu" });
     }

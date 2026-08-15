@@ -94,7 +94,7 @@ export const dataService = {
   },
 
   // --- BẤT ĐỘNG SẢN (PROPERTIES) ---
-  getProperties: async ({ authorId } = {}) => {
+  getProperties: async ({ authorId, refresh } = {}) => {
     if (dataService.isLocalMode()) {
       let list = localStore.get(CONFIG.LOCAL_KEYS.PROPERTIES);
       if (authorId) {
@@ -104,8 +104,11 @@ export const dataService = {
       return list;
     }
 
-    const query = authorId ? `?authorId=${encodeURIComponent(authorId)}` : '';
-    const res = await fetch(`${CONFIG.API_BASE}/properties${query}`);
+    const params = new URLSearchParams();
+    if (authorId) params.set('authorId', authorId);
+    if (refresh) params.set('refresh', refresh);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    const res = await fetch(`${CONFIG.API_BASE}/properties${query}`, { cache: 'no-store' });
     return await res.json();
   },
 

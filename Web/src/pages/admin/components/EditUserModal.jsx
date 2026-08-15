@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Mail, ShieldAlert } from 'lucide-react';
+import { X, Mail, ShieldAlert, CheckCircle2, AlertCircle } from 'lucide-react';
 import { LabeledField, IS } from '../../../components/DashboardShared';
 import { apiUrl } from '../../../services/api';
 
@@ -10,10 +10,14 @@ export default function EditUserModal({ user, onClose, onSuccess, toast }) {
   });
   const [loading, setLoading] = useState(false);
   const [sendingOTP, setSendingOTP] = useState(false);
+  const [otpStatus, setOtpStatus] = useState(null);
 
   const isEmailChanged = form.email.trim().toLowerCase() !== user.email.trim().toLowerCase();
 
-  const handleChange = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
+  const handleChange = e => {
+    setForm(p => ({ ...p, [e.target.name]: e.target.value }));
+    if (e.target.name === 'email') setOtpStatus(null);
+  };
 
   const handleSubmit = async () => {
     if (!form.name || !form.email) {
@@ -47,6 +51,7 @@ export default function EditUserModal({ user, onClose, onSuccess, toast }) {
 
   const handleSendResetOTP = async () => {
     setSendingOTP(true);
+    setOtpStatus(null);
     try {
       const res = await fetch(apiUrl('auth/forgot-password'), {
         method: 'POST',
@@ -55,12 +60,18 @@ export default function EditUserModal({ user, onClose, onSuccess, toast }) {
       });
       const result = await res.json();
       if (result.success) {
-        toast.success('Đã gửi yêu cầu', `Mã OTP/Link thiết lập mật khẩu mới đã được gửi tới email "${form.email}".`);
+        const msg = `Đã gửi OTP/Link đặt lại mật khẩu đến "${form.email}".`;
+        setOtpStatus({ type: 'success', message: msg });
+        if (toast?.success) toast.success('Đã gửi yêu cầu', msg);
       } else {
-        toast.error('Gửi thất bại', result.message);
+        const msg = result.message || 'Gửi yêu cầu OTP thất bại.';
+        setOtpStatus({ type: 'error', message: msg });
+        if (toast?.error) toast.error('Gửi thất bại', msg);
       }
     } catch {
-      toast.error('Lỗi kết nối', 'Không thể gửi yêu cầu đặt lại mật khẩu.');
+      const msg = 'Không thể gửi yêu cầu đặt lại mật khẩu do lỗi kết nối.';
+      setOtpStatus({ type: 'error', message: msg });
+      if (toast?.error) toast.error('Lỗi kết nối', msg);
     } finally {
       setSendingOTP(false);
     }
@@ -258,13 +269,34 @@ export default function EditUserModal({ user, onClose, onSuccess, toast }) {
                 </p>
               </div>
             </div>
+
+            {/* OTP Status Banner Feedback */}
+            {otpStatus && (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.65rem 0.85rem',
+                borderRadius: 10,
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                background: otpStatus.type === 'success' ? '#dcfce7' : '#fee2e2',
+                color: otpStatus.type === 'success' ? '#15803d' : '#b91c1c',
+                border: otpStatus.type === 'success' ? '1px solid #bbf7d0' : '1px solid #fca5a5',
+                lineHeight: 1.4
+              }}>
+                {otpStatus.type === 'success' ? <CheckCircle2 size={16} style={{ flexShrink: 0 }} /> : <AlertCircle size={16} style={{ flexShrink: 0 }} />}
+                <span>{otpStatus.message}</span>
+              </div>
+            )}
+
             <button 
               className="otp-send-btn"
               type="button" 
               onClick={handleSendResetOTP}
               disabled={sendingOTP}
             >
-              {sendingOTP ? 'Đang gửi...' : '✉ Gửi OTP đặt lại mật khẩu'}
+              {sendingOTP ? '⏳ Đang gửi OTP...' : '✉ Gửi OTP đặt lại mật khẩu'}
             </button>
           </div>
         </div>

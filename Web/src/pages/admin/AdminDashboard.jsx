@@ -37,10 +37,12 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
   const fetchData = useCallback(async (silent = false) => {
     try {
       if (!silent) setLoading(true);
+      const requestOptions = { cache: 'no-store' };
+      const refreshKey = `?refresh=${Date.now()}`;
       const [dRes, pRes, aRes] = await Promise.all([
-        fetch(apiUrl('admin/dashboard')),
-        fetch(apiUrl('admin/properties/pending')),
-        fetch(apiUrl('admin/properties/all'))
+        fetch(apiUrl('admin/dashboard') + refreshKey, requestOptions),
+        fetch(apiUrl('admin/properties/pending') + refreshKey, requestOptions),
+        fetch(apiUrl('admin/properties/all') + refreshKey, requestOptions)
       ]);
       const dr = await dRes.json();
       const pr = await pRes.json();

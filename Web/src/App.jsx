@@ -92,20 +92,23 @@ function App() {
     }
   };
 
+  const isAuthPage = ['login', 'register', 'forgot_password', 'reset_password', 'verify'].includes(currentPage);
+  const isDashboardPage = ['admin_dashboard', 'dashboard'].includes(currentPage);
+
   return (
     <div className="app-container">
-      {/* Hide global header on internal dashboards to allow them to use their own full height layout with sidebar */}
-      {currentPage !== 'admin_dashboard' && currentPage !== 'dashboard' && (
+      {/* Hide global header on internal dashboards and auth pages */}
+      {!isDashboardPage && !isAuthPage && (
         <Header currentPage={currentPage} setCurrentPage={setCurrentPage} userRole={userRole} setUserRole={setUserRole} currentUser={currentUser} />
       )}
 
       {renderPage()}
       
-      {/* Floating Chat Widget across all pages (except admin dashboard to avoid clutter, optional) */}
+      {/* Floating Chat Widget across all pages except admin dashboard */}
       {currentPage !== 'admin_dashboard' && <ChatWidget />}
       
       {/* Footer across main pages */}
-      {currentPage !== 'admin_dashboard' && currentPage !== 'dashboard' && currentPage !== 'login' && currentPage !== 'register' && currentPage !== 'forgot_password' && currentPage !== 'reset_password' && currentPage !== 'verify' && (
+      {!isDashboardPage && !isAuthPage && (
         <Footer />
       )}
     </div>

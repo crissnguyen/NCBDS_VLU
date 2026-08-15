@@ -216,7 +216,9 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
         toast.success('Đăng tin thành công!', currentUser?.role === 'admin' ? `Tin "${autoTitle()}" đã được duyệt.` : `Tin "${autoTitle()}" đã được gửi và đang chờ Admin duyệt.`);
         setForm({ transactionType: 'sale', propertyType: 'apartment', location: '', price: '', area: '', beds: '', baths: '', legalStatus: 'pink-book', description: '', title: '' });
         setImages([]); setPreviews([]);
-        if (onSuccess) onSuccess();
+        // Chờ đồng bộ lại dữ liệu cha trước khi kết thúc luồng đăng tin,
+        // để danh sách/dashboard cập nhật ngay mà không cần reload trang.
+        if (onSuccess) await onSuccess();
       } else {
         toast.error('Đăng tin thất bại', result.message);
       }

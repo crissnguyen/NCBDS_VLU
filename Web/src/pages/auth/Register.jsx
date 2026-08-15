@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowRight, Building2, Lock, Mail, User, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Building2, Lock, Mail, User, Eye, EyeOff } from 'lucide-react';
 import { Field } from '../../components/ui';
 import { apiUrl } from '../../services/api';
 
@@ -74,6 +74,30 @@ export default function Register({ setCurrentPage }) {
 
       <section className="login-card">
         <div className="login-card-inner">
+          <button
+            type="button"
+            onClick={() => setCurrentPage('home')}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              background: '#f1f5f9',
+              color: '#334155',
+              border: 'none',
+              padding: '0.45rem 0.9rem',
+              borderRadius: '20px',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              marginBottom: '1.25rem',
+              transition: 'all 0.15s ease'
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#e2e8f0'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#f1f5f9'; }}
+          >
+            <ArrowLeft size={16} /> Quay lại trang chủ
+          </button>
+
           <div style={{ marginBottom: '1.5rem' }}>
             <div className="brand-icon" style={{ marginBottom: '1.5rem', width: '48px', height: '48px', borderRadius: '12px' }}><Building2 size={24} /></div>
             <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Đăng ký</h2>

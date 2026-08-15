@@ -39,7 +39,15 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', marginTop: '1.25rem' }}>
           {pendingProperties.map(p => (
-            <div key={p.id} className="pending-property-card">
+            <div key={p.id} className="pending-property-card pending-property-card-v2" style={{
+              display: 'grid',
+              gridTemplateColumns: '164px minmax(0, 1fr) 132px',
+              alignItems: 'center',
+              gap: '1.15rem',
+              padding: '1rem 1.15rem',
+              background: 'linear-gradient(135deg, #ffffff 0%, #fbfefd 100%)',
+              borderLeft: '4px solid #f59e0b'
+            }}>
               <div style={{ width: 140, height: 96, borderRadius: 10, overflow: 'hidden', background: '#f1f5f9', flexShrink: 0, position: 'relative' }}>
                 {p.images?.length > 0 ? (
                   <img src={mediaUrl(p.images[0].url || p.images[0])} alt="" style={{ width:'100%',height:'100%',objectFit:'cover' }}/>
@@ -411,4 +419,3 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
     </>
   );
 }
-
