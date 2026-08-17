@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { LayoutDashboard, Users, FileText, Settings, LogOut, User, Home, Check, PlusCircle, Image as ImageIcon, Bell, X, Menu, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Settings, LogOut, User, Home, Check, PlusCircle, Image as ImageIcon, Bell, X, Menu, MessageSquare, Sparkles } from 'lucide-react';
 import {
   AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -16,6 +16,7 @@ import AllPropertiesTab from './tabs/AllPropertiesTab';
 import SettingsTab from './tabs/SettingsTab';
 import NewsTab from './tabs/NewsTab';
 import ContactManagementTab from './tabs/ContactManagementTab';
+import AiModelTab from './tabs/AiModelTab';
 import { apiUrl } from '../../services/api';
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -174,6 +175,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     { icon: FileText, label: 'Quản lý tin tức', tab: 6 },
     { icon: MessageSquare, label: 'Ý kiến khách hàng', tab: 7 },
     { icon: Settings, label: 'Cài đặt', tab: 5 },
+    { icon: Sparkles, label: 'Mô hình AI', tab: 8 },
   ];
 
   const navigationGroups = [
@@ -191,7 +193,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     },
     {
       title: "Cấu hình",
-      items: [navItems[7]]
+      items: [navItems[7], navItems[8]]
     }
   ];
 
@@ -297,6 +299,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
           {activeTab === 6 && <NewsTab toast={toast} />}
           {activeTab === 7 && <ContactManagementTab toast={toast} />}
           {activeTab === 5 && <SettingsTab />}
+          {activeTab === 8 && <AiModelTab />}
 </main>
       </div>
 

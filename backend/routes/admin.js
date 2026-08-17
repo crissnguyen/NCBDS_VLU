@@ -2,6 +2,51 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const prisma = require('../lib/prisma');
+
+const systemSettings = {
+  emailNotifications: true,
+  autoApproveHighPerformingSales: false,
+  aiPriceAnalysis: true,
+  maintenanceMode: false,
+};
+
+let settingsTableReady;
+const ensureSettingsTable = () => {
+  if (!settingsTableReady) {
+    settingsTableReady = prisma.$executeRawUnsafe(`CREATE TABLE IF NOT EXISTS "SystemSetting" ("key" TEXT PRIMARY KEY, "value" BOOLEAN NOT NULL DEFAULT false, "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP)`);
+  }
+  return settingsTableReady;
+};
+
+router.get('/settings', async (req, res) => {
+  try {
+    await ensureSettingsTable();
+    const rows = await prisma.$queryRawUnsafe('SELECT "key", "value" FROM "SystemSetting"');
+    const settings = { ...systemSettings };
+    rows.forEach(row => {
+      if (Object.prototype.hasOwnProperty.call(settings, row.key)) settings[row.key] = Boolean(row.value);
+    });
+    res.json({ success: true, data: settings });
+  } catch (error) {
+    console.error('Get settings error:', error);
+    res.status(500).json({ success: false, message: 'Không thể tải cài đặt hệ thống.' });
+  }
+});
+
+router.put('/settings', async (req, res) => {
+  try {
+    await ensureSettingsTable();
+    const updates = Object.entries(req.body || {}).filter(([key, value]) => Object.prototype.hasOwnProperty.call(systemSettings, key) && typeof value === 'boolean');
+    await prisma.$transaction(updates.map(([key, value]) => prisma.$executeRawUnsafe('INSERT INTO "SystemSetting" ("key", "value", "updatedAt") VALUES ($1, $2, CURRENT_TIMESTAMP) ON CONFLICT ("key") DO UPDATE SET "value" = EXCLUDED."value", "updatedAt" = CURRENT_TIMESTAMP', key, value)));
+    const rows = await prisma.$queryRawUnsafe('SELECT "key", "value" FROM "SystemSetting"');
+    const settings = { ...systemSettings };
+    rows.forEach(row => { if (Object.prototype.hasOwnProperty.call(settings, row.key)) settings[row.key] = Boolean(row.value); });
+    res.json({ success: true, data: settings });
+  } catch (error) {
+    console.error('Update settings error:', error);
+    res.status(500).json({ success: false, message: 'Không thể lưu cài đặt hệ thống.' });
+  }
+});
 const { normalizeEmail } = require('../utils/auth');
 const { sendMail } = require('../services/mail');
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Building2, CheckCircle2, Filter, Map as MapIcon, Search as SearchIcon, SlidersHorizontal, Sparkles } from 'lucide-react';
 import PropertyCard from '../../components/PropertyCard';
 import { Field } from '../../components/ui';
-import { mediaUrl } from '../../services/api';
+import { apiUrl, mediaUrl } from '../../services/api';
 import { dataService } from '../../services/data/dataService';
 
 export default function Search({ setCurrentPage }) {
@@ -10,6 +10,8 @@ export default function Search({ setCurrentPage }) {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [provinces, setProvinces] = useState([]);
+  const [marketData, setMarketData] = useState(null);
+  const [recommendations, setRecommendations] = useState([]);
 
   // Filter States
   const [query, setQuery] = useState('');
@@ -61,6 +63,13 @@ export default function Search({ setCurrentPage }) {
       .then(res => res.json())
       .then(data => setProvinces(data))
       .catch(err => console.error("Lỗi lấy khu vực:", err));
+    Promise.all([fetch(apiUrl('ai/market-analysis')), fetch(apiUrl('ai/recommendations'))])
+      .then(async ([marketRes, recommendationRes]) => [await marketRes.json(), await recommendationRes.json()])
+      .then(([market, recommendation]) => {
+        if (market.success) setMarketData(market.data);
+        if (recommendation.success) setRecommendations(recommendation.data.recommendations || []);
+      })
+      .catch(() => {});
   }, []);
 
   const applyFilters = (sortOverride = sortMethod) => {
@@ -292,6 +301,11 @@ export default function Search({ setCurrentPage }) {
           </div>
 
           <div className="property-grid search-results-grid">
+            {marketData && <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: '0.75rem', background: 'linear-gradient(135deg,#0f2a44,#0f766e)', color: 'white', borderRadius: 16, padding: '1rem 1.15rem', marginBottom: '0.25rem' }}>
+              <div><small style={{ opacity: .7 }}>AI phân tích thị trường</small><strong style={{ display: 'block', fontSize: '1.25rem' }}>{marketData.averagePriceMillion || 0} triệu</strong><span style={{ fontSize: '.75rem', opacity: .8 }}>Giá trung bình/tin</span></div>
+              <div><small style={{ opacity: .7 }}>Dữ liệu tham chiếu</small><strong style={{ display: 'block', fontSize: '1.25rem' }}>{marketData.sampleSize}</strong><span style={{ fontSize: '.75rem', opacity: .8 }}>tin đã duyệt</span></div>
+              <div><small style={{ opacity: .7 }}>Đề xuất nổi bật</small><strong style={{ display: 'block', fontSize: '1.25rem' }}>{recommendations[0]?.recommendationScore || '—'}/100</strong><span style={{ fontSize: '.75rem', opacity: .8 }}>điểm phù hợp cao nhất</span></div>
+            </div>}
             {loading ? (
               <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1', color: '#64748b' }}>
                 Đang tải danh sách bất động sản...

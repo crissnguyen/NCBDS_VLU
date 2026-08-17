@@ -416,3 +416,133 @@ Chỉ kết luận chức năng ổn định sau khi kiểm tra bằng một ema
 ### 15.5. Kết luận báo cáo
 
 Hiện nên ghi: **“Luồng tạo OTP và xác thực email đã được xây dựng; khả năng gửi email thực tế chưa được nghiệm thu end-to-end do endpoint gửi mail bên ngoài chưa kiểm tra thành công.”** Không nên ghi “chức năng gửi mail đã hoạt động ổn định” cho đến khi hoàn thành kiểm thử nhận email thực tế.
+
+## 16. Mô hình phân tích giá và đề xuất bất động sản
+
+### 16.1. Phạm vi đã triển khai
+
+Hệ thống đã bổ sung lớp phân tích AI cho cả trang quản trị và giao diện người dùng. Mục tiêu của lớp này là cung cấp giá tham chiếu, phân tích theo khu vực và xếp hạng các tin đăng phù hợp nhất.
+
+Đây là phiên bản MVP dựa trên phương pháp so sánh dữ liệu, **chưa phải mô hình machine learning dự báo giá đã được huấn luyện bằng dữ liệu lịch sử**. Vì vậy, kết quả hiện tại có giá trị hỗ trợ tham khảo, không được diễn giải là cam kết giá thị trường tương lai.
+
+### 16.2. Nguồn dữ liệu đầu vào
+
+Dữ liệu được lấy từ bảng `Property` trong PostgreSQL, chỉ sử dụng các tin đã được duyệt:
+
+```text
+status = "Approved"
+```
+
+Các trường được sử dụng gồm:
+
+| Trường | Vai trò |
+|---|---|
+| `price` | Giá niêm yết dùng để quy đổi về triệu đồng |
+| `location` | Nhóm và so sánh theo khu vực |
+| `area` | Tính giá tham chiếu trên mỗi m² |
+| `propertyType` | Phân biệt căn hộ, nhà phố, đất nền... |
+| `transactionType` | Phân biệt mua bán và cho thuê |
+| `legalStatus` | Tăng mức độ tin cậy khi xếp hạng |
+| `createdAt` | Thời điểm tin được tạo, dùng cho phân tích thời gian về sau |
+
+Nguồn dữ liệu hiện gồm:
+
+- Dữ liệu mẫu được tạo trong `backend/prisma/seed.js`.
+- Tin do người dùng hoặc nhân viên đăng và được duyệt.
+- Tin được quản trị viên import từ file Excel `.xlsx`.
+
+Hiện hệ thống **chưa kết nối trực tiếp** với Batdongsan.com.vn, Chợ Tốt, sàn giao dịch hoặc cơ sở dữ liệu giao dịch nhà nước. Dữ liệu seed chỉ phục vụ kiểm thử tính năng, không được xem là dữ liệu thị trường thực tế.
+
+### 16.3. Cách tính phân tích hiện tại
+
+Backend chuẩn hóa chuỗi giá như `2.5 tỷ`, `3 tỷ` hoặc `12 triệu/tháng` về đơn vị triệu đồng. Sau đó hệ thống:
+
+1. Lọc các tin có giá hợp lệ.
+2. Tính giá trung bình của tập tin được duyệt.
+3. Nhóm tin theo khu vực.
+4. Tính giá trung bình và giá/m² của từng khu vực nếu có diện tích.
+5. So sánh giá từng tin với mặt bằng tham chiếu.
+6. Xếp hạng tin dựa trên giá, độ tin cậy và thông tin pháp lý.
+
+Điểm đề xuất MVP được tính từ các yếu tố:
+
+```text
+Giá thấp hơn mặt bằng tham chiếu
+Độ tin cậy của tin đăng
+Có thông tin pháp lý
+Có diện tích để so sánh
+```
+
+Kết quả đề xuất gồm `recommendationScore`, giá tham chiếu, phần trăm chênh lệch và lý do đề xuất.
+
+### 16.4. API và giao diện sử dụng
+
+Các API hiện có:
+
+```text
+GET /api/ai/market-analysis
+GET /api/ai/recommendations
+```
+
+Trang quản trị có tab **Mô hình AI**, hiển thị:
+
+- Trạng thái phân tích.
+- Số lượng tin được sử dụng.
+- Giá trung bình tham chiếu.
+- Phân tích theo khu vực.
+- BĐS có điểm đề xuất cao nhất.
+- Nút `Phân tích lại` để lấy dữ liệu mới nhất.
+
+Trang người dùng hiển thị tóm tắt giá trung bình, số lượng mẫu phân tích và điểm đề xuất nổi bật trong trang tìm kiếm BĐS.
+
+### 16.5. Trạng thái mô hình khi báo cáo
+
+| Hạng mục | Trạng thái |
+|---|---|
+| Đọc dữ liệu tin đã duyệt | Đã triển khai |
+| Phân tích giá trung bình | Đã triển khai |
+| Phân tích giá/m² | Đã triển khai khi có diện tích |
+| Xếp hạng BĐS đề xuất | Đã triển khai ở mức MVP |
+| Hiển thị trên Admin | Đã triển khai |
+| Hiển thị trên UI người dùng | Đã triển khai |
+| Dự báo giá theo thời gian | Chưa triển khai đầy đủ |
+| Huấn luyện machine learning | Chưa triển khai |
+| Đánh giá MAE/RMSE/R² | Chưa có |
+| Tự động học từ file dữ liệu người dùng | Chưa hoàn tất |
+
+### 16.6. Dữ liệu cần có để huấn luyện mô hình thực tế
+
+Để chuyển từ mô hình tham chiếu sang mô hình dự báo, cần bổ sung dataset lịch sử có tối thiểu các cột:
+
+```text
+date
+location
+propertyType
+transactionType
+price
+area
+beds
+baths
+legalStatus
+```
+
+Nên có tối thiểu 500–1.000 bản ghi và dữ liệu trải dài ít nhất 12 tháng. Với paper có độ tin cậy tốt hơn, nên có 5.000 bản ghi trở lên, nhiều khu vực và nhiều loại BĐS.
+
+Pipeline dự kiến:
+
+```text
+Upload XLSX
+  → Kiểm tra dữ liệu
+  → Loại bản ghi trùng/lỗi
+  → Chuẩn hóa giá và diện tích
+  → Lưu dataset lịch sử
+  → Chia train/validation/test
+  → Huấn luyện mô hình
+  → Đánh giá MAE, RMSE, R²
+  → Lưu phiên bản model
+  → Phục vụ dự báo qua API
+```
+
+### 16.7. Kết luận nghiệp vụ
+
+Hiện tại có thể mô tả trong báo cáo rằng hệ thống đã triển khai **module phân tích giá tham chiếu và đề xuất BĐS dựa trên các tin đã duyệt trong PostgreSQL**. Chưa nên ghi rằng hệ thống đã dự báo biến động giá bằng mô hình machine learning hoặc đã tự động huấn luyện từ dữ liệu người dùng, vì hai phần này cần dataset lịch sử và pipeline huấn luyện thực tế trước khi nghiệm thu.

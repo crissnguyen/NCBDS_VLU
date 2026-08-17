@@ -1,5 +1,6 @@
 const express = require('express');
 const { env } = require('../config/env');
+const prisma = require('../lib/prisma');
 
 const router = express.Router();
 
@@ -7,6 +8,62 @@ const cleanText = (value = '') => String(value)
   .replace(/\*\*/g, '')
   .replace(/^["'\s]+|["'\s]+$/g, '')
   .trim();
+
+const parsePriceMillion = (value) => {
+  const text = String(value || '').toLowerCase().replace(/,/g, '.');
+  const match = text.match(/[\d.]+/);
+  if (!match) return null;
+  const number = Number.parseFloat(match[0]);
+  if (!Number.isFinite(number)) return null;
+  return text.includes('tỷ') || text.includes('tỉ') || text.includes('ty') ? number * 1000 : number;
+};
+
+const normalizeLocation = value => String(value || '').split(',').pop().trim() || 'Chưa xác định';
+
+const buildMarketAnalysis = properties => {
+  const valid = properties.map(property => ({
+    ...property,
+    priceMillion: parsePriceMillion(property.price),
+    pricePerM2: property.area && parsePriceMillion(property.price) ? parsePriceMillion(property.price) / Number(property.area) : null,
+  })).filter(property => property.priceMillion !== null);
+  const average = valid.length ? valid.reduce((sum, item) => sum + item.priceMillion, 0) / valid.length : 0;
+  const locations = [...new Set(valid.map(item => normalizeLocation(item.location)))].map(location => {
+    const rows = valid.filter(item => normalizeLocation(item.location) === location);
+    const avg = rows.reduce((sum, item) => sum + item.priceMillion, 0) / rows.length;
+    const perM2Rows = rows.filter(item => item.pricePerM2);
+    return { location, listings: rows.length, averagePriceMillion: Math.round(avg * 100) / 100, averagePricePerM2: perM2Rows.length ? Math.round(perM2Rows.reduce((sum, item) => sum + item.pricePerM2, 0) / perM2Rows.length * 100) / 100 : null };
+  }).sort((a, b) => b.listings - a.listings);
+  return { sampleSize: valid.length, averagePriceMillion: Math.round(average * 100) / 100, locations, methodology: 'So sánh giá trung bình và giá/m² từ các tin đã duyệt; cần dữ liệu lịch sử để dự báo xu hướng đáng tin cậy.' };
+};
+
+router.get('/market-analysis', async (req, res) => {
+  try {
+    const properties = await prisma.property.findMany({ where: { status: 'Approved' }, select: { price: true, location: true, area: true, propertyType: true, transactionType: true, createdAt: true } });
+    const analysis = buildMarketAnalysis(properties);
+    res.json({ success: true, data: analysis });
+  } catch (error) {
+    console.error('Market analysis error:', error);
+    res.status(500).json({ success: false, message: 'Không thể phân tích dữ liệu thị trường.' });
+  }
+});
+
+router.get('/recommendations', async (req, res) => {
+  try {
+    const properties = await prisma.property.findMany({ where: { status: 'Approved' }, include: { images: true }, orderBy: { createdAt: 'desc' } });
+    const valid = properties.map(property => ({ ...property, priceMillion: parsePriceMillion(property.price), pricePerM2: property.area && parsePriceMillion(property.price) ? parsePriceMillion(property.price) / Number(property.area) : null })).filter(property => property.priceMillion !== null);
+    const avg = valid.length ? valid.reduce((sum, item) => sum + item.priceMillion, 0) / valid.length : 0;
+    const recommendations = valid.map(property => {
+      const discount = avg ? Math.max(0, Math.min(30, ((avg - property.priceMillion) / avg) * 100)) : 0;
+      const trust = Number(property.trustScore || 85);
+      const score = Math.round(Math.min(100, 55 + discount * 0.8 + (trust - 70) * 0.35 + (property.legalStatus ? 5 : 0)));
+      return { ...property, images: property.images.map(image => image.url), recommendationScore: score, estimatedMarketPriceMillion: Math.round(avg * 100) / 100, priceDifferencePercent: Math.round((property.priceMillion - avg) / avg * 1000) / 10, reasons: [discount > 3 ? 'Giá thấp hơn mặt bằng tham chiếu' : 'Giá nằm gần mặt bằng tham chiếu', property.legalStatus ? 'Có thông tin pháp lý' : 'Cần xác minh pháp lý', property.area ? 'Có dữ liệu diện tích để so sánh' : 'Thiếu dữ liệu diện tích'] };
+    }).sort((a, b) => b.recommendationScore - a.recommendationScore).slice(0, 10);
+    res.json({ success: true, data: { sampleSize: valid.length, recommendations, methodology: 'Điểm xếp hạng MVP dựa trên chênh lệch giá, độ tin cậy và thông tin pháp lý; chưa phải mô hình dự báo đã huấn luyện.' } });
+  } catch (error) {
+    console.error('Recommendation error:', error);
+    res.status(500).json({ success: false, message: 'Không thể tạo đề xuất BĐS.' });
+  }
+});
 
 router.post('/rewrite-description', async (req, res) => {
   try {

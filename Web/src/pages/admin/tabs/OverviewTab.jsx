@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Users, FileText, Home, TrendingUp } from 'lucide-react';
 import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { StatCard } from '../../../components/DashboardShared';
+import { apiUrl } from '../../../services/api';
 
 function ChartTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
@@ -15,6 +16,16 @@ function ChartTooltip({ active, payload, label }) {
 
 
 export default function OverviewTab({ stats, currentUser, pendingProperties, allProperties, metrics }) {
+  const [market, setMarket] = useState(null);
+  const [recommendation, setRecommendation] = useState(null);
+  useEffect(() => {
+    Promise.all([fetch(apiUrl('ai/market-analysis')), fetch(apiUrl('ai/recommendations'))])
+      .then(async ([marketRes, recommendationRes]) => [await marketRes.json(), await recommendationRes.json()])
+      .then(([marketResult, recommendationResult]) => {
+        if (marketResult.success) setMarket(marketResult.data);
+        if (recommendationResult.success) setRecommendation(recommendationResult.data.recommendations?.[0] || null);
+      }).catch(() => {});
+  }, []);
   const chartData = useMemo(() => {
     const properties = Array.isArray(allProperties) ? allProperties : [];
     const now = new Date();
@@ -78,6 +89,10 @@ export default function OverviewTab({ stats, currentUser, pendingProperties, all
                 <StatCard icon={Home} label="Tổng tin đăng" value={allProperties.length} change="Tất cả" color="#0f2a44" />
                 <StatCard icon={TrendingUp} label="Giao dịch" value={metrics.successfulTransactions || 0} change="+12%" color="#0891b2" />
               </div>
+              {market && <div style={{ background: 'white', border: '1px solid #dbe7ef', borderRadius: 14, padding: '1rem 1.25rem', marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+                <div><div style={{ color: '#64748b', fontSize: '.75rem' }}>AI thị trường</div><strong style={{ color: '#0f766e', fontSize: '1.1rem' }}>{market.averagePriceMillion || 0} triệu/tin</strong><div style={{ color: '#94a3b8', fontSize: '.75rem' }}>Mẫu phân tích: {market.sampleSize} tin</div></div>
+                <div><div style={{ color: '#64748b', fontSize: '.75rem' }}>Đề xuất tốt nhất</div><strong style={{ color: '#0f2a44', fontSize: '1.1rem' }}>{recommendation?.title || 'Chưa đủ dữ liệu'}</strong><div style={{ color: '#0f766e', fontSize: '.75rem' }}>Điểm: {recommendation?.recommendationScore || '—'}/100</div></div>
+              </div>}
               <div className="dashboard-charts-grid overview-charts-grid">
                 <div className="overview-chart-card" style={{ background: 'white', borderRadius: 14, padding: '1.25rem 1.5rem', border: '1px solid #e2e8f0' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
