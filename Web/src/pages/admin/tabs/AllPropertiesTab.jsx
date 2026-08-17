@@ -1,11 +1,59 @@
-import { useState, useEffect, useMemo } from 'react';
-import { Trash2, Search, ChevronLeft, ChevronRight, CheckCircle2, Clock, XCircle, Building2, Edit3, SlidersHorizontal } from 'lucide-react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { Trash2, Search, ChevronLeft, ChevronRight, CheckCircle2, Clock, XCircle, Building2, Edit3, SlidersHorizontal, Upload, FileSpreadsheet, X } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { mediaUrl } from '../../../services/api';
 import { dataService } from '../../../services/data/dataService';
 
 export default function AllPropertiesTab({ allProperties = [], setEditingProperty, handleDeleteProperty, handleApproveProperty, fetchData, toast }) {
   const [selectedIds, setSelectedIds] = useState([]);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
+  const [importRows, setImportRows] = useState([]);
+  const [importFileName, setImportFileName] = useState('');
+  const [isImporting, setIsImporting] = useState(false);
+  const importInputRef = useRef(null);
+
+  const normalizeImportRows = (rows) => {
+    const aliases = { tieude: 'title', title: 'title', gia: 'price', price: 'price', vitri: 'location', location: 'location', dientich: 'area', area: 'area', phongngu: 'beds', beds: 'beds', phongtam: 'baths', baths: 'baths', mota: 'description', description: 'description', hinhthuc: 'transactionType', transactiontype: 'transactionType', loai: 'propertyType', propertytype: 'propertyType', phaply: 'legalStatus', legalstatus: 'legalStatus', hinhanh: 'imageUrl', imageurl: 'imageUrl', trangthai: 'status', status: 'status' };
+    return rows.map(sourceRow => Object.entries(sourceRow).reduce((row, [header, value]) => {
+        const normalizedHeader = String(header).toLowerCase().trim().replace(/\s+/g, '').replace(/đ/g, 'd');
+        const key = aliases[normalizedHeader];
+        if (key && value !== '' && value !== null && value !== undefined) row[key] = String(value).trim();
+        return row;
+      }, {})).filter(row => row.title || row.price || row.location);
+  };
+
+  const handleImportFile = async event => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      const workbook = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = normalizeImportRows(XLSX.utils.sheet_to_json(firstSheet, { defval: '' }));
+      setImportFileName(file.name);
+      setImportRows(rows);
+      setIsImportOpen(true);
+    } catch {
+      toast?.error('Import thất bại', 'Không thể đọc file Excel (.xlsx).');
+    } finally {
+      event.target.value = '';
+    }
+  };
+
+  const executeImport = async () => {
+    const validRows = importRows.filter(row => row.title && row.price && row.location);
+    if (!validRows.length) return toast?.warning('Thiếu dữ liệu', 'Cần có title, price và location.');
+    setIsImporting(true);
+    try {
+      const result = await dataService.importProperties(validRows);
+      if (!result.success) throw new Error(result.message || 'Import thất bại.');
+      toast?.success('Import thành công', result.message || `Đã import ${result.imported} tin.`);
+      setImportRows([]); setImportFileName(''); setIsImportOpen(false);
+      await fetchData?.();
+    } catch (error) {
+      toast?.error('Import thất bại', error.message || 'Không thể kết nối máy chủ.');
+    } finally { setIsImporting(false); }
+  };
 
   // Filters & Search
   const [searchTerm, setSearchTerm] = useState('');
@@ -120,6 +168,9 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
           }}>
             {filteredProperties.length} tin
           </span>
+          <input ref={importInputRef} type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" onChange={handleImportFile} hidden />
+          <a className="property-template-button" href="/mau-import-tin-dang.xlsx" download title="Tải file Excel mẫu"><FileSpreadsheet size={15} /> Tải file Excel mẫu</a>
+          <button className="property-import-button" onClick={() => setIsImportOpen(true)}><Upload size={15} /> Import Excel</button>
         </div>
 
         {/* Right Search & Filter Actions (Strict Single Row) */}
@@ -533,6 +584,34 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {isImportOpen && (
+        <div className="property-import-overlay">
+          <div className="property-import-modal">
+            <div className="property-import-modal-head">
+              <div><FileSpreadsheet size={20} color="#0f766e" /><div><h3>Import tin đăng</h3><p>{importFileName} · {importRows.length} dòng dữ liệu</p></div></div>
+              <button onClick={() => setIsImportOpen(false)}><X size={18} /></button>
+            </div>
+            <div className="property-import-help">
+              Cột bắt buộc: <strong>title, price, location</strong>. Cột tùy chọn: area, beds, baths, transactionType, propertyType, legalStatus, description, imageUrl, status.
+              <br /><a className="property-import-template-link" href="/mau-import-tin-dang.xlsx" download>Tải file Excel mẫu (.xlsx)</a> để điền theo đúng định dạng.
+            </div>
+            {!importRows.length && (
+              <div className="property-import-empty">
+                <FileSpreadsheet size={34} />
+                <strong>Chưa chọn file Excel</strong>
+                <span>Chọn file dữ liệu hoặc tải file mẫu để bắt đầu.</span>
+                <button onClick={() => importInputRef.current?.click()}><Upload size={16} /> Chọn file Excel</button>
+              </div>
+            )}
+            {importRows.length > 0 && <div className="property-import-preview">
+              {importRows.slice(0, 5).map((row, index) => <div key={index}><strong>{row.title || '(thiếu tiêu đề)'}</strong><span>{row.price || '—'} · {row.location || '—'}</span></div>)}
+              {importRows.length > 5 && <small>Hiển thị 5/{importRows.length} dòng xem trước</small>}
+            </div>}
+            <div className="property-import-actions"><button onClick={() => { setIsImportOpen(false); setImportRows([]); setImportFileName(''); }}>Hủy</button>{importRows.length > 0 && <button onClick={executeImport} disabled={isImporting}>{isImporting ? 'Đang import...' : `Import ${importRows.length} tin`}</button>}</div>
           </div>
         </div>
       )}

@@ -665,6 +665,51 @@ router.post('/contacts/bulk-delete', async (req, res) => {
   }
 });
 
+// Import hàng loạt tin đăng từ CSV/Excel đã chuyển thành JSON ở frontend
+router.post('/properties/import', async (req, res) => {
+  try {
+    const rows = Array.isArray(req.body?.rows) ? req.body.rows : [];
+    if (!rows.length) {
+      return res.status(400).json({ success: false, message: 'Không có dữ liệu để import.' });
+    }
+    if (rows.length > 500) {
+      return res.status(400).json({ success: false, message: 'Mỗi lần chỉ được import tối đa 500 tin.' });
+    }
+
+    const validRows = rows.filter(row => row.title && row.price && row.location);
+    if (!validRows.length) {
+      return res.status(400).json({ success: false, message: 'Mỗi tin cần có title, price và location.' });
+    }
+
+    const created = await prisma.$transaction(validRows.map(row => prisma.property.create({
+      data: {
+        title: String(row.title).trim(),
+        price: String(row.price).trim(),
+        location: String(row.location).trim(),
+        beds: row.beds ? Number.parseInt(row.beds, 10) : null,
+        baths: row.baths ? Number.parseInt(row.baths, 10) : null,
+        area: row.area ? Number.parseFloat(row.area) : null,
+        description: row.description ? String(row.description) : null,
+        transactionType: row.transactionType || 'sale',
+        propertyType: row.propertyType || 'apartment',
+        legalStatus: row.legalStatus || null,
+        status: row.status || 'Approved',
+        images: row.imageUrl ? { create: [{ url: String(row.imageUrl).trim() }] } : undefined,
+      },
+    })));
+
+    return res.status(201).json({
+      success: true,
+      imported: created.length,
+      skipped: rows.length - validRows.length,
+      message: `Đã import ${created.length} tin đăng.`,
+    });
+  } catch (error) {
+    console.error('Lỗi import tin đăng:', error);
+    return res.status(500).json({ success: false, message: 'Lỗi máy chủ khi import tin đăng.' });
+  }
+});
+
 // Xóa hàng loạt tin đăng bất động sản
 router.post('/properties/bulk-delete', async (req, res) => {
   try {

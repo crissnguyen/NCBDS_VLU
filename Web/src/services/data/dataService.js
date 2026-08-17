@@ -160,6 +160,23 @@ export const dataService = {
     return await res.json();
   },
 
+  importProperties: async (rows) => {
+    if (dataService.isLocalMode()) {
+      const created = rows.map(row => localStore.insert(CONFIG.LOCAL_KEYS.PROPERTIES, {
+        ...row,
+        status: row.status || 'Approved',
+        updatedAt: new Date().toISOString(),
+      }));
+      return { success: true, imported: created.length, skipped: 0 };
+    }
+    const res = await fetch(`${CONFIG.API_BASE}/admin/properties/import`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rows }),
+    });
+    return await res.json();
+  },
+
   // Lấy danh sách tin chưa đồng bộ
   getUnsyncedNewsCount: () => {
     const list = localStore.get(CONFIG.LOCAL_KEYS.NEWS);

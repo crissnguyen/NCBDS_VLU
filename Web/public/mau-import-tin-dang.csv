@@ -1,0 +1,5 @@
+title,price,location,area,beds,baths,transactionType,propertyType,legalStatus,description,imageUrl,status
+Căn hộ 2 phòng ngủ view biển,2.85 tỷ,"Lộc Thọ, Nha Trang",68,2,2,sale,apartment,Sổ hồng lâu dài,"Căn hộ tầng cao, đầy đủ nội thất, phù hợp ở hoặc khai thác cho thuê.",,Approved
+Nhà phố trung tâm Phước Hải,4.9 tỷ,"Phước Hải, Nha Trang",85,3,3,sale,house,Sổ đỏ chính chủ,"Nhà phố hoàn thiện, đường ô tô, khu dân cư an ninh.",,Approved
+Đất nền thổ cư Diên Khánh,1.75 tỷ,"Diên Khánh, Khánh Hòa",100,,,sale,land,Sổ đỏ riêng,"Đất nền vuông vức, hạ tầng điện nước đầy đủ.",,Pending
+Căn hộ cao cấp cho thuê,12 triệu/tháng,"Trần Phú, Nha Trang",65,2,2,rent,apartment,Hợp đồng lâu dài,"Căn hộ đầy đủ nội thất, gần biển, phù hợp thuê dài hạn.",,Approved
