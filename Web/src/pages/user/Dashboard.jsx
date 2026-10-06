@@ -120,9 +120,9 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
           {/* TAB 0: Tổng quan */}
           {activeTab === 0 && (
             <>
-              <div style={{ background: 'linear-gradient(120deg, #0f2a44 0%, #0f766e 100%)', borderRadius: 14, padding: '1.5rem 2rem', color: 'white' }}>
+              <div className="dark-surface" style={{ background: 'linear-gradient(120deg, #0f2a44 0%, #0f766e 100%)', borderRadius: 14, padding: '1.5rem 2rem', color: 'white' }}>
                 <h1 style={{ fontSize: '1.35rem', fontWeight: 800, margin: '0 0 0.2rem' }}>Chào mừng, {currentUser?.name?.split(' ').pop() || 'Môi giới'}! 👋</h1>
-                <p style={{ color: 'rgba(255,255,255,0.7)', margin: 0, fontSize: '0.875rem' }}>
+                <p style={{ color: '#e2f3f1', margin: 0, fontSize: '0.875rem' }}>
                   Bạn đang có <strong style={{ color: 'white' }}>{properties.length} tin đăng</strong> trên hệ thống.
                 </p>
               </div>

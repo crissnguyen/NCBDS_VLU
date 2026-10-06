@@ -4214,3 +4214,9 @@ tr:last-child td {
   .approval-author { flex-wrap: wrap; }
   .approval-email { display: none; }
 }
+
+
+/* Explicit text colors for dark headers, banners and information panels. */
+.dark-surface { color: #fff; }
+.dark-surface :is(h1, h2, h3, h4) { color: #fff; }
+.dark-surface p, .dark-surface-description { color: #e2f3f1; }

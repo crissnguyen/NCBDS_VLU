@@ -185,7 +185,7 @@ export default function ChatWidget() {
                   <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'white', fontWeight: 800, letterSpacing: '0.02em', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                     EstateAI <Sparkles size={14} color="var(--accent)" />
                   </h3>
-                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>Sẵn sàng hỗ trợ 24/7</div>
+                  <div style={{ fontSize: '0.75rem', color: '#e2f3f1', fontWeight: 500 }}>Sẵn sàng hỗ trợ 24/7</div>
                 </div>
               </div>
               <button 

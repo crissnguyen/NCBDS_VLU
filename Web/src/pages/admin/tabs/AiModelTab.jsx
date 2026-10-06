@@ -44,10 +44,10 @@ export default function AiModelTab() {
         {market?.locations?.length ? market.locations.map(item => <div key={item.location} style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: '.75rem', alignItems: 'center', padding: '.75rem 0', borderTop: '1px solid #f1f5f9', fontSize: '.82rem' }}><strong style={{ color: '#0f2a44' }}>{item.location}</strong><span style={{ color: '#64748b' }}>{item.listings} tin</span><span style={{ color: '#0f766e', fontWeight: 800 }}>{formatMillion(item.averagePriceMillion)}</span></div>) : <p style={{ color: '#94a3b8', fontSize: '.85rem' }}>Chưa có dữ liệu đã duyệt.</p>}
         <p style={{ color: '#94a3b8', fontSize: '.72rem', lineHeight: 1.5, margin: '.8rem 0 0' }}>{market?.methodology}</p>
       </section>
-      <section style={{ background: 'linear-gradient(145deg,#0f2a44,#0f766e)', color: 'white', borderRadius: 14, padding: '1.15rem' }}>
+      <section className="dark-surface" style={{ background: 'linear-gradient(145deg,#0f2a44,#0f766e)', color: 'white', borderRadius: 14, padding: '1.15rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.85rem' }}><Sparkles size={19} /><h3 style={{ margin: 0, fontSize: '.98rem' }}>Đề xuất nổi bật</h3></div>
-        {recommendations.slice(0, 4).map(item => <div key={item.id} style={{ padding: '.7rem 0', borderTop: '1px solid rgba(255,255,255,.16)' }}><div style={{ display: 'flex', justifyContent: 'space-between', gap: '.5rem', fontSize: '.82rem' }}><strong>{item.title}</strong><b>{item.recommendationScore}</b></div><small style={{ opacity: .72 }}>{item.price} · {item.location}</small></div>)}
-        {!recommendations.length && <p style={{ opacity: .75, fontSize: '.85rem' }}>Chưa đủ dữ liệu để đề xuất.</p>}
+        {recommendations.slice(0, 4).map(item => <div key={item.id} style={{ padding: '.7rem 0', borderTop: '1px solid rgba(255,255,255,.16)' }}><div style={{ display: 'flex', justifyContent: 'space-between', gap: '.5rem', fontSize: '.82rem' }}><strong>{item.title}</strong><b>{item.recommendationScore}</b></div><small className="dark-surface-description">{item.price} · {item.location}</small></div>)}
+        {!recommendations.length && <p style={{ fontSize: '.85rem' }}>Chưa đủ dữ liệu để đề xuất.</p>}
       </section>
     </div>
     {lastUpdated && <div style={{ color: '#94a3b8', fontSize: '.72rem', marginTop: '.8rem' }}>Cập nhật lúc {lastUpdated.toLocaleTimeString('vi-VN')}</div>}

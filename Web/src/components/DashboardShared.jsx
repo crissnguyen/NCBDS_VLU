@@ -268,9 +268,9 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
   return (
     <div className="post-property-grid">
       <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-        <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #f1f5f9', background: 'linear-gradient(135deg, #0f2a44, #0f766e)' }}>
+        <div className="dark-surface" style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #f1f5f9', background: 'linear-gradient(135deg, #0f2a44, #0f766e)' }}>
           <h3 style={{ margin: 0, color: 'white', fontWeight: 700, fontSize: '1rem' }}>📋 Thông tin bất động sản</h3>
-          <p style={{ margin: '0.2rem 0 0', color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem' }}>Điền đầy đủ thông tin để tăng cơ hội tiếp cận khách hàng</p>
+          <p style={{ margin: '0.2rem 0 0', color: '#e2f3f1', fontSize: '0.8rem' }}>Điền đầy đủ thông tin để tăng cơ hội tiếp cận khách hàng</p>
         </div>
 
         <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>

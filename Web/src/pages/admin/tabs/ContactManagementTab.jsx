@@ -602,10 +602,10 @@ export default function ContactManagementTab({ toast }) {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div style={{ background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="dark-surface" style={{ background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>Soạn phản hồi gửi khách hàng</h3>
-                <p style={{ margin: '0.2rem 0 0', color: 'rgba(255,255,255,0.7)', fontSize: '0.78rem' }}>Gửi thư tới: {selectedContact.name} &lt;{selectedContact.email}&gt;</p>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#ffffff' }}>Soạn phản hồi gửi khách hàng</h3>
+                <p style={{ margin: '0.2rem 0 0', color: '#e2f3f1', fontSize: '0.78rem' }}>Gửi thư tới: {selectedContact.name} &lt;{selectedContact.email}&gt;</p>
               </div>
               <button
                 onClick={() => setSelectedContact(null)}
@@ -694,8 +694,8 @@ export default function ContactManagementTab({ toast }) {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div style={{ background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800 }}>
+            <div className="dark-surface" style={{ background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#ffffff' }}>
                 {modalMode === 'add' ? 'Thêm mới khách hàng liên hệ' : 'Chỉnh sửa thông tin liên hệ'}
               </h3>
               <button
