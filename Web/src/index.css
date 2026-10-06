@@ -4220,3 +4220,25 @@ tr:last-child td {
 .dark-surface { color: #fff; }
 .dark-surface :is(h1, h2, h3, h4) { color: #fff; }
 .dark-surface p, .dark-surface-description { color: #e2f3f1; }
+
+
+.listing-score-card { padding: 20px; border: 1px solid #e2e8f0; border-radius: 16px; background: #fff; align-self: start; }
+.listing-score-heading { display: flex; align-items: center; gap: 8px; color: #0f766e; }
+.listing-score-heading h4 { margin: 0; font-size: .95rem; }
+.listing-score-caption, .listing-score-footnote { color: #667085; font-size: .76rem; line-height: 1.6; }
+.listing-score-value { display: flex; align-items: baseline; justify-content: center; gap: 5px; padding: 16px 0; color: #98a2b3; }
+.listing-score-value strong { font-size: 2.5rem; color: #0f766e; }
+.listing-score-value span { font-size: .8rem; }
+.listing-score-button { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; min-height: 38px; border: 0; border-radius: 8px; background: #0f766e; color: white; font-size: .8rem; font-weight: 600; cursor: pointer; }
+.listing-score-button:disabled { opacity: .65; cursor: wait; }
+.listing-score-notice, .listing-score-error { padding: 10px; border-radius: 8px; font-size: .76rem; line-height: 1.5; background: #fffbeb; color: #92400e; }
+.listing-score-error { background: #fef2f2; color: #b42318; }
+.listing-score-results > p { font-size: .8rem; line-height: 1.6; color: #344054; }
+.listing-score-criterion { margin-top: 14px; }
+.listing-score-criterion > div { display: flex; justify-content: space-between; gap: 8px; font-size: .77rem; color: #344054; }
+.listing-score-criterion progress { width: 100%; height: 5px; accent-color: #0f766e; }
+.listing-score-criterion p { margin: 4px 0 0; color: #667085; font-size: .74rem; line-height: 1.5; }
+.listing-score-suggestions { margin-top: 16px; padding: 12px; background: #f0faf7; border-radius: 8px; }
+.listing-score-suggestions h5 { margin: 0; font-size: .8rem; color: #0f766e; }
+.listing-score-suggestions ul { margin: 8px 0 0; padding-left: 18px; color: #475467; font-size: .75rem; line-height: 1.6; }
+.listing-score-footnote { margin-bottom: 0; padding-top: 12px; border-top: 1px solid #edf0f4; }

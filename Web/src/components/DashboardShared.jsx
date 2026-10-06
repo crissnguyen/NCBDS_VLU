@@ -144,6 +144,43 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [provinces, setProvinces] = useState([]);
+  const [scoreResult, setScoreResult] = useState(null);
+  const [scoreLoading, setScoreLoading] = useState(false);
+  const [scoreError, setScoreError] = useState('');
+  const scoreController = useRef(null);
+  const scoreSnapshot = JSON.stringify({ property: form, imageCount: images.length });
+  const scoreIsStale = scoreResult && scoreResult.snapshot !== scoreSnapshot;
+  useEffect(() => () => scoreController.current?.abort(), []);
+
+  const handleScoreListing = async () => {
+    if (form.description.trim().length < 12) {
+      setScoreError('Nhập mô tả ít nhất 12 ký tự trước khi chấm điểm.');
+      return;
+    }
+    scoreController.current?.abort();
+    const controller = new AbortController();
+    scoreController.current = controller;
+    setScoreLoading(true);
+    setScoreError('');
+    setScoreResult(null);
+    const snapshot = scoreSnapshot;
+    const timeout = setTimeout(() => controller.abort(), 35000);
+    try {
+      const response = await fetch(apiUrl('ai/score-listing'), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: snapshot, signal: controller.signal,
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.message || 'Không thể chấm điểm tin.');
+      setScoreResult({ ...result.data, snapshot });
+    } catch (error) {
+      setScoreError(error.name === 'AbortError' ? 'Chấm điểm quá lâu, vui lòng thử lại.' : error.message || 'Không thể kết nối AI.');
+    } finally {
+      clearTimeout(timeout);
+      setScoreLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     fetch('https://provinces.open-api.vn/api/')
@@ -427,43 +464,30 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
         </div>
       </div>
 
-      <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e2e8f0', padding: '1.25rem', position: 'sticky', top: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-          <Sparkles size={17} color="#f59e0b" />
-          <h4 style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem' }}>AI Chấm điểm</h4>
+      <aside className="listing-score-card" aria-busy={scoreLoading}>
+        <div className="listing-score-heading"><Sparkles size={18} /><h4>AI chấm điểm tin</h4></div>
+        <p className="listing-score-caption">Đánh giá chất lượng nội dung, độ đầy đủ và tính nhất quán của tin.</p>
+        <div className="listing-score-value" aria-live="polite">
+          <strong>{scoreLoading ? '…' : scoreIsStale ? '—' : scoreResult?.score ?? '—'}</strong><span>/100</span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-          {(() => {
-            const score = [form.location, form.price, form.area].filter(Boolean).length * 15 + previews.length * 10 + (form.description.length > 50 ? 15 : 0) + 10;
-            const pct = Math.min(score, 100);
-            return (
-              <div style={{ width: 80, height: 80, borderRadius: '50%', background: `conic-gradient(#0f766e 0% ${pct}%, #e2e8f0 ${pct}% 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ width: 62, height: 62, borderRadius: '50%', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-                  <span style={{ fontWeight: 800, fontSize: '1.2rem', color: '#0f172a', lineHeight: 1 }}>{pct}</span>
-                  <span style={{ fontSize: '0.65rem', color: '#94a3b8' }}>/100</span>
-                </div>
-              </div>
-            );
-          })()}
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          {[
-            [!!form.location, 'Đã nhập vị trí'],
-            [!!form.price, 'Đã nhập giá'],
-            [previews.length >= 1, `${previews.length} hình ảnh (tối thiểu 1)`],
-            [form.description.length > 50, 'Mô tả chi tiết'],
-            [!!form.area, 'Đã nhập diện tích'],
-          ].map(([ok, txt], i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem' }}>
-              {ok ? <CheckCircle size={14} color="#0f766e" /> : <AlertCircle size={14} color="#f59e0b" />}
-              <span style={{ color: ok ? '#0f766e' : '#64748b' }}>{txt}</span>
-            </div>
-          ))}
-        </div>
-        <div style={{ marginTop: '1rem', padding: '0.7rem', background: '#eff6ff', borderRadius: 8, fontSize: '0.76rem', color: '#1d4ed8', lineHeight: 1.5 }}>
-          💡 Tin có ảnh đẹp và mô tả chi tiết được tìm kiếm nhiều hơn <strong>3.2×</strong>
-        </div>
-      </div>
+        {scoreIsStale && <p className="listing-score-notice">Nội dung đã thay đổi. Chấm lại để cập nhật kết quả.</p>}
+        {scoreError && <p className="listing-score-error" role="alert">{scoreError}</p>}
+        <button type="button" className="listing-score-button" onClick={handleScoreListing} disabled={scoreLoading}>
+          <Sparkles size={15} />{scoreLoading ? 'AI đang đánh giá…' : scoreResult ? 'Chấm lại tin đăng' : 'Chấm điểm bằng AI'}
+        </button>
+        {scoreResult && !scoreIsStale && <div className="listing-score-results">
+          <p>{scoreResult.summary}</p>
+          {scoreResult.criteria.map(item => <div className="listing-score-criterion" key={item.id}>
+            <div><strong>{item.label}</strong><span>{item.score}/{item.maxScore}</span></div>
+            <progress value={item.score} max={item.maxScore} aria-label={item.label} />
+            <p>{item.reason}</p>
+          </div>)}
+          {scoreResult.suggestions.length > 0 && <div className="listing-score-suggestions">
+            <h5>Gợi ý cải thiện</h5><ul>{scoreResult.suggestions.map((item, index) => <li key={index}>{item}</li>)}</ul>
+          </div>}
+        </div>}
+        <p className="listing-score-footnote">Ảnh chỉ được đánh giá theo số lượng. Điểm phản ánh chất lượng tin, không xác nhận giá thị trường hay pháp lý.</p>
+      </aside>
     </div>
   );
 }
