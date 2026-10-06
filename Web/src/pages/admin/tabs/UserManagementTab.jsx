@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Users, ShieldAlert, Search, Trash2, PlusCircle, Edit } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, ShieldAlert, Search, Trash2, PlusCircle, Edit, MoreVertical, ShieldCheck } from 'lucide-react';
 import { useToast } from '../../../components/DashboardShared';
 import EditUserModal from '../components/EditUserModal';
 
@@ -34,7 +34,18 @@ const roleConfig = {
 export default function UserManagementTab({ users, currentUser, handleRoleChange, handleToggleStatus, handleDeleteUser, setShowAddEmployee, fetchData }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingUser, setEditingUser] = useState(null);
+  const [openActionId, setOpenActionId] = useState(null);
   const toast = useToast();
+
+  useEffect(() => {
+    const handleDocClick = (e) => {
+      if (!e.target.closest('.user-action-dropdown-wrapper')) {
+        setOpenActionId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleDocClick);
+    return () => document.removeEventListener('mousedown', handleDocClick);
+  }, []);
 
   const filteredUsers = users.filter(u => 
     u.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -43,62 +54,62 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
   );
 
   return (
-    <div className="user-management-page" style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-      {/* Top Header & Action */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
-        <div>
-          <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#0f2a44' }}>Người dùng hệ thống</h2>
-          <p style={{ margin: '0.15rem 0 0', color: '#64748b', fontSize: '0.78rem' }}>Quản lý danh sách, vai trò và phân quyền tài khoản</p>
+    <div className="user-management-page">
+      {/* Unified Table Card */}
+      <div className="admin-table-card admin-filter-table-card user-list-card">
+        {/* Unified Table Header Toolbar */}
+        <div className="admin-table-header-toolbar">
+          <div className="admin-table-header-left">
+            <div className="admin-table-header-icon">
+              <Users size={20} />
+            </div>
+            <div className="admin-table-header-info">
+              <div className="admin-table-header-title-row">
+                <h2 className="admin-table-header-title">Người dùng hệ thống</h2>
+                <span className="admin-table-count-badge">{filteredUsers.length} người dùng</span>
+              </div>
+              <p className="admin-table-header-subtitle">Quản lý danh sách, vai trò và phân quyền tài khoản</p>
+            </div>
+          </div>
+
+          <div className="admin-table-header-right admin-table-actions">
+            
+
+            <button 
+              className="admin-table-btn-primary"
+              onClick={() => setShowAddEmployee(true)} 
+            >
+              <PlusCircle size={15} /> Thêm nhân viên
+            </button>
+          </div>
         </div>
-        
-        <button 
-          onClick={() => setShowAddEmployee(true)} 
-          style={{ 
-            background: 'linear-gradient(135deg, #0f2a44, #0f766e)', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: 8, 
-            padding: '0.45rem 0.95rem', 
-            fontWeight: 700, 
-            cursor: 'pointer', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.4rem', 
-            fontSize: '0.8rem',
-            boxShadow: '0 2px 8px rgba(15, 118, 110, 0.2)',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <PlusCircle size={14} /> Thêm nhân viên
-        </button>
+      <div className="admin-table-filters">
+        <div className="admin-table-search-input">
+              <Search size={15} color="#667085" />
+              <input 
+                type="text" 
+                aria-label="Tìm kiếm"
+              placeholder="Tìm theo tên, email, vai trò..." 
+                value={searchTerm} 
+                onChange={e => setSearchTerm(e.target.value)} 
+              />
+              {searchTerm && (
+                <button aria-label="Xóa tìm kiếm" onClick={() => setSearchTerm('')} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#98a2b3', fontSize: '0.8rem', padding: 0 }}>✕</button>
+              )}
+            </div>
       </div>
 
-      {/* Compact Search Bar */}
-      <div style={{ background: 'white', borderRadius: 8, padding: '0.45rem 0.85rem', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <Search size={14} color="#94a3b8" />
-        <input 
-          type="text" 
-          placeholder="Tìm theo tên, email hoặc vai trò..." 
-          value={searchTerm} 
-          onChange={e => setSearchTerm(e.target.value)} 
-          style={{ flex: 1, border: 'none', outline: 'none', fontSize: '0.8rem', background: 'transparent', color: '#0f172a' }} 
-        />
-        {searchTerm && (
-          <button onClick={() => setSearchTerm('')} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#94a3b8', fontSize: '0.75rem' }}>✕</button>
-        )}
-      </div>
-
-      {/* Ultra Compact Table Card */}
-      <div className="user-management-card" style={{ background: 'white', borderRadius: 12, border: '1px solid #eaecf0', overflow: 'hidden', boxShadow: '0 1px 3px rgba(16, 24, 40, 0.04)' }}>
+        {/* Table Container */}
         <div className="responsive-table-wrapper" style={{ overflowX: 'auto' }}>
-          <table className="user-management-table" style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, textAlign: 'left' }}>
+          <table className="admin-unified-table">
             <thead>
-              <tr style={{ borderBottom: '1px solid #eaecf0', background: '#f8fafc' }}>
-                {['Người dùng', 'Vai trò / Quyền', 'Trạng thái', 'Tin đăng', 'Hiệu suất', 'Thao tác'].map(h => (
-                  <th key={h} style={{ padding: '0.65rem 0.85rem', fontSize: '0.72rem', fontWeight: 700, color: '#475467', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    {h}
-                  </th>
-                ))}
+              <tr>
+                <th>Người dùng</th>
+                <th style={{ width: '200px' }}>Vai trò / quyền</th>
+                <th style={{ width: '130px', textAlign: 'center' }}>Trạng thái</th>
+                <th style={{ width: '100px', textAlign: 'center' }}>Tin đăng</th>
+                <th style={{ width: '150px' }}>Hiệu suất</th>
+                <th style={{ width: '90px', textAlign: 'center' }}>Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -117,7 +128,7 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                     onMouseOut={e => e.currentTarget.style.background = 'transparent'}
                   >
                     {/* User Info */}
-                    <td style={{ padding: '0.65rem 0.85rem' }}>
+                    <td style={{ padding: '0.75rem 1rem', textAlign: 'left' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
                         <div style={{ 
                           width: 32, 
@@ -126,7 +137,7 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                           background: `hsl(${(user.name.charCodeAt(0)*17)%360},60%,42%)`, 
                           display: 'flex', 
                           alignItems: 'center', 
-                          justify: 'center', 
+                          justifyContent: 'center', 
                           color: 'white', 
                           fontWeight: 700, 
                           fontSize: '0.8rem', 
@@ -142,7 +153,7 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                     </td>
 
                     {/* Sleek Pill Badge Role Select */}
-                    <td style={{ padding: '0.65rem 0.85rem' }}>
+                    <td style={{ padding: '0.75rem 1rem', textAlign: 'left' }}>
                       <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
                         {/* Dot indicator */}
                         <span style={{
@@ -190,7 +201,7 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                     </td>
 
                     {/* Status */}
-                    <td style={{ padding: '0.65rem 0.85rem' }}>
+                    <td style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>
                       <span style={{ 
                         background: statusBg[user.status] || '#f1f5f9', 
                         color: statusColor[user.status] || '#64748b', 
@@ -204,12 +215,12 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                     </td>
 
                     {/* Property Count */}
-                    <td style={{ padding: '0.65rem 0.85rem', fontWeight: 700, fontSize: '0.82rem', color: '#0f2a44' }}>
+                    <td style={{ padding: '0.75rem 1rem', textAlign: 'center', fontWeight: 700, fontSize: '0.85rem', color: '#0f2a44' }}>
                       {user._count?.properties || 0}
                     </td>
 
                     {/* Performance */}
-                    <td style={{ padding: '0.65rem 0.85rem' }}>
+                    <td style={{ padding: '0.75rem 1rem', textAlign: 'left' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                         <div style={{ width: 48, height: 5, borderRadius: 3, background: '#f1f5f9' }}>
                           <div style={{ width: user.performance || '0%', height: '100%', background: parseInt(user.performance) > 80 ? '#0f766e' : '#f59e0b', borderRadius: 3 }} />
@@ -220,38 +231,144 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                       </div>
                     </td>
 
-                    {/* Small Action Buttons */}
-                    <td style={{ padding: '0.65rem 0.85rem' }}>
-                      <div style={{ display: 'flex', gap: '0.3rem' }}>
+                    {/* Action Dropdown Menu */}
+                    <td style={{ padding: '0.75rem 1rem', textAlign: 'center', position: 'relative' }}>
+                      <div className="user-action-dropdown-wrapper" style={{ display: 'inline-block', position: 'relative', textAlign: 'left' }}>
                         <button 
-                          onClick={() => handleToggleStatus(user)} 
-                          title={user.status === 'Active' ? 'Khóa tài khoản' : 'Mở khóa'} 
-                          style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #e2e8f0', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s ease' }}
-                          onMouseOver={e => e.currentTarget.style.background = user.status === 'Active' ? '#fee2e2' : '#dcfce7'}
-                          onMouseOut={e => e.currentTarget.style.background = 'white'}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenActionId(openActionId === user.id ? null : user.id);
+                          }}
+                          title="Thao tác"
+                          aria-label="Thao tác"
+                          style={{ 
+                            width: 30, 
+                            height: 30, 
+                            borderRadius: 8, 
+                            border: '1px solid #d0d5dd', 
+                            background: openActionId === user.id ? '#f1f5f9' : 'white', 
+                            color: openActionId === user.id ? '#0f766e' : '#475467',
+                            display: 'inline-flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            cursor: 'pointer', 
+                            transition: 'all 0.15s ease' 
+                          }}
+                          onMouseEnter={e => { if (openActionId !== user.id) e.currentTarget.style.background = '#f8fafc'; }}
+                          onMouseLeave={e => { if (openActionId !== user.id) e.currentTarget.style.background = 'white'; }}
                         >
-                          <ShieldAlert size={13} color={user.status === 'Active' ? '#ef4444' : '#0f766e'} />
-                        </button>
-                        
-                        <button 
-                          onClick={() => setEditingUser(user)} 
-                          title="Sửa thông tin" 
-                          style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #e2e8f0', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s ease' }}
-                          onMouseOver={e => e.currentTarget.style.background = '#eff6ff'}
-                          onMouseOut={e => e.currentTarget.style.background = 'white'}
-                        >
-                          <Edit size={13} color="#2563eb" />
+                          <MoreVertical size={15} />
                         </button>
 
-                        <button 
-                          onClick={() => handleDeleteUser(user.id, user.email)} 
-                          title="Xóa tài khoản" 
-                          style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #e2e8f0', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s ease' }}
-                          onMouseOver={e => e.currentTarget.style.background = '#fee2e2'}
-                          onMouseOut={e => e.currentTarget.style.background = 'white'}
-                        >
-                          <Trash2 size={13} color="#ef4444" />
-                        </button>
+                        {openActionId === user.id && (
+                          <div 
+                            style={{ 
+                              position: 'absolute',
+                              right: 0,
+                              ...(idx >= filteredUsers.length - 2 && filteredUsers.length > 3
+                                ? { bottom: '100%', marginBottom: 6 }
+                                : { top: '100%', marginTop: 6 }),
+                              width: 175,
+                              background: '#ffffff',
+                              border: '1px solid #eaecf0',
+                              borderRadius: 10,
+                              boxShadow: '0 12px 24px -4px rgba(16, 24, 40, 0.14), 0 4px 6px -2px rgba(16, 24, 40, 0.05)',
+                              padding: '4px',
+                              zIndex: 100
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOpenActionId(null);
+                                setEditingUser(user);
+                              }}
+                              style={{
+                                width: '100%',
+                                padding: '8px 10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                background: 'transparent',
+                                border: 'none',
+                                borderRadius: 6,
+                                color: '#344054',
+                                fontSize: '0.82rem',
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                transition: 'background 0.12s'
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.background = '#f2f4f7'}
+                              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                            >
+                              <Edit size={14} color="#175cd3" />
+                              <span>Sửa thông tin</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOpenActionId(null);
+                                handleToggleStatus(user);
+                              }}
+                              style={{
+                                width: '100%',
+                                padding: '8px 10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                background: 'transparent',
+                                border: 'none',
+                                borderRadius: 6,
+                                color: user.status === 'Active' ? '#b42318' : '#027a48',
+                                fontSize: '0.82rem',
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                transition: 'background 0.12s'
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.background = user.status === 'Active' ? '#fef3f2' : '#ecfdf5'}
+                              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                            >
+                              {user.status === 'Active' ? <ShieldAlert size={14} color="#ef4444" /> : <ShieldCheck size={14} color="#059669" />}
+                              <span>{user.status === 'Active' ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}</span>
+                            </button>
+
+                            <div style={{ height: 1, background: '#f2f4f7', margin: '4px 0' }} />
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOpenActionId(null);
+                                handleDeleteUser(user.id, user.email);
+                              }}
+                              style={{
+                                width: '100%',
+                                padding: '8px 10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                background: 'transparent',
+                                border: 'none',
+                                borderRadius: 6,
+                                color: '#d92d20',
+                                fontSize: '0.82rem',
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                transition: 'background 0.12s'
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.background = '#fef3f2'}
+                              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                            >
+                              <Trash2 size={14} color="#d92d20" />
+                              <span>Xóa người dùng</span>
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </td>
                   </tr>

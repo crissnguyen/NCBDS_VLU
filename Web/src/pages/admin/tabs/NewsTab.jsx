@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, X, Link2, FileText, ImagePlus, Star, Newspaper } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Link2, FileText, ImagePlus, Star, Newspaper, MoreVertical, Search } from 'lucide-react';
 import { dataService } from '../../../services/data/dataService';
 import { API_ORIGIN } from '../../../services/api';
 
@@ -63,12 +63,25 @@ export default function NewsTab({ toast }) {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [openActionId, setOpenActionId] = useState(null);
+
+  useEffect(() => {
+    const handleDocClick = (e) => {
+      if (!e.target.closest('.news-action-dropdown-wrapper')) {
+        setOpenActionId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleDocClick);
+    return () => document.removeEventListener('mousedown', handleDocClick);
+  }, []);
   const [editingId, setEditingId] = useState(null);
   const [contentMode, setContentMode] = useState('write');
   const [formData, setFormData] = useState(emptyForm);
 
   const [selectedIds, setSelectedIds] = useState([]);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
 
   const fetchNews = async () => {
     try {
@@ -83,6 +96,14 @@ export default function NewsTab({ toast }) {
     }
   };
 
+  const filteredNews = news.filter(item => {
+    const matchesSearch = !searchQuery || 
+      (item.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.excerpt || '').toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
+
   const handleSelectRow = (id) => {
     setSelectedIds(prev => 
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
@@ -90,10 +111,10 @@ export default function NewsTab({ toast }) {
   };
 
   const handleSelectAll = () => {
-    if (selectedIds.length === news.length && news.length > 0) {
+    if (selectedIds.length === filteredNews.length && filteredNews.length > 0) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(news.map(n => n.id));
+      setSelectedIds(filteredNews.map(n => n.id));
     }
   };
 
@@ -207,101 +228,239 @@ export default function NewsTab({ toast }) {
   if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Đang tải...</div>;
 
   return (
-    <div style={{ animation: 'fadeInScale 0.3s ease' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.35rem' }}>Quản lý tin tức</h2>
-          <p style={{ color: '#64748b', fontSize: '0.88rem', margin: 0 }}>Tạo bài viết tự biên soạn hoặc gắn URL bài báo nguồn cho khách hàng đọc chi tiết.</p>
+    <>
+      <div className="admin-table-card admin-filter-table-card news-list-card">
+      {/* Unified Table Header Toolbar */}
+      <div className="admin-table-header-toolbar">
+        <div className="admin-table-header-left">
+          <div className="admin-table-header-icon">
+            <Newspaper size={20} />
+          </div>
+          <div className="admin-table-header-info">
+            <div className="admin-table-header-title-row">
+              <h2 className="admin-table-header-title">Quản lý tin tức</h2>
+              <span className="admin-table-count-badge">{filteredNews.length} bài viết</span>
+            </div>
+            <p className="admin-table-header-subtitle">Tạo và quản lý các bài viết tin tức bất động sản</p>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+
+        <div className="admin-table-header-right admin-table-actions">
           {selectedIds.length > 0 && (
             <button
+              className="admin-table-btn-danger"
               onClick={() => setIsBulkDeleteOpen(true)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                background: '#fee2e2',
-                color: '#ef4444',
-                border: 'none',
-                padding: '0.72rem 1.15rem',
-                borderRadius: 10,
-                fontWeight: 700,
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.1)',
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#fecaca'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = '#fee2e2'; }}
             >
-              <Trash2 size={17} /> Xóa hàng loạt ({selectedIds.length})
+              <Trash2 size={14} /> Xóa ({selectedIds.length})
             </button>
           )}
+
           <button
+            className="admin-table-btn-primary"
             onClick={() => openModal()}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', border: 'none', padding: '0.72rem 1.15rem', borderRadius: 10, fontWeight: 700, cursor: 'pointer', boxShadow: '0 12px 26px rgba(15,118,110,0.18)' }}
           >
-            <Plus size={17} /> Thêm bài viết
+            <Plus size={15} /> Thêm bài viết
           </button>
         </div>
       </div>
+      <div className="admin-table-filters">
+        <div className="admin-table-search-input">
+            <Search size={15} color="#667085" />
+            <input 
+              type="text" 
+              aria-label="Tìm kiếm"
+              placeholder="Tìm bài viết, danh mục..." 
+              value={searchQuery} 
+              onChange={e => setSearchQuery(e.target.value)} 
+            />
+            {searchQuery && (
+              <button aria-label="Xóa tìm kiếm" onClick={() => setSearchQuery('')} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#98a2b3', fontSize: '0.8rem', padding: 0 }}>✕</button>
+            )}
+          </div>
+        <select 
+            className="admin-table-select"
+            aria-label="Chuyên mục"
+            value={categoryFilter}
+            onChange={e => setCategoryFilter(e.target.value)}
+          >
+            <option value="all">Tất cả chuyên mục</option>
+            <option value="Thị trường">Thị trường</option>
+            <option value="Chính sách">Chính sách</option>
+            <option value="Quy hoạch">Quy hoạch</option>
+            <option value="Dự án">Dự án</option>
+          </select>
+      </div>
 
-      <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e2e8f0', overflow: 'hidden' }}>
-        <div className="responsive-table-wrapper">
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                <th style={{ padding: '0.9rem 1rem', width: '50px' }}>
+      <div className="responsive-table-wrapper" style={{ overflowX: 'auto' }}>
+        <table className="admin-unified-table">
+          <thead>
+            <tr>
+              <th style={{ width: '46px', textAlign: 'center' }}>
+                <input
+                  type="checkbox"
+                  checked={selectedIds.length === filteredNews.length && filteredNews.length > 0}
+                  onChange={handleSelectAll}
+                  style={{ cursor: 'pointer', accentColor: '#0f766e', width: 16, height: 16, verticalAlign: 'middle' }}
+                />
+              </th>
+              <th>Bài viết</th>
+              <th style={{ width: '150px' }}>Chuyên mục</th>
+              <th style={{ width: '130px' }}>Nguồn</th>
+              <th style={{ width: '130px' }}>Ngày tạo</th>
+              <th style={{ textAlign: 'center', width: '90px' }}>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredNews.map(item => (
+              <tr key={item.id} style={{ background: selectedIds.includes(item.id) ? '#f0fdfa' : 'transparent' }}>
+                <td style={{ textAlign: 'center', width: '46px' }}>
                   <input
                     type="checkbox"
-                    checked={selectedIds.length === news.length && news.length > 0}
-                    onChange={handleSelectAll}
-                    style={{ cursor: 'pointer', width: 16, height: 16, verticalAlign: 'middle' }}
+                    checked={selectedIds.includes(item.id)}
+                    onChange={() => handleSelectRow(item.id)}
+                    style={{ cursor: 'pointer', accentColor: '#0f766e', width: 16, height: 16, verticalAlign: 'middle' }}
                   />
-                </th>
-                {['Bài viết', 'Chuyên mục', 'Nguồn', 'Ngày tạo', 'Thao tác'].map(label => (
-                  <th key={label} style={{ padding: '0.9rem 1rem', color: '#475569', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase' }}>{label}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {news.map(item => (
-                <tr key={item.id} style={{ borderBottom: '1px solid #f1f5f9', background: selectedIds.includes(item.id) ? '#f0fdfa' : 'transparent' }}>
-                  <td style={{ padding: '1rem', width: '50px' }}>
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.includes(item.id)}
-                      onChange={() => handleSelectRow(item.id)}
-                      style={{ cursor: 'pointer', width: 16, height: 16, verticalAlign: 'middle' }}
-                    />
-                  </td>
-                  <td style={{ padding: '1rem' }}>
-                    <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
-                      <img src={item.image} alt="" style={{ width: 78, height: 54, objectFit: 'cover', borderRadius: 10, border: '1px solid #e2e8f0' }} />
-                      <div>
-                        <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.9rem', marginBottom: 5 }}>{item.title}</div>
-                        <div style={{ color: '#64748b', fontSize: '0.78rem', maxWidth: 420, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.excerpt}</div>
-                      </div>
+                </td>
+                <td>
+                  <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
+                    <img src={item.image} alt="" style={{ width: 68, height: 48, objectFit: 'cover', borderRadius: 8, border: '1px solid #e2e8f0', flexShrink: 0 }} />
+                    <div>
+                      <div style={{ fontWeight: 650, color: '#101828', fontSize: '0.88rem', marginBottom: 2 }}>{item.title}</div>
+                      <div style={{ color: '#64748b', fontSize: '0.78rem', maxWidth: 420, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.excerpt}</div>
                     </div>
-                  </td>
-                  <td style={{ padding: '1rem', color: '#475569', fontSize: '0.85rem' }}>
-                    <span style={{ background: '#e6f7f4', color: '#0f766e', padding: '0.32rem 0.58rem', borderRadius: 999, fontWeight: 700 }}>{item.category}</span>
-                  </td>
-                  <td style={{ padding: '1rem', color: '#475569', fontSize: '0.85rem' }}>
-                    {item.sourceUrl ? <span style={{ color: '#0f766e', fontWeight: 700 }}>URL nguồn</span> : <span>Tự viết</span>}
-                    {item.featured && <div style={{ color: '#f59e0b', fontSize: '0.76rem', marginTop: 5, fontWeight: 700 }}>Nổi bật</div>}
-                  </td>
-                  <td style={{ padding: '1rem', color: '#475569', fontSize: '0.85rem' }}>{new Date(item.createdAt).toLocaleDateString('vi-VN')}</td>
-                  <td style={{ padding: '1rem', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                    <button onClick={() => openModal(item)} style={{ background: '#eef6ff', border: 'none', padding: 8, borderRadius: 8, color: '#2563eb', cursor: 'pointer', marginRight: 8 }}><Edit size={16} /></button>
-                    <button onClick={() => handleDelete(item.id)} style={{ background: '#fee2e2', border: 'none', padding: 8, borderRadius: 8, color: '#ef4444', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                  </div>
+                </td>
+                <td>
+                  <span style={{ background: '#ecfdf5', color: '#027a48', border: '1px solid #a6f4c5', padding: '2px 8px', borderRadius: 999, fontWeight: 600, fontSize: '0.75rem' }}>{item.category}</span>
+                </td>
+                <td>
+                  {item.sourceUrl ? <span style={{ color: '#0f766e', fontWeight: 600, fontSize: '0.8rem' }}>URL nguồn</span> : <span style={{ color: '#64748b', fontSize: '0.8rem' }}>Tự biên soạn</span>}
+                  {item.featured && <div style={{ color: '#b54708', fontSize: '0.74rem', marginTop: 3, fontWeight: 700 }}>★ Nổi bật</div>}
+                </td>
+                <td style={{ color: '#64748b', fontSize: '0.82rem' }}>{new Date(item.createdAt).toLocaleDateString('vi-VN')}</td>
+                <td style={{ textAlign: 'center', whiteSpace: 'nowrap', position: 'relative' }}>
+                    <div className="news-action-dropdown-wrapper" style={{ display: 'inline-block', position: 'relative', textAlign: 'left' }}>
+                      <button 
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenActionId(openActionId === item.id ? null : item.id);
+                        }}
+                        title="Thao tác"
+                        aria-label="Thao tác"
+                        style={{ 
+                          width: 32, 
+                          height: 32, 
+                          borderRadius: 8, 
+                          border: '1px solid #d0d5dd', 
+                          background: openActionId === item.id ? '#f1f5f9' : 'white', 
+                          color: openActionId === item.id ? '#0f766e' : '#475467',
+                          display: 'inline-flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center', 
+                          cursor: 'pointer', 
+                          transition: 'all 0.15s ease',
+                          boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)'
+                        }}
+                        onMouseEnter={e => { if (openActionId !== item.id) e.currentTarget.style.background = '#f8fafc'; }}
+                        onMouseLeave={e => { if (openActionId !== item.id) e.currentTarget.style.background = 'white'; }}
+                      >
+                        <MoreVertical size={16} />
+                      </button>
+
+                      {openActionId === item.id && (
+                        <div 
+                          style={{ 
+                            position: 'absolute',
+                            right: 0,
+                            ...(news.indexOf(item) >= news.length - 2 && news.length > 3
+                              ? { bottom: '100%', marginBottom: 6 }
+                              : { top: '100%', marginTop: 6 }),
+                            width: 165,
+                            background: '#ffffff',
+                            border: '1px solid #eaecf0',
+                            borderRadius: 10,
+                            boxShadow: '0 12px 24px -4px rgba(16, 24, 40, 0.14), 0 4px 6px -2px rgba(16, 24, 40, 0.05)',
+                            padding: '4px',
+                            zIndex: 100
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpenActionId(null);
+                              openModal(item);
+                            }}
+                            style={{
+                              width: '100%',
+                              padding: '8px 10px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              background: 'transparent',
+                              border: 'none',
+                              borderRadius: 6,
+                              color: '#344054',
+                              fontSize: '0.82rem',
+                              fontWeight: 500,
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              transition: 'background 0.12s'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.background = '#f2f4f7'}
+                            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                          >
+                            <Edit size={14} color="#175cd3" />
+                            <span>Sửa bài viết</span>
+                          </button>
+
+                          <div style={{ height: 1, background: '#f2f4f7', margin: '4px 0' }} />
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setOpenActionId(null);
+                              handleDelete(item.id);
+                            }}
+                            style={{
+                              width: '100%',
+                              padding: '8px 10px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '8px',
+                              background: 'transparent',
+                              border: 'none',
+                              borderRadius: 6,
+                              color: '#d92d20',
+                              fontSize: '0.82rem',
+                              fontWeight: 500,
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              transition: 'background 0.12s'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.background = '#fef3f2'}
+                            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                          >
+                            <Trash2 size={14} color="#d92d20" />
+                            <span>Xóa bài viết</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        {news.length === 0 && <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>Chưa có tin tức nào</div>}
+        {filteredNews.length === 0 && (
+          <div style={{ padding: '3.5rem 1.5rem', textAlign: 'center', color: '#475467', fontSize: '0.875rem' }}>
+            <Newspaper size={36} color="#d0d5dd" style={{ marginBottom: '0.5rem' }} />
+            <div style={{ fontWeight: 600, color: '#101828' }}>Không tìm thấy bài viết nào</div>
+            <div style={{ fontSize: '0.8rem', color: '#667085', marginTop: 2 }}>Thử tìm kiếm với từ khóa khác hoặc thay đổi bộ lọc chuyên mục.</div>
+          </div>
+        )}
       </div>
 
       {showModal && (
@@ -465,6 +624,6 @@ export default function NewsTab({ toast }) {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

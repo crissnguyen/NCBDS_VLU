@@ -232,7 +232,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
         <nav className="dashboard-sidebar-nav" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1rem 0' }}>
           {navigationGroups.map(group => (
             <div key={group.title} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <div style={{ color: 'rgba(255,255,255,0.22)', fontSize: '0.67rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 1.25rem 0.25rem' }}>
+              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.72rem', fontWeight: 600, padding: '0 1.25rem 0.25rem' }}>
                 {group.title}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', paddingLeft: '0.75rem', paddingRight: '0.75rem' }}>

@@ -1,9 +1,28 @@
-import { useState } from 'react';
-import { Check, X, ShieldCheck, Image as ImageIcon, MapPin, Bed, Bath, Maximize, FileText, Info } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Check, X, ShieldCheck, Image as ImageIcon, MapPin, Bed, Bath, Maximize, FileText, Info, Eye, MoreHorizontal, ChevronDown, Clock } from 'lucide-react';
 import { mediaUrl } from '../../../services/api';
 
 export default function PendingPropertiesTab({ pendingProperties, handleApproveProperty }) {
   const [selectedProperty, setSelectedProperty] = useState(null);
+  const [openActionId, setOpenActionId] = useState(null);
+
+  useEffect(() => {
+    const closeOutside = event => {
+      if (!event.target.closest('.approval-actions')) setOpenActionId(null);
+    };
+    const closeOnEscape = event => {
+      if (event.key === 'Escape') {
+        setOpenActionId(null);
+        document.querySelector('.approval-actions-trigger[aria-expanded="true"]')?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, []);
 
   const getPropertyTypeLabel = (type) => {
     switch (type) {
@@ -20,88 +39,75 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
 
   return (
     <>
-      {/* TAB 2: Phê duyệt */}
-      <div>
-        <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>Phê duyệt tin đăng</h2>
-        <p style={{ margin: '0.2rem 0 0', color: '#64748b', fontSize: '0.82rem' }}>
-          {pendingProperties.length > 0 ? `${pendingProperties.length} tin đang chờ xét duyệt` : 'Không có tin nào cần duyệt'}
-        </p>
-      </div>
-
-      {pendingProperties.length === 0 ? (
-        <div style={{ background: 'white', borderRadius: 14, padding: '3.5rem', textAlign: 'center', border: '1px solid #e2e8f0', marginTop: '1.25rem' }}>
-          <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#d8f3ef', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
-            <ShieldCheck size={28} color="#0f766e"/>
-          </div>
-          <h3 style={{ margin: '0 0 0.4rem' }}>Tất cả tin đã được xử lý!</h3>
-          <p style={{ color: '#94a3b8', margin: 0, fontSize: '0.875rem' }}>Mọi thứ đã xong, không có gì cần làm ngay lúc này.</p>
-        </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', marginTop: '1.25rem' }}>
-          {pendingProperties.map(p => (
-            <div key={p.id} className="pending-property-card pending-property-card-v2" style={{
-              display: 'grid',
-              gridTemplateColumns: '164px minmax(0, 1fr) 132px',
-              alignItems: 'center',
-              gap: '1.15rem',
-              padding: '1rem 1.15rem',
-              background: 'linear-gradient(135deg, #ffffff 0%, #fbfefd 100%)',
-              borderLeft: '4px solid #f59e0b'
-            }}>
-              <div style={{ width: 140, height: 96, borderRadius: 10, overflow: 'hidden', background: '#f1f5f9', flexShrink: 0, position: 'relative' }}>
-                {p.images?.length > 0 ? (
-                  <img src={mediaUrl(p.images[0].url || p.images[0])} alt="" style={{ width:'100%',height:'100%',objectFit:'cover' }}/>
-                ) : (
-                  <div style={{ width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:3 }}>
-                    <ImageIcon size={22} color="#cbd5e1"/>
-                    <span style={{fontSize:'0.68rem',color:'#cbd5e1'}}>Chưa có ảnh</span>
-                  </div>
-                )}
-                {p.images?.length > 1 && (
-                  <div style={{ position:'absolute',top:5,right:5,background:'rgba(0,0,0,0.55)',color:'white',borderRadius:5,fontSize:'0.68rem',fontWeight:700,padding:'1px 6px' }}>
-                    +{p.images.length-1}
-                  </div>
-                )}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:'1rem',marginBottom:'0.3rem' }}>
-                  <h3 style={{ margin:0,fontSize:'0.95rem',fontWeight:700,color:'#0f172a' }}>{p.title}</h3>
-                  <span style={{ background:'#fef3c7',color:'#d97706',padding:'2px 9px',borderRadius:99,fontSize:'0.7rem',fontWeight:700,flexShrink:0 }}>⏳ Chờ duyệt</span>
-                </div>
-                <div style={{ fontSize:'1rem',fontWeight:800,color:'#ef4444',marginBottom:'0.4rem' }}>{p.price||'Liên hệ'}</div>
-                <div style={{ display:'flex',gap:'0.75rem',fontSize:'0.78rem',color:'#64748b',marginBottom:'0.4rem' }}>
-                  {p.location && <span>📍 {p.location}</span>}
-                  {p.area && <span>📐 {p.area}m²</span>}
-                </div>
-                <div style={{ fontSize:'0.78rem',color:'#64748b' }}>
-                  Đăng bởi: <strong style={{color:'#0f172a'}}>{p.author?.name||'Ẩn danh'}</strong>
-                  {p.author?.email && <span style={{color:'#94a3b8'}}> · {p.author.email}</span>}
-                </div>
-              </div>
-              <div className="pending-property-card-actions">
-                <button 
-                  onClick={() => setSelectedProperty(p)} 
-                  style={{ background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', borderRadius: 9, padding: '0.55rem 1rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.82rem' }}
-                >
-                  👁️ Chi tiết
-                </button>
-                <button 
-                  onClick={() => handleApproveProperty(p.id, 'approve')} 
-                  style={{ background:'linear-gradient(135deg,#0f766e,#0891b2)',color:'white',border:'none',borderRadius:9,padding:'0.55rem 1rem',fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',gap:'0.4rem',fontSize:'0.82rem',boxShadow:'0 2px 6px rgba(15,118,110,0.3)' }}
-                >
-                  <Check size={14}/> Duyệt
-                </button>
-                <button 
-                  onClick={() => handleApproveProperty(p.id, 'reject')} 
-                  style={{ background:'#fef2f2',color:'#ef4444',border:'1px solid #fecaca',borderRadius:9,padding:'0.55rem 1rem',fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',gap:'0.4rem',fontSize:'0.82rem' }}
-                >
-                  <X size={14}/> Từ chối
-                </button>
-              </div>
+      <section className="approval-panel">
+        <header className="approval-heading">
+          <div className="approval-heading-icon"><ShieldCheck size={22} /></div>
+          <div>
+            <div className="approval-heading-title">
+              <h2>Phê duyệt tin đăng</h2>
+              <span>{pendingProperties.length} tin</span>
             </div>
-          ))}
-        </div>
-      )}
+            <p>Kiểm tra nội dung và xét duyệt tin trước khi hiển thị</p>
+          </div>
+        </header>
+        {pendingProperties.length === 0 ? (
+          <div className="approval-empty">
+            <ShieldCheck size={36} />
+            <h3>Tất cả tin đã được xử lý!</h3>
+            <p>Không có tin đăng nào đang chờ xét duyệt.</p>
+          </div>
+        ) : (
+          <div className="approval-list">
+            {pendingProperties.map(p => (
+              <article key={p.id} className={`approval-item${openActionId === p.id ? ' is-open' : ''}`}>
+                <div className="approval-photo">
+                  {p.images?.length > 0 ? (
+                    <img src={mediaUrl(p.images[0].url || p.images[0])} alt={p.title} />
+                  ) : <ImageIcon size={24} />}
+                  {p.images?.length > 1 && <span>+{p.images.length - 1}</span>}
+                </div>
+                <div className="approval-info">
+                  <h3>{p.title}</h3>
+                  <div className="approval-meta">
+                    <strong>{p.price || 'Liên hệ'}</strong>
+                    {p.location && <span><MapPin size={13} />{p.location}</span>}
+                    {p.area && <span><Maximize size={13} />{p.area} m²</span>}
+                  </div>
+                  <div className="approval-author">
+                    <span className="approval-avatar">{(p.author?.name || 'A').charAt(0).toUpperCase()}</span>
+                    <span>{p.author?.name || 'Ẩn danh'}</span>
+                    {p.author?.email && <span className="approval-email">{p.author.email}</span>}
+                  </div>
+                </div>
+                <span className="approval-status"><Clock size={13} />Chờ duyệt</span>
+                <div className="approval-actions" onBlur={event => {
+                  if (!event.currentTarget.contains(event.relatedTarget)) setOpenActionId(null);
+                }}>
+                  <button className="approval-actions-trigger" aria-label={`Thao tác với ${p.title}`}
+                    aria-expanded={openActionId === p.id} aria-controls={`approval-actions-${p.id}`}
+                    onClick={() => setOpenActionId(openActionId === p.id ? null : p.id)}>
+                    <MoreHorizontal size={17} /><span>Thao tác</span><ChevronDown size={13} />
+                  </button>
+                  {openActionId === p.id && (
+                    <div id={`approval-actions-${p.id}`} className="approval-dropdown">
+                      <button onClick={() => { setOpenActionId(null); setSelectedProperty(p); }}>
+                        <Eye size={16} />Xem chi tiết
+                      </button>
+                      <button className="approval-accept" onClick={() => {
+                        setOpenActionId(null); handleApproveProperty(p.id, 'approve');
+                      }}><Check size={16} />Duyệt tin đăng</button>
+                      <div className="approval-dropdown-divider" />
+                      <button className="approval-reject" onClick={() => {
+                        setOpenActionId(null); handleApproveProperty(p.id, 'reject');
+                      }}><X size={16} />Từ chối tin đăng</button>
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* MODAL CHI TIẾT TIN ĐĂNG */}
       {selectedProperty && (
@@ -331,8 +337,8 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
               {/* Extra Metadata Section */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div style={{ background: '#f8fafc', padding: '1rem 1.25rem', borderRadius: 14, border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.03em' }}>
-                    <Info size={13} color="#0f766e" /> Pháp lý & Người Đăng
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#64748b', fontWeight: 700 }}>
+                    <Info size={13} color="#0f766e" /> Pháp lý & người đăng
                   </div>
                   <div style={{ fontSize: '0.85rem', color: '#334155' }}>
                     Giấy tờ pháp lý: <strong style={{ color: '#0f172a' }}>{selectedProperty.legalStatus || 'Chưa xác định'}</strong>
@@ -342,7 +348,7 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
                   </div>
                 </div>
                 <div style={{ background: '#f8fafc', padding: '1rem 1.25rem', borderRadius: 14, border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#64748b', fontWeight: 700 }}>
                     <ShieldCheck size={13} color="#0f766e" /> Kiểm duyệt thông tin
                   </div>
                   <div style={{ fontSize: '0.85rem', color: '#334155' }}>

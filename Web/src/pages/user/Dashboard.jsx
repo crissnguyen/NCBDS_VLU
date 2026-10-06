@@ -139,7 +139,7 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
                 </div>
                 <div className="responsive-table-wrapper">
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Tin đăng', 'Khu vực', 'Giá', 'Trạng thái'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.73rem',fontWeight:700,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.05em',background:'#fafafa'}}>{h}</th>)}</tr></thead>
+                    <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Tin đăng', 'Khu vực', 'Giá', 'Trạng thái'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.8rem',fontWeight:600,color:'#475467',background:'#fafafa'}}>{h}</th>)}</tr></thead>
                   <tbody>
                     {properties.slice(0, 5).map((p, idx) => (
                       <tr key={p.id} style={{ borderBottom: idx < 4 ? '1px solid #f8fafc' : 'none' }}>
@@ -177,7 +177,7 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
               </div>
               <div className="responsive-table-wrapper">
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Mã tin', 'Tiêu đề', 'Khu vực', 'Mức giá', 'Trạng thái'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.73rem',fontWeight:700,color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.05em',background:'#fafafa'}}>{h}</th>)}</tr></thead>
+                  <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Mã tin', 'Tiêu đề', 'Khu vực', 'Mức giá', 'Trạng thái'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.8rem',fontWeight:600,color:'#475467',background:'#fafafa'}}>{h}</th>)}</tr></thead>
                 <tbody>
                   {properties.map((p, idx) => (
                     <tr key={p.id} style={{ borderBottom: idx < properties.length - 1 ? '1px solid #f8fafc' : 'none' }} onMouseOver={e => e.currentTarget.style.background = '#fafafa'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>

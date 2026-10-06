@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { Trash2, Search, ChevronLeft, ChevronRight, CheckCircle2, Clock, XCircle, Building2, Edit3, SlidersHorizontal, Upload, FileSpreadsheet, X } from 'lucide-react';
+import { Trash2, Search, ChevronLeft, ChevronRight, CheckCircle2, Clock, XCircle, Building2, Edit3, SlidersHorizontal, Upload, FileSpreadsheet, X, MoreVertical } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { mediaUrl } from '../../../services/api';
 import { dataService } from '../../../services/data/dataService';
@@ -12,6 +12,17 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
   const [importFileName, setImportFileName] = useState('');
   const [isImporting, setIsImporting] = useState(false);
   const importInputRef = useRef(null);
+  const [openActionId, setOpenActionId] = useState(null);
+
+  useEffect(() => {
+    const handleDocClick = (e) => {
+      if (!e.target.closest('.action-dropdown-wrapper')) {
+        setOpenActionId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleDocClick);
+    return () => document.removeEventListener('mousedown', handleDocClick);
+  }, []);
 
   const normalizeImportRows = (rows) => {
     const aliases = { tieude: 'title', title: 'title', gia: 'price', price: 'price', vitri: 'location', location: 'location', dientich: 'area', area: 'area', phongngu: 'beds', beds: 'beds', phongtam: 'baths', baths: 'baths', mota: 'description', description: 'description', hinhthuc: 'transactionType', transactiontype: 'transactionType', loai: 'propertyType', propertytype: 'propertyType', phaply: 'legalStatus', legalstatus: 'legalStatus', hinhanh: 'imageUrl', imageurl: 'imageUrl', trangthai: 'status', status: 'status' };
@@ -136,89 +147,56 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
   };
 
   return (
-    <div className="property-management-card" style={{ background: 'white', borderRadius: 16, border: '1px solid #eaecf0', boxShadow: '0 1px 3px rgba(16, 24, 40, 0.08)', overflow: 'hidden' }}>
+    <div className="admin-table-card property-list-card">
       {/* 1. Unified Table Card Top Toolbar Header */}
-      <div style={{ 
-        padding: '1rem 1.25rem', 
-        borderBottom: '1px solid #eaecf0', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justify: 'space-between',
-        background: '#ffffff',
-        flexWrap: 'nowrap',
-        gap: '1rem'
-      }}>
+      <div className="admin-table-header-toolbar">
         {/* Title & Count Badge */}
-        <div className="property-management-heading" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', whiteSpace: 'nowrap' }}>
-          <div className="property-management-heading-icon"><Building2 size={20} /></div>
-          <div>
-            <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: '#101828', letterSpacing: '-0.01em' }}>
-              Tất cả tin đăng
-            </h2>
-            <p className="property-management-subtitle">Theo dõi và quản lý toàn bộ tin bất động sản</p>
+        <div className="admin-table-header-left">
+          <div className="admin-table-header-icon"><Building2 size={20} /></div>
+          <div className="admin-table-header-info">
+            <div className="admin-table-header-title-row">
+              <h2 className="admin-table-header-title">Tất cả tin đăng</h2>
+              <span className="admin-table-count-badge">{filteredProperties.length} tin</span>
+            </div>
+            <p className="admin-table-header-subtitle">Theo dõi và quản lý toàn bộ tin bất động sản</p>
           </div>
-          <span className="property-management-count" style={{ 
-            background: '#f0fdf4', 
-            color: '#15803d', 
-            fontSize: '0.75rem', 
-            fontWeight: 700, 
-            padding: '2px 8px', 
-            borderRadius: 16,
-            border: '1px solid #bbf7d0'
-          }}>
-            {filteredProperties.length} tin
-          </span>
-          <input ref={importInputRef} type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" onChange={handleImportFile} hidden />
-          <a className="property-template-button" href="/mau-import-tin-dang.xlsx" download title="Tải file Excel mẫu"><FileSpreadsheet size={15} /> Tải file Excel mẫu</a>
-          <button className="property-import-button" onClick={() => setIsImportOpen(true)}><Upload size={15} /> Import Excel</button>
         </div>
 
-        {/* Right Search & Filter Actions (Strict Single Row) */}
-        <div className="property-management-tools" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', whiteSpace: 'nowrap', flexShrink: 0 }}>
+        {/* Right Search, Filters & Import Actions */}
+        <div className="admin-table-header-right property-list-actions">
+          <input ref={importInputRef} type="file" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" onChange={handleImportFile} hidden />
+          <a className="admin-table-btn-secondary" href="/mau-import-tin-dang.xlsx" download title="Tải file Excel mẫu">
+            <FileSpreadsheet size={15} /> Mẫu Excel
+          </a>
+          <button className="admin-table-btn-primary" onClick={() => setIsImportOpen(true)}>
+            <Upload size={15} /> Import Excel
+          </button>
+
+        </div>
+      </div>
+
+      <div className="property-list-filters">
           {/* Search Box */}
-          <div className="property-management-search" style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.45rem', 
-            background: '#ffffff', 
-            padding: '0.45rem 0.85rem', 
-            borderRadius: 8, 
-            border: '1px solid #d0d5dd', 
-            width: 260,
-            height: 38,
-            boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)'
-          }}>
+          <div className="admin-table-search-input">
             <Search size={15} color="#667085" />
             <input
               type="text"
-              placeholder="Tìm theo tên tin đăng, vị trí, môi giới..."
+              aria-label="Tìm tin đăng, vị trí hoặc môi giới"
+              placeholder="Tìm tin đăng, vị trí, môi giới..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              style={{ border: 'none', outline: 'none', background: 'transparent', width: '100%', fontSize: '0.85rem', color: '#101828' }}
             />
             {searchTerm && (
-              <button onClick={() => setSearchTerm('')} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#98a2b3', fontSize: '0.8rem', padding: 0 }}>✕</button>
+              <button aria-label="Xóa tìm kiếm" onClick={() => setSearchTerm('')} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#98a2b3', fontSize: '0.8rem', padding: 0 }}>✕</button>
             )}
           </div>
 
           {/* Category Filter 1: Hình thức (Bán / Cho thuê) */}
           <select 
-            className="property-management-status-select"
+            className="admin-table-select"
+            aria-label="Hình thức"
             value={transactionFilter}
             onChange={e => setTransactionFilter(e.target.value)}
-            style={{ 
-              height: 36,
-              padding: '0 0.75rem', 
-              borderRadius: 8, 
-              border: '1px solid #d0d5dd', 
-              background: '#ffffff', 
-              fontSize: '0.82rem', 
-              color: '#344054', 
-              fontWeight: 600, 
-              outline: 'none',
-              cursor: 'pointer',
-              boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)'
-            }}
           >
             <option value="all">Tất cả hình thức</option>
             <option value="sale">Bán</option>
@@ -227,22 +205,10 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
 
           {/* Category Filter 2: Loại BĐS */}
           <select 
-            className="property-management-status-select"
+            className="admin-table-select"
+            aria-label="Loại bất động sản"
             value={propertyTypeFilter}
             onChange={e => setPropertyTypeFilter(e.target.value)}
-            style={{ 
-              height: 36,
-              padding: '0 0.75rem', 
-              borderRadius: 8, 
-              border: '1px solid #d0d5dd', 
-              background: '#ffffff', 
-              fontSize: '0.82rem', 
-              color: '#344054', 
-              fontWeight: 600, 
-              outline: 'none',
-              cursor: 'pointer',
-              boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)'
-            }}
           >
             <option value="all">Tất cả loại BĐS</option>
             <option value="apartment">Căn hộ</option>
@@ -253,23 +219,11 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
           </select>
 
           {/* Status Dropdown Filter */}
-          <label className="property-management-filter-label"><SlidersHorizontal size={15} /> <span>Lọc</span></label>
-          <select className="property-management-status-select"
+          <select 
+            className="admin-table-select"
+            aria-label="Trạng thái"
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
-            style={{ 
-              height: 36,
-              padding: '0 0.75rem', 
-              borderRadius: 8, 
-              border: '1px solid #d0d5dd', 
-              background: '#ffffff', 
-              fontSize: '0.82rem', 
-              color: '#344054', 
-              fontWeight: 600, 
-              outline: 'none',
-              cursor: 'pointer',
-              boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)'
-            }}
           >
             <option value="all">Tất cả trạng thái</option>
             <option value="Approved">Đã duyệt</option>
@@ -277,30 +231,23 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
             <option value="Rejected">Từ chối</option>
           </select>
 
+          {(searchTerm || transactionFilter !== 'all' || propertyTypeFilter !== 'all' || statusFilter !== 'all') && (
+            <button className="property-list-reset" onClick={() => {
+              setSearchTerm('');
+              setTransactionFilter('all');
+              setPropertyTypeFilter('all');
+              setStatusFilter('all');
+            }}><X size={14} /> Xóa bộ lọc</button>
+          )}
           {/* Bulk Delete Button */}
           {selectedIds.length > 0 && (
             <button
+              className="admin-table-btn-danger"
               onClick={() => setIsBulkDeleteOpen(true)}
-              style={{ 
-                height: 36,
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '0.35rem', 
-                background: '#fef2f2', 
-                color: '#b91c1c', 
-                border: '1px solid #fda4af', 
-                padding: '0 0.85rem', 
-                borderRadius: 8, 
-                fontWeight: 600, 
-                fontSize: '0.8rem', 
-                cursor: 'pointer',
-                transition: 'all 0.15s ease'
-              }}
             >
               <Trash2 size={14} /> Xóa ({selectedIds.length})
             </button>
           )}
-        </div>
       </div>
 
       {/* 2. Main Data Table */}
@@ -314,22 +261,22 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
         <div>
           {/* Scrollable Container with Sticky Table Header */}
           <div style={{ maxHeight: 'calc(100vh - 380px)', overflowY: 'auto', overflowX: 'auto' }}>
-            <table className="property-management-table" style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, textAlign: 'left', fontSize: '0.85rem' }}>
+            <table className="admin-unified-table">
               <thead>
-                <tr style={{ background: '#f8fafc', color: '#475467', position: 'sticky', top: 0, zIndex: 10, borderBottom: '1px solid #eaecf0' }}>
-                  <th style={{ padding: '0.75rem 1.25rem', width: '44px', background: '#f8fafc' }}>
+                <tr>
+                  <th style={{ width: '46px', textAlign: 'center' }}>
                     <input
                       type="checkbox"
                       checked={selectedIds.length === currentProperties.length && currentProperties.length > 0}
                       onChange={handleSelectAll}
-                      style={{ cursor: 'pointer', accentColor: '#0f766e', width: 16, height: 16 }}
+                      style={{ cursor: 'pointer', accentColor: '#0f766e', width: 16, height: 16, verticalAlign: 'middle' }}
                     />
                   </th>
-                  <th style={{ padding: '0.75rem 1.25rem', fontWeight: 600, background: '#f8fafc', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Bất động sản</th>
-                  <th style={{ padding: '0.75rem 1.25rem', fontWeight: 600, background: '#f8fafc', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phân loại</th>
-                  <th style={{ padding: '0.75rem 1.25rem', fontWeight: 600, background: '#f8fafc', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Môi giới</th>
-                  <th style={{ padding: '0.75rem 1.25rem', fontWeight: 600, background: '#f8fafc', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Trạng thái</th>
-                  <th style={{ padding: '0.75rem 1.25rem', fontWeight: 600, background: '#f8fafc', textAlign: 'right', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Thao tác</th>
+                  <th>Bất động sản</th>
+                  <th style={{ width: '150px', textAlign: 'center' }}>Phân loại</th>
+                  <th style={{ width: '180px' }}>Môi giới</th>
+                  <th style={{ width: '130px', textAlign: 'center' }}>Trạng thái</th>
+                  <th style={{ textAlign: 'center', width: '90px' }}>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
@@ -373,20 +320,14 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
                         </div>
                       </td>
                       <td style={{ padding: '0.85rem 1.25rem' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                          <span style={{ 
-                            display: 'inline-flex',
-                            width: 'fit-content',
-                            padding: '2px 8px',
-                            borderRadius: 6,
-                            fontWeight: 600, 
-                            fontSize: '0.75rem',
+                        <div className="property-classification">
+                          <span className="property-transaction-pill" style={{
                             background: p.transactionType === 'sale' ? '#eff8ff' : '#f9f5ff',
                             color: p.transactionType === 'sale' ? '#175cd3' : '#6941c6'
                           }}>
                             {p.transactionType === 'sale' ? 'Bán' : 'Cho thuê'}
                           </span>
-                          <span style={{ fontSize: '0.75rem', color: '#667085' }}>{getPropertyTypeName(p.propertyType)}</span>
+                          <span className="property-type-label">{getPropertyTypeName(p.propertyType)}</span>
                         </div>
                       </td>
                       <td style={{ padding: '0.85rem 1.25rem' }}>
@@ -398,7 +339,7 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
                         </div>
                       </td>
                       <td style={{ padding: '0.85rem 1.25rem' }}>
-                        <span style={{ 
+                        <span className="admin-status-pill" style={{ 
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '5px',
@@ -416,46 +357,127 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
                           {isApproved ? 'Đã duyệt' : isPending ? 'Chờ duyệt' : 'Từ chối'}
                         </span>
                       </td>
-                      <td style={{ padding: '0.85rem 1.25rem', textAlign: 'right' }}>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.4rem' }}>
+                      <td style={{ padding: '0.85rem 1.25rem', textAlign: 'center', position: 'relative' }}>
+                        <div className="action-dropdown-wrapper" style={{ display: 'inline-block', position: 'relative', textAlign: 'left' }}>
                           <button 
-                            onClick={() => setEditingProperty(p)} 
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenActionId(openActionId === p.id ? null : p.id);
+                            }}
+                            title="Thao tác"
+                            aria-label="Thao tác"
                             style={{ 
-                              padding: '5px 10px', 
-                              background: '#ffffff', 
-                              color: '#175cd3', 
+                              width: 32,
+                              height: 32,
+                              padding: 0,
+                              background: openActionId === p.id ? '#f1f5f9' : '#ffffff', 
+                              color: openActionId === p.id ? '#0f766e' : '#475467', 
                               border: '1px solid #d0d5dd', 
-                              borderRadius: 6, 
-                              fontWeight: 600, 
-                              fontSize: '0.78rem', 
+                              borderRadius: 8, 
                               cursor: 'pointer',
-                              display: 'flex',
+                              display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '4px',
-                              boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)'
+                              justifyContent: 'center',
+                              boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)',
+                              transition: 'all 0.15s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              if (openActionId !== p.id) {
+                                e.currentTarget.style.background = '#f8fafc';
+                                e.currentTarget.style.borderColor = '#98a2b3';
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (openActionId !== p.id) {
+                                e.currentTarget.style.background = '#ffffff';
+                                e.currentTarget.style.borderColor = '#d0d5dd';
+                              }
                             }}
                           >
-                            <Edit3 size={13} /> Sửa
+                            <MoreVertical size={16} />
                           </button>
-                          <button 
-                            onClick={() => handleDeleteProperty(p.id)} 
-                            style={{ 
-                              padding: '5px 10px', 
-                              background: '#ffffff', 
-                              color: '#b42318', 
-                              border: '1px solid #fda4af', 
-                              borderRadius: 6, 
-                              fontWeight: 600, 
-                              fontSize: '0.78rem', 
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '4px',
-                              boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)'
-                            }}
-                          >
-                            <Trash2 size={13} /> Xóa
-                          </button>
+
+                          {openActionId === p.id && (
+                            <div 
+                              style={{ 
+                                position: 'absolute',
+                                right: 0,
+                                ...(idx >= currentProperties.length - 2 && currentProperties.length > 3
+                                  ? { bottom: '100%', marginBottom: 6 }
+                                  : { top: '100%', marginTop: 6 }),
+                                width: 160,
+                                background: '#ffffff',
+                                border: '1px solid #eaecf0',
+                                borderRadius: 10,
+                                boxShadow: '0 12px 24px -4px rgba(16, 24, 40, 0.14), 0 4px 6px -2px rgba(16, 24, 40, 0.05)',
+                                padding: '4px',
+                                zIndex: 100,
+                                animation: 'fadeIn 0.12s ease'
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setOpenActionId(null);
+                                  setEditingProperty(p);
+                                }}
+                                style={{
+                                  width: '100%',
+                                  padding: '8px 10px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                  background: 'transparent',
+                                  border: 'none',
+                                  borderRadius: 6,
+                                  color: '#344054',
+                                  fontSize: '0.82rem',
+                                  fontWeight: 500,
+                                  cursor: 'pointer',
+                                  textAlign: 'left',
+                                  transition: 'background 0.12s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = '#f2f4f7'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                              >
+                                <Edit3 size={14} color="#175cd3" />
+                                <span>Chỉnh sửa</span>
+                              </button>
+
+                              <div style={{ height: 1, background: '#f2f4f7', margin: '4px 0' }} />
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setOpenActionId(null);
+                                  handleDeleteProperty(p.id);
+                                }}
+                                style={{
+                                  width: '100%',
+                                  padding: '8px 10px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                  background: 'transparent',
+                                  border: 'none',
+                                  borderRadius: 6,
+                                  color: '#d92d20',
+                                  fontSize: '0.82rem',
+                                  fontWeight: 500,
+                                  cursor: 'pointer',
+                                  textAlign: 'left',
+                                  transition: 'background 0.12s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = '#fef3f2'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                              >
+                                <Trash2 size={14} color="#d92d20" />
+                                <span>Xóa tin đăng</span>
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -465,124 +487,37 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
             </table>
           </div>
 
-          {/* 3. Integrated Footer Pagination Bar (Strict Single Line) */}
-          <div className="property-management-pagination" style={{ 
-            padding: '0.85rem 1.25rem', 
-            background: '#ffffff', 
-            borderTop: '1px solid #eaecf0', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justify: 'space-between', 
-            fontSize: '0.85rem', 
-            color: '#475467',
-            whiteSpace: 'nowrap'
-          }}>
-            {/* Left Info Summary */}
+          <div className="property-management-pagination compact-pagination">
             <div className="property-management-pagination-summary">
-              <span className="pagination-label">Đang hiển thị</span> <strong style={{ color: '#101828' }}>{filteredProperties.length > 0 ? startIndex + 1 : 0}–{endIndex}</strong> <span className="pagination-label">trên tổng số</span> <strong style={{ color: '#101828' }}>{filteredProperties.length}</strong> <span className="pagination-label">tin đăng</span>
+              <strong>{startIndex + 1}–{endIndex}</strong> / {filteredProperties.length} tin
             </div>
-
-            {/* Right Controls Container */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', whiteSpace: 'nowrap' }}>
-              {/* Items Per Page Dropdown */}
-              <div className="property-management-page-size" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ fontSize: '0.8rem', color: '#667085' }}>Mỗi trang</span>
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  style={{ 
-                    height: 32,
-                    padding: '0 0.6rem', 
-                    borderRadius: 6, 
-                    border: '1px solid #d0d5dd', 
-                    background: '#ffffff', 
-                    fontSize: '0.8rem', 
-                    color: '#344054', 
-                    fontWeight: 600, 
-                    outline: 'none', 
-                    cursor: 'pointer',
-                    boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)'
-                  }}
-                >
-                  <option value={10}>10 tin / trang</option>
-                  <option value={15}>15 tin / trang</option>
-                  <option value={20}>20 tin / trang</option>
-                  <option value={50}>50 tin / trang</option>
+            <div className="compact-pagination-controls">
+              <label className="property-management-page-size compact-page-size">
+                <select aria-label="Số tin mỗi trang" value={pageSize} onChange={e => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}>
+                  {[10, 15, 20, 50].map(size => <option key={size} value={size}>{size} / trang</option>)}
                 </select>
-              </div>
-
-              {/* Action Buttons */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <button
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  style={{ 
-                    height: 32,
-                    padding: '0 0.75rem', 
-                    borderRadius: 6, 
-                    border: '1px solid #d0d5dd', 
-                    background: currentPage === 1 ? '#f8fafc' : '#ffffff', 
-                    color: currentPage === 1 ? '#d0d5dd' : '#344054', 
-                    fontWeight: 600, 
-                    cursor: currentPage === 1 ? 'not-allowed' : 'pointer', 
-                    fontSize: '0.8rem', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '4px',
-                    boxShadow: currentPage === 1 ? 'none' : '0 1px 2px rgba(16, 24, 40, 0.05)' 
-                  }}
-                >
-                  <ChevronLeft size={15} /> Trang trước
+              </label>
+              <nav className="compact-pagination-pages" aria-label="Phân trang tin đăng">
+                <button aria-label="Trang trước" title="Trang trước" disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}>
+                  <ChevronLeft size={16} />
                 </button>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', margin: '0 0.2rem' }}>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      style={{ 
-                        width: 32, 
-                        height: 32, 
-                        borderRadius: 6, 
-                        border: page === currentPage ? 'none' : '1px solid #d0d5dd', 
-                        background: page === currentPage ? '#0f766e' : '#ffffff', 
-                        color: page === currentPage ? '#ffffff' : '#344054', 
-                        fontWeight: page === currentPage ? 700 : 600, 
-                        fontSize: '0.8rem', 
-                        cursor: 'pointer',
-                        boxShadow: page === currentPage ? '0 2px 4px rgba(15, 118, 110, 0.25)' : 'none' 
-                      }}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                  style={{ 
-                    height: 32,
-                    padding: '0 0.75rem', 
-                    borderRadius: 6, 
-                    border: '1px solid #d0d5dd', 
-                    background: currentPage === totalPages ? '#f8fafc' : '#ffffff', 
-                    color: currentPage === totalPages ? '#d0d5dd' : '#344054', 
-                    fontWeight: 600, 
-                    cursor: currentPage === totalPages ? 'not-allowed' : 'pointer', 
-                    fontSize: '0.8rem', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '4px',
-                    boxShadow: currentPage === totalPages ? 'none' : '0 1px 2px rgba(16, 24, 40, 0.05)'
-                  }}
-                >
-                  Trang sau <ChevronRight size={15} />
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(page => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1)
+                  .flatMap((page, index, pages) => [
+                    ...(index > 0 && page - pages[index - 1] > 1
+                      ? [<span key={`gap-${page}`} className="compact-pagination-gap">…</span>] : []),
+                    <button key={page} aria-label={`Trang ${page}`} aria-current={page === currentPage ? 'page' : undefined}
+                      onClick={() => setCurrentPage(page)}>{page}</button>
+                  ])}
+                <button aria-label="Trang sau" title="Trang sau" disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}>
+                  <ChevronRight size={16} />
                 </button>
-              </div>
+              </nav>
             </div>
           </div>
         </div>

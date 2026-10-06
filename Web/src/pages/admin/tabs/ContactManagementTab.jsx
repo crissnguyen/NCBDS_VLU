@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Mail, MessageSquare, Send, CheckCircle, Clock, User, Phone, Search, Check, AlertCircle, X, Plus, Edit, Trash2, Calendar, FileText, Download } from 'lucide-react';
+import { Mail, MessageSquare, Send, CheckCircle, Clock, User, Phone, Search, Check, AlertCircle, X, Plus, Edit, Trash2, Calendar, FileText, Download, MoreVertical } from 'lucide-react';
 import { dataService } from '../../../services/data/dataService';
 
 export default function ContactManagementTab({ toast }) {
@@ -13,6 +13,17 @@ export default function ContactManagementTab({ toast }) {
   const [replyText, setReplyText] = useState('');
   const [replySubject, setReplySubject] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
+  const [openActionId, setOpenActionId] = useState(null);
+
+  useEffect(() => {
+    const handleDocClick = (e) => {
+      if (!e.target.closest('.contact-action-dropdown-wrapper')) {
+        setOpenActionId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleDocClick);
+    return () => document.removeEventListener('mousedown', handleDocClick);
+  }, []);
 
   const [isAddEditModalOpen, setIsAddEditModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
@@ -275,116 +286,75 @@ export default function ContactManagementTab({ toast }) {
   });
 
   return (
-    <div style={{ animation: 'fadeInScale 0.3s ease-out' }}>
-
-      {/* Top action bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
-        <div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Quản lý ý kiến & liên hệ</h2>
-          <p style={{ color: '#64748b', fontSize: '0.875rem', marginTop: '0.25rem' }}>Quản lý, thêm, sửa, xóa thông tin liên hệ và gửi email phản hồi trực tiếp cho khách hàng.</p>
+    <>
+      <div className="admin-table-card admin-filter-table-card contact-list-card">
+        {/* Unified Table Header Toolbar */}
+      <div className="admin-table-header-toolbar">
+        <div className="admin-table-header-left">
+          <div className="admin-table-header-icon">
+            <MessageSquare size={20} />
+          </div>
+          <div className="admin-table-header-info">
+            <div className="admin-table-header-title-row">
+              <h2 className="admin-table-header-title">Quản lý liên hệ</h2>
+              <span className="admin-table-count-badge">{filteredContacts.length} liên hệ</span>
+            </div>
+            <p className="admin-table-header-subtitle">Tiếp nhận và xử lý yêu cầu tư vấn từ khách hàng</p>
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+
+        <div className="admin-table-header-right admin-table-actions">
+          {/* Export Excel Button */}
+          <button 
+            className="admin-table-btn-secondary"
+            onClick={handleExportExcel}
+          >
+            <Download size={15} /> Xuất Excel
+          </button>
+
+          {/* Bulk Delete */}
           {selectedIds.length > 0 && (
-            <button
+            <button 
+              className="admin-table-btn-danger"
               onClick={() => setIsBulkDeleteOpen(true)}
-              style={{
-                border: 'none',
-                background: '#fee2e2',
-                color: '#ef4444',
-                fontWeight: 700,
-                fontSize: '0.875rem',
-                padding: '0.65rem 1.25rem',
-                borderRadius: 10,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.1)',
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = '#fecaca'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = '#fee2e2'; }}
             >
-              <Trash2 size={17} /> Xóa hàng loạt ({selectedIds.length})
+              <Trash2 size={14} /> Xóa ({selectedIds.length})
             </button>
           )}
-          <button
-            onClick={handleExportExcel}
-            style={{
-              border: '1px solid #cbd5e1',
-              background: 'white',
-              color: '#475569',
-              fontWeight: 700,
-              fontSize: '0.875rem',
-              padding: '0.65rem 1.25rem',
-              borderRadius: 10,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#f8fafc'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; }}
-          >
-            <Download size={17} /> Xuất Excel
-          </button>
-          <button
+
+          {/* Add Contact Button */}
+          <button 
+            className="admin-table-btn-primary"
             onClick={handleOpenAddModal}
-            style={{
-              border: 'none',
-              background: 'linear-gradient(135deg, #0f766e, #0891b2)',
-              color: 'white',
-              fontWeight: 700,
-              fontSize: '0.875rem',
-              padding: '0.65rem 1.25rem',
-              borderRadius: 10,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              boxShadow: '0 4px 14px rgba(15, 118, 110, 0.25)'
-            }}
           >
-            <Plus size={18} /> Thêm liên hệ
+            <Plus size={15} /> Thêm liên hệ
           </button>
         </div>
       </div>
-
-      {/* Filter and search */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', background: 'white', padding: '1.25rem', borderRadius: 16, border: '1px solid #e2e8f0', marginBottom: '1.5rem' }}>
-        <div style={{ display: 'flex', gap: '0.5rem', background: '#f1f5f9', padding: 4, borderRadius: 10 }}>
-          <button
-            onClick={() => setFilter('all')}
-            style={{ border: 'none', background: filter === 'all' ? 'white' : 'transparent', color: filter === 'all' ? '#0f766e' : '#64748b', fontWeight: 600, fontSize: '0.85rem', padding: '0.45rem 1rem', borderRadius: 8, cursor: 'pointer', boxShadow: filter === 'all' ? '0 1px 3px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}
+      <div className="admin-table-filters">
+        <div className="admin-table-search-input">
+            <Search size={15} color="#667085" />
+            <input 
+              type="text" 
+              aria-label="Tìm kiếm"
+              placeholder="Tìm tên, email, SĐT..." 
+              value={searchQuery} 
+              onChange={e => setSearchQuery(e.target.value)} 
+            />
+            {searchQuery && (
+              <button aria-label="Xóa tìm kiếm" onClick={() => setSearchQuery('')} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#98a2b3', fontSize: '0.8rem', padding: 0 }}>✕</button>
+            )}
+          </div>
+        <select 
+            className="admin-table-select"
+            aria-label="Trạng thái liên hệ"
+            value={filter}
+            onChange={e => setFilter(e.target.value)}
           >
-            Tất cả
-          </button>
-          <button
-            onClick={() => setFilter('Pending')}
-            style={{ border: 'none', background: filter === 'Pending' ? 'white' : 'transparent', color: filter === 'Pending' ? '#b45309' : '#64748b', fontWeight: 600, fontSize: '0.85rem', padding: '0.45rem 1rem', borderRadius: 8, cursor: 'pointer', boxShadow: filter === 'Pending' ? '0 1px 3px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}
-          >
-            Chưa trả lời
-          </button>
-          <button
-            onClick={() => setFilter('Replied')}
-            style={{ border: 'none', background: filter === 'Replied' ? 'white' : 'transparent', color: filter === 'Replied' ? '#0f766e' : '#64748b', fontWeight: 600, fontSize: '0.85rem', padding: '0.45rem 1rem', borderRadius: 8, cursor: 'pointer', boxShadow: filter === 'Replied' ? '0 1px 3px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}
-          >
-            Đã trả lời
-          </button>
-        </div>
-
-        <div style={{ position: 'relative', width: '100%', maxWidth: 320 }}>
-          <Search size={18} color="#94a3b8" style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)' }} />
-          <input
-            type="text"
-            placeholder="Tìm theo tên, email, SĐT..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ width: '100%', padding: '0.55rem 1rem 0.55rem 2.5rem', borderRadius: 10, border: '1px solid #cbd5e1', outline: 'none', fontSize: '0.875rem', transition: 'all 0.2s' }}
-          />
-        </div>
+            <option value="all">Tất cả trạng thái</option>
+            <option value="Pending">Chờ trả lời</option>
+            <option value="Replied">Đã trả lời</option>
+          </select>
       </div>
 
       {/* Main List view table */}
@@ -393,113 +363,227 @@ export default function ContactManagementTab({ toast }) {
           <div style={{ width: 32, height: 32, border: '3px solid #e2e8f0', borderTopColor: '#0f766e', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
         </div>
       ) : filteredContacts.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '4rem 2rem', background: 'white', borderRadius: 20, border: '1px solid #e2e8f0' }}>
-          <MessageSquare size={48} color="#cbd5e1" style={{ marginBottom: '1rem' }} />
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#475569', margin: '0 0 0.5rem' }}>Không tìm thấy liên hệ nào</h3>
-          <p style={{ color: '#94a3b8', fontSize: '0.875rem', margin: 0 }}>Hệ thống chưa nhận được thông tin liên hệ nào trùng khớp.</p>
+        <div style={{ textAlign: 'center', padding: '3.5rem 1.5rem', background: 'white' }}>
+          <MessageSquare size={36} color="#cbd5e1" style={{ marginBottom: '0.5rem' }} />
+          <div style={{ fontWeight: 600, color: '#101828' }}>Không tìm thấy liên hệ nào</div>
+          <div style={{ fontSize: '0.8rem', color: '#667085', marginTop: 2 }}>Hệ thống chưa nhận được thông tin liên hệ nào trùng khớp.</div>
         </div>
       ) : (
-        <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e2e8f0', overflow: 'hidden', boxShadow: '0 4px 20px rgba(15,23,42,0.02)' }}>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
-              <thead>
-                <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', color: '#475569', fontWeight: 700 }}>
-                  <th style={{ padding: '1rem 1.5rem', width: '50px' }}>
+        <div className="responsive-table-wrapper" style={{ overflowX: 'auto' }}>
+          <table className="admin-unified-table">
+            <thead>
+              <tr>
+                <th style={{ width: '46px', textAlign: 'center' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={selectedIds.length === filteredContacts.length && filteredContacts.length > 0} 
+                    onChange={handleSelectAll} 
+                    style={{ cursor: 'pointer', width: 16, height: 16, verticalAlign: 'middle', accentColor: '#0f766e' }} 
+                  />
+                </th>
+                <th>Khách hàng</th>
+                <th>Nội dung yêu cầu</th>
+                <th style={{ width: '130px', textAlign: 'center' }}>Trạng thái</th>
+                <th style={{ width: '150px' }}>Thời gian nhận</th>
+                <th style={{ width: '90px', textAlign: 'center' }}>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredContacts.map((contact, idx) => (
+                <tr key={contact.id} style={{ background: selectedIds.includes(contact.id) ? '#f0fdfa' : 'transparent' }} className="table-row-hover">
+                  <td style={{ textAlign: 'center', width: '46px' }}>
                     <input 
                       type="checkbox" 
-                      checked={selectedIds.length === filteredContacts.length && filteredContacts.length > 0} 
-                      onChange={handleSelectAll} 
-                      style={{ cursor: 'pointer', width: 16, height: 16, verticalAlign: 'middle' }} 
+                      checked={selectedIds.includes(contact.id)} 
+                      onChange={() => handleSelectRow(contact.id)} 
+                      style={{ cursor: 'pointer', width: 16, height: 16, verticalAlign: 'middle', accentColor: '#0f766e' }} 
                     />
-                  </th>
-                  <th style={{ padding: '1rem 1.5rem' }}>Khách hàng</th>
-                  <th style={{ padding: '1rem 1.5rem' }}>Nội dung yêu cầu</th>
-                  <th style={{ padding: '1rem 1.5rem', width: '140px' }}>Trạng thái</th>
-                  <th style={{ padding: '1rem 1.5rem', width: '170px' }}>Thời gian nhận</th>
-                  <th style={{ padding: '1rem 1.5rem', width: '150px', textAlign: 'right' }}>Hành động</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredContacts.map(contact => (
-                  <tr key={contact.id} style={{ borderBottom: '1px solid #e2e8f0', transition: 'background 0.2s', background: selectedIds.includes(contact.id) ? '#f0fdfa' : 'transparent' }} className="table-row-hover">
-                    <td style={{ padding: '1rem 1.5rem' }}>
-                      <input 
-                        type="checkbox" 
-                        checked={selectedIds.includes(contact.id)} 
-                        onChange={() => handleSelectRow(contact.id)} 
-                        style={{ cursor: 'pointer', width: 16, height: 16, verticalAlign: 'middle' }} 
-                      />
-                    </td>
+                  </td>
                     {/* Customer Info */}
-                    <td style={{ padding: '1rem 1.5rem' }}>
+                    <td>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-                        <strong style={{ color: '#0f172a', fontSize: '0.92rem' }}>{contact.name}</strong>
-                        <span style={{ color: '#64748b', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <strong style={{ color: '#0f172a', fontSize: '0.88rem' }}>{contact.name}</strong>
+                        <span style={{ color: '#64748b', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <Phone size={12} /> {contact.phone}
                         </span>
-                        <span style={{ color: '#64748b', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span style={{ color: '#64748b', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <Mail size={12} /> {contact.email}
                         </span>
                       </div>
                     </td>
                     {/* Subject & Message */}
-                    <td style={{ padding: '1rem 1.5rem', maxWidth: '350px' }}>
+                    <td style={{ maxWidth: '340px' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#0f766e', textTransform: 'uppercase' }}>{contact.subject}</span>
-                        <p style={{ margin: 0, color: '#334155', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} title={contact.message}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f766e' }}>{contact.subject}</span>
+                        <p style={{ margin: 0, color: '#334155', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', fontSize: '0.8rem' }} title={contact.message}>
                           "{contact.message}"
                         </p>
                         {contact.status === 'Replied' && contact.replyText && (
-                          <div style={{ fontSize: '0.8rem', color: '#475569', fontStyle: 'italic', marginTop: '0.2rem', padding: '4px 8px', background: '#f0fdfa', borderRadius: 6, display: 'inline-block' }}>
+                          <div style={{ fontSize: '0.76rem', color: '#475569', fontStyle: 'italic', marginTop: '0.2rem', padding: '3px 7px', background: '#f0fdfa', borderRadius: 6, display: 'inline-block' }}>
                             <strong>Phản hồi:</strong> {contact.replyText}
                           </div>
                         )}
                       </div>
                     </td>
                     {/* Status Badge */}
-                    <td style={{ padding: '1rem 1.5rem' }}>
+                    <td style={{ textAlign: 'center' }}>
                       {contact.status === 'Replied' ? (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', fontWeight: 700, color: '#0f766e', background: '#d8f3ef', padding: '0.25rem 0.55rem', borderRadius: 999, whiteSpace: 'nowrap' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.74rem', fontWeight: 600, color: '#027a48', background: '#ecfdf5', border: '1px solid #a6f4c5', padding: '2px 8px', borderRadius: 999, whiteSpace: 'nowrap' }}>
                           <Check size={12} /> Đã trả lời
                         </span>
                       ) : (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.75rem', fontWeight: 700, color: '#b45309', background: '#fef3c7', padding: '0.25rem 0.55rem', borderRadius: 999, whiteSpace: 'nowrap' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.74rem', fontWeight: 600, color: '#b54708', background: '#fffaeb', border: '1px solid #fedf89', padding: '2px 8px', borderRadius: 999, whiteSpace: 'nowrap' }}>
                           <AlertCircle size={12} /> Chờ trả lời
                         </span>
                       )}
                     </td>
                     {/* Time */}
-                    <td style={{ padding: '1rem 1.5rem', color: '#64748b' }}>
+                    <td style={{ color: '#64748b' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.8rem' }}>
                         <Calendar size={13} /> {formatDate(contact.createdAt)}
                       </span>
                     </td>
                     {/* Actions */}
-                    <td style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>
-                      <div style={{ display: 'flex', gap: '0.55rem', justifyContent: 'flex-end', alignItems: 'center' }}>
-                        {contact.status === 'Pending' && (
-                          <button
-                            onClick={() => handleOpenReply(contact)}
-                            title="Phản hồi Email"
-                            style={{ border: 'none', background: '#d8f3ef', color: '#0f766e', width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}
+                    <td style={{ textAlign: 'center', position: 'relative' }}>
+                      <div className="contact-action-dropdown-wrapper" style={{ display: 'inline-block', position: 'relative', textAlign: 'left' }}>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenActionId(openActionId === contact.id ? null : contact.id);
+                          }}
+                          title="Hành động"
+                          aria-label="Hành động"
+                          style={{
+                            width: 32,
+                            height: 32,
+                            borderRadius: 8,
+                            border: '1px solid #d0d5dd',
+                            background: openActionId === contact.id ? '#f1f5f9' : 'white',
+                            color: openActionId === contact.id ? '#0f766e' : '#475467',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s ease',
+                            boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)'
+                          }}
+                          onMouseEnter={e => { if (openActionId !== contact.id) e.currentTarget.style.background = '#f8fafc'; }}
+                          onMouseLeave={e => { if (openActionId !== contact.id) e.currentTarget.style.background = 'white'; }}
+                        >
+                          <MoreVertical size={16} />
+                        </button>
+
+                        {openActionId === contact.id && (
+                          <div
+                            style={{
+                              position: 'absolute',
+                              right: 0,
+                              ...(idx >= filteredContacts.length - 2 && filteredContacts.length > 3
+                                ? { bottom: '100%', marginBottom: 6 }
+                                : { top: '100%', marginTop: 6 }),
+                              width: 175,
+                              background: '#ffffff',
+                              border: '1px solid #eaecf0',
+                              borderRadius: 10,
+                              boxShadow: '0 12px 24px -4px rgba(16, 24, 40, 0.14), 0 4px 6px -2px rgba(16, 24, 40, 0.05)',
+                              padding: '4px',
+                              zIndex: 100
+                            }}
+                            onClick={(e) => e.stopPropagation()}
                           >
-                            <Send size={14} />
-                          </button>
+                            {contact.status === 'Pending' && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setOpenActionId(null);
+                                  handleOpenReply(contact);
+                                }}
+                                style={{
+                                  width: '100%',
+                                  padding: '8px 10px',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                  background: 'transparent',
+                                  border: 'none',
+                                  borderRadius: 6,
+                                  color: '#0f766e',
+                                  fontSize: '0.82rem',
+                                  fontWeight: 500,
+                                  cursor: 'pointer',
+                                  textAlign: 'left',
+                                  transition: 'background 0.12s'
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.background = '#f0fdfa'}
+                                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                              >
+                                <Send size={14} color="#0f766e" />
+                                <span>Phản hồi Email</span>
+                              </button>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOpenActionId(null);
+                                handleOpenEditModal(contact);
+                              }}
+                              style={{
+                                width: '100%',
+                                padding: '8px 10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                background: 'transparent',
+                                border: 'none',
+                                borderRadius: 6,
+                                color: '#344054',
+                                fontSize: '0.82rem',
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                transition: 'background 0.12s'
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.background = '#f2f4f7'}
+                              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                            >
+                              <Edit size={14} color="#175cd3" />
+                              <span>Sửa thông tin</span>
+                            </button>
+
+                            <div style={{ height: 1, background: '#f2f4f7', margin: '4px 0' }} />
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setOpenActionId(null);
+                                handleDeleteContact(contact.id, contact.name);
+                              }}
+                              style={{
+                                width: '100%',
+                                padding: '8px 10px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                background: 'transparent',
+                                border: 'none',
+                                borderRadius: 6,
+                                color: '#d92d20',
+                                fontSize: '0.82rem',
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                transition: 'background 0.12s'
+                              }}
+                              onMouseEnter={(e) => e.currentTarget.style.background = '#fef3f2'}
+                              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                            >
+                              <Trash2 size={14} color="#d92d20" />
+                              <span>Xóa liên hệ</span>
+                            </button>
+                          </div>
                         )}
-                        <button
-                          onClick={() => handleOpenEditModal(contact)}
-                          title="Sửa thông tin"
-                          style={{ border: 'none', background: '#f1f5f9', color: '#475569', width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}
-                        >
-                          <Edit size={14} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteContact(contact.id, contact.name)}
-                          title="Xóa liên hệ"
-                          style={{ border: 'none', background: '#fee2e2', color: '#ef4444', width: 32, height: 32, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}
-                        >
-                          <Trash2 size={14} />
-                        </button>
                       </div>
                     </td>
                   </tr>
@@ -507,8 +591,8 @@ export default function ContactManagementTab({ toast }) {
               </tbody>
             </table>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Reply Modal */}
       {selectedContact && (
@@ -536,7 +620,7 @@ export default function ContactManagementTab({ toast }) {
 
               {/* Original Query details */}
               <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: 12, border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', marginBottom: '0.35rem' }}>Yêu cầu gốc của khách hàng:</div>
+                <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#64748b', marginBottom: '0.35rem' }}>Yêu cầu gốc của khách hàng:</div>
                 <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: 1.4, whiteSpace: 'pre-line' }}>"{selectedContact.message}"</p>
               </div>
 
@@ -863,6 +947,6 @@ export default function ContactManagementTab({ toast }) {
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
 
-    </div>
+    </>
   );
 }
