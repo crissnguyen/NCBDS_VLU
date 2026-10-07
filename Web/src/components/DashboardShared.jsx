@@ -164,7 +164,7 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
     setScoreError('');
     setScoreResult(null);
     const snapshot = scoreSnapshot;
-    const timeout = setTimeout(() => controller.abort(), 35000);
+    const timeout = setTimeout(() => controller.abort(), 45000);
     try {
       const response = await fetch(apiUrl('ai/score-listing'), {
         method: 'POST', headers: { 'Content-Type': 'application/json' },

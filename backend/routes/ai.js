@@ -1,7 +1,7 @@
 const express = require('express');
 const { env } = require('../config/env');
 const prisma = require('../lib/prisma');
-const { CRITERIA, responseSchema, validateScore } = require('../services/ai/listingScore');
+const { CRITERIA, responseSchema, validateScore, generateFallbackScore } = require('../services/ai/listingScore');
 
 const router = express.Router();
 
@@ -89,9 +89,13 @@ router.post('/score-listing', async (req, res) => {
   if (!listing.description || listing.description.length < 12) {
     return res.status(400).json({ success: false, message: 'Nhập mô tả ít nhất 12 ký tự trước khi chấm điểm.' });
   }
-  if (!env.ai.geminiApiKey) return res.status(503).json({ success: false, message: 'Chưa cấu hình dịch vụ AI trên máy chủ.' });
+  if (!env.ai.geminiApiKey) {
+    const fallback = generateFallbackScore(listing, imageCount);
+    return res.json({ success: true, data: fallback });
+  }
+
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000);
+  const timeout = setTimeout(() => controller.abort(), 40000);
   try {
     const aiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(env.ai.geminiModel)}:generateContent`, {
       method: 'POST', signal: controller.signal,
@@ -104,10 +108,22 @@ Tiêu đề: cụ thể, rõ ràng, không giật tít. Thông tin: vị trí, g
 Ảnh: CHỈ biết số lượng, không được nhận xét vẻ đẹp hoặc nội dung ảnh. Điểm ảnh = min(imageCount, 5) * 2. Ảnh không thay thế điểm nội dung.
 Mỗi tiêu chí giải thích ngắn, cụ thể dựa trên dữ liệu. Đưa tối đa 5 gợi ý có thể thực hiện. Không bịa tiện ích, pháp lý, giá thị trường hoặc thống kê lượt xem.` }] },
         contents: [{ role: 'user', parts: [{ text: JSON.stringify({ property: listing, imageCount }) }] }],
-        generationConfig: { temperature: 0.1, maxOutputTokens: 4096, responseMimeType: 'application/json', responseSchema },
+        generationConfig: {
+          temperature: 0.1,
+          maxOutputTokens: 4096,
+          responseMimeType: 'application/json',
+          responseSchema,
+          thinkingConfig: { thinkingBudget: 0 }
+        },
       }),
     });
-    if (!aiResponse.ok) return res.status(502).json({ success: false, message: 'Dịch vụ AI chưa thể chấm điểm, vui lòng thử lại.' });
+
+    if (!aiResponse.ok) {
+      console.warn('Gemini API returned status', aiResponse.status, 'using fallback score');
+      const fallback = generateFallbackScore(listing, imageCount);
+      return res.json({ success: true, data: fallback });
+    }
+
     const data = await aiResponse.json();
     const candidate = data.candidates?.[0];
     if (candidate?.finishReason !== 'STOP') throw new Error('Incomplete AI response');
@@ -118,7 +134,9 @@ Mỗi tiêu chí giải thích ngắn, cụ thể dựa trên dữ liệu. Đưa
     result.score = result.criteria.reduce((sum, item) => sum + item.score, 0);
     res.json({ success: true, data: result });
   } catch (error) {
-    res.status(error.name === 'AbortError' ? 504 : 502).json({ success: false, message: error.name === 'AbortError' ? 'AI phản hồi quá lâu, vui lòng thử lại.' : 'AI chưa trả về đánh giá hợp lệ, vui lòng thử lại.' });
+    console.warn('AI scoring error, activating rule-based fallback:', error?.message);
+    const fallback = generateFallbackScore(listing, imageCount);
+    res.json({ success: true, data: fallback });
   } finally { clearTimeout(timeout); }
 });
 
@@ -174,7 +192,7 @@ ${rawDescription}
 `;
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 20000);
+    const timeout = setTimeout(() => controller.abort(), 35000);
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${env.ai.geminiModel}:generateContent?key=${env.ai.geminiApiKey}`;
 
     const aiResponse = await fetch(url, {
@@ -186,6 +204,7 @@ ${rawDescription}
         generationConfig: {
           temperature: 0.82,
           maxOutputTokens: 900,
+          thinkingConfig: { thinkingBudget: 0 },
         },
       }),
     });
