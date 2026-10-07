@@ -7,6 +7,7 @@ export const CONFIG = {
   LOCAL_KEYS: {
     NEWS: 'local_news_db',
     PROPERTIES: 'local_properties_db',
-    CONTACTS: 'local_contacts_db'
+    CONTACTS: 'local_contacts_db',
+    LEADS: 'local_leads_db'
   }
 };

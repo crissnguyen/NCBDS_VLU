@@ -5,7 +5,7 @@ import { apiUrl } from '../../../services/api';
 const items = [
   { key: 'emailNotifications', title: 'Thông báo email tự động', desc: 'Gửi email khi có tin đăng mới hoặc cần phê duyệt', icon: Mail },
   { key: 'autoApproveHighPerformingSales', title: 'Phê duyệt tự động (Sale hiệu suất cao)', desc: 'Tự động duyệt tin từ Sale có hiệu suất > 90%', icon: ShieldCheck },
-  { key: 'aiPriceAnalysis', title: 'AI Copilot phân tích giá', desc: 'Gợi ý giá thị trường hợp lý dựa trên AI', icon: Sparkles },
+  { key: 'aiPriceAnalysis', title: 'AI phân tích giá', desc: 'Gợi ý giá thị trường hợp lý dựa trên AI', icon: Sparkles },
   { key: 'maintenanceMode', title: 'Chế độ bảo trì', desc: 'Tạm thời ẩn website khỏi người dùng thông thường', icon: Wrench },
 ];
 

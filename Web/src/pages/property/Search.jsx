@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Building2, CheckCircle2, Filter, Map as MapIcon, Search as SearchIcon, SlidersHorizontal, Sparkles } from 'lucide-react';
+import { Building2, CheckCircle2, Filter, Map as MapIcon, Search as SearchIcon, SlidersHorizontal, Sparkles, ChevronDown, TrendingUp, Database, Target } from 'lucide-react';
 import PropertyCard from '../../components/PropertyCard';
 import { Field } from '../../components/ui';
 import { apiUrl, mediaUrl } from '../../services/api';
 import { dataService } from '../../services/data/dataService';
+import { enrichAndSortProperties } from '../../utils/aiScoring';
 
 export default function Search({ setCurrentPage }) {
   const [allProperties, setAllProperties] = useState([]);
@@ -45,12 +46,10 @@ export default function Search({ setCurrentPage }) {
   useEffect(() => {
     dataService.getProperties()
       .then(data => {
-        // Filter only approved ones (assuming 'status' field exists and represents approval state)
-        // Adjust condition based on your actual backend schema
         const approved = Array.isArray(data) ? data.filter(p => p.status === 'Approved') : [];
-        setAllProperties(approved);
-        // Ban đầu hiển thị theo tab mặc định 'project' (không lọc transactionType)
-        setProperties(approved);
+        const sorted = enrichAndSortProperties(approved);
+        setAllProperties(sorted);
+        setProperties(sorted);
         setLoading(false);
       })
       .catch(err => {
@@ -142,9 +141,9 @@ export default function Search({ setCurrentPage }) {
     if (sortOverride === 'priceAsc') {
       filtered.sort((a, b) => parsePriceToMillion(a.price) - parsePriceToMillion(b.price));
     } else if (sortOverride === 'trust') {
-      filtered.sort((a, b) => (b.trustScore || 90) - (a.trustScore || 90));
+      filtered.sort((a, b) => (b.trustScore || 0) - (a.trustScore || 0));
     } else if (sortOverride === 'match') {
-      filtered.sort((a, b) => (b.aiScore || 85) - (a.aiScore || 85));
+      filtered.sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0));
     }
 
     setProperties(filtered);
@@ -301,11 +300,24 @@ export default function Search({ setCurrentPage }) {
           </div>
 
           <div className="property-grid search-results-grid">
-            {marketData && <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: '0.75rem', background: 'linear-gradient(135deg,#0f2a44,#0f766e)', color: 'white', borderRadius: 16, padding: '1rem 1.15rem', marginBottom: '0.25rem' }}>
-              <div><small style={{ opacity: .7 }}>AI phân tích thị trường</small><strong style={{ display: 'block', fontSize: '1.25rem' }}>{marketData.averagePriceMillion || 0} triệu</strong><span style={{ fontSize: '.75rem', opacity: .8 }}>Giá trung bình/tin</span></div>
-              <div><small style={{ opacity: .7 }}>Dữ liệu tham chiếu</small><strong style={{ display: 'block', fontSize: '1.25rem' }}>{marketData.sampleSize}</strong><span style={{ fontSize: '.75rem', opacity: .8 }}>tin đã duyệt</span></div>
-              <div><small style={{ opacity: .7 }}>Đề xuất nổi bật</small><strong style={{ display: 'block', fontSize: '1.25rem' }}>{recommendations[0]?.recommendationScore || '—'}/100</strong><span style={{ fontSize: '.75rem', opacity: .8 }}>điểm phù hợp cao nhất</span></div>
-            </div>}
+            {marketData && <details className="market-insight">
+              <summary>
+                <span className="market-insight-icon"><Sparkles size={18} /></span>
+                <span className="market-insight-title"><strong>Góc nhìn thị trường</strong><small>Tham khảo số liệu và đề xuất từ AI</small></span>
+                <span className="market-insight-toggle">Xem phân tích<ChevronDown size={16} /></span>
+              </summary>
+              <div className="market-insight-body">
+                <div className="market-insight-stats">
+                  <div><span className="market-stat-icon"><TrendingUp size={18} /></span><div><small>Giá trung bình / tin</small><strong>{marketData.sampleSize > 0 ? `${new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 1 }).format(marketData.averagePriceMillion)} triệu` : 'Chưa có dữ liệu'}</strong></div></div>
+                  <div><span className="market-stat-icon"><Database size={18} /></span><div><small>Dữ liệu tham chiếu</small><strong>{marketData.sampleSize} <span>tin đã duyệt</span></strong></div></div>
+                  <div><span className="market-stat-icon"><Target size={18} /></span><div><small>Điểm đề xuất cao nhất</small><strong>{recommendations[0] ? `${recommendations[0].recommendationScore}/100` : 'Chưa có đề xuất'}</strong></div></div>
+                </div>
+                {recommendations[0] && <button className="market-insight-featured" onClick={() => setCurrentPage(`property_detail_${recommendations[0].id}`)}>
+                  <span>Đề xuất nổi bật</span><strong>{recommendations[0].title}</strong><span>Xem tin →</span>
+                </button>}
+                {marketData.methodology && <p className="market-insight-note">{marketData.methodology}</p>}
+              </div>
+            </details>}
             {loading ? (
               <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1', color: '#64748b' }}>
                 Đang tải danh sách bất động sản...
@@ -338,8 +350,8 @@ export default function Search({ setCurrentPage }) {
                       area={property.area || 0}
                       type={typeMap[property.propertyType] || 'BĐS'}
                       intent={intentMap[property.transactionType] || 'Khác'}
-                      match={property.aiScore || 85}
-                      trust={property.trustScore || 90}
+                      match={property.aiScore}
+                      trust={property.trustScore}
                       badge={property.isFeatured ? "Tin VIP" : null}
                     />
                   </div>

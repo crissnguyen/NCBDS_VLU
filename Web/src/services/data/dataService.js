@@ -1,5 +1,6 @@
 import { CONFIG } from './config';
 import { localStore } from './localStore';
+import { enrichAndSortProperties } from '../../utils/aiScoring';
 
 const fileToBase64 = (file) => new Promise((resolve, reject) => {
   if (!file || !(file instanceof File)) {
@@ -95,31 +96,37 @@ export const dataService = {
 
   // --- BẤT ĐỘNG SẢN (PROPERTIES) ---
   getProperties: async ({ authorId, refresh } = {}) => {
+    let list = [];
     if (dataService.isLocalMode()) {
-      let list = localStore.get(CONFIG.LOCAL_KEYS.PROPERTIES);
+      list = localStore.get(CONFIG.LOCAL_KEYS.PROPERTIES);
       if (authorId) {
         const ownItems = list.filter(item => item.authorId === authorId);
         list = ownItems.length > 0 ? ownItems : list;
       }
-      return list;
+    } else {
+      const params = new URLSearchParams();
+      if (authorId) params.set('authorId', authorId);
+      if (refresh) params.set('refresh', refresh);
+      const query = params.toString() ? `?${params.toString()}` : '';
+      const res = await fetch(`${CONFIG.API_BASE}/properties${query}`, { cache: 'no-store' });
+      list = await res.json();
     }
-
-    const params = new URLSearchParams();
-    if (authorId) params.set('authorId', authorId);
-    if (refresh) params.set('refresh', refresh);
-    const query = params.toString() ? `?${params.toString()}` : '';
-    const res = await fetch(`${CONFIG.API_BASE}/properties${query}`, { cache: 'no-store' });
-    return await res.json();
+    return enrichAndSortProperties(Array.isArray(list) ? list : []);
   },
 
   getProperty: async (id) => {
+    let item = null;
     if (dataService.isLocalMode()) {
-      const item = localStore.get(CONFIG.LOCAL_KEYS.PROPERTIES).find(property => property.id === id);
-      return item || null;
+      item = localStore.get(CONFIG.LOCAL_KEYS.PROPERTIES).find(property => property.id === id) || null;
+    } else {
+      const res = await fetch(`${CONFIG.API_BASE}/properties/${id}`);
+      item = await res.json();
     }
-
-    const res = await fetch(`${CONFIG.API_BASE}/properties/${id}`);
-    return await res.json();
+    if (item && typeof item === 'object') {
+      const [enriched] = enrichAndSortProperties([item]);
+      return enriched || item;
+    }
+    return item;
   },
 
   createProperty: async (formData) => {
@@ -351,5 +358,30 @@ export const dataService = {
       body: JSON.stringify({ ids })
     });
     return await res.json();
+  },
+
+  // --- KHÁCH HÀNG TIỀM NĂNG & VIP (LEADS CRM) ---
+  getLeads: async () => {
+    return { success: true, data: localStore.get(CONFIG.LOCAL_KEYS.LEADS) };
+  },
+
+  createLead: async (leadData) => {
+    const created = localStore.insert(CONFIG.LOCAL_KEYS.LEADS, leadData);
+    return { success: true, data: created };
+  },
+
+  updateLead: async (id, leadData) => {
+    const updated = localStore.update(CONFIG.LOCAL_KEYS.LEADS, id, leadData);
+    return { success: true, data: updated };
+  },
+
+  deleteLead: async (id) => {
+    localStore.delete(CONFIG.LOCAL_KEYS.LEADS, id);
+    return { success: true };
+  },
+
+  bulkDeleteLeads: async (ids) => {
+    ids.forEach(id => localStore.delete(CONFIG.LOCAL_KEYS.LEADS, id));
+    return { success: true };
   }
 };

@@ -9,23 +9,23 @@ const statusLabel = { Active: 'Hoạt động', Locked: 'Đã khóa' };
 
 const roleConfig = {
   admin: {
-    bg: '#fff1f2',
-    color: '#be123c',
-    dotColor: '#e11d48',
-    borderColor: '#fecdd3',
+    bg: '#ffffff',
+    color: '#0f172a',
+    dotColor: '#0f766e',
+    borderColor: '#e2e8f0',
     label: 'Quản trị viên'
   },
   sale: {
-    bg: '#eff6ff',
-    color: '#1d4ed8',
+    bg: '#ffffff',
+    color: '#334155',
     dotColor: '#2563eb',
-    borderColor: '#bfdbfe',
+    borderColor: '#e2e8f0',
     label: 'Môi giới (Sale)'
   },
   user: {
-    bg: '#f8fafc',
-    color: '#475569',
-    dotColor: '#64748b',
+    bg: '#ffffff',
+    color: '#64748b',
+    dotColor: '#94a3b8',
     borderColor: '#e2e8f0',
     label: 'Khách hàng'
   }
@@ -134,13 +134,14 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                           width: 32, 
                           height: 32, 
                           borderRadius: '50%', 
-                          background: `hsl(${(user.name.charCodeAt(0)*17)%360},60%,42%)`, 
+                          background: '#f1f5f9', 
                           display: 'flex', 
                           alignItems: 'center', 
                           justifyContent: 'center', 
-                          color: 'white', 
+                          color: '#0f2a44', 
                           fontWeight: 700, 
                           fontSize: '0.8rem', 
+                          border: '1px solid #e2e8f0',
                           flexShrink: 0 
                         }}>
                           {user.name.charAt(0).toUpperCase()}
@@ -152,13 +153,13 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                       </div>
                     </td>
 
-                    {/* Sleek Pill Badge Role Select */}
+                    {/* Sleek Minimalist Role Select */}
                     <td style={{ padding: '0.75rem 1rem', textAlign: 'left' }}>
                       <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
-                        {/* Dot indicator */}
+                        {/* Subtle Dot indicator */}
                         <span style={{
                           position: 'absolute',
-                          left: '9px',
+                          left: '10px',
                           width: 6,
                           height: 6,
                           borderRadius: '50%',
@@ -174,28 +175,31 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                           style={{ 
                             display: 'inline-flex',
                             alignItems: 'center',
-                            padding: '3px 22px 3px 21px', 
-                            borderRadius: '16px', 
+                            padding: '4px 26px 4px 22px', 
+                            borderRadius: '8px', 
                             border: `1px solid ${role.borderColor}`, 
                             background: role.bg, 
                             color: role.color, 
-                            fontSize: '0.74rem', 
-                            fontWeight: 700, 
+                            fontSize: '0.76rem', 
+                            fontWeight: 600, 
                             outline: 'none', 
                             cursor: isDisabledRole ? 'not-allowed' : 'pointer',
-                            opacity: isDisabledRole ? 0.75 : 1,
+                            opacity: isDisabledRole ? 0.65 : 1,
+                            boxShadow: '0 1px 2px rgba(15, 23, 42, 0.04)',
                             transition: 'all 0.15s ease',
                             WebkitAppearance: 'none',
                             MozAppearance: 'none',
                             appearance: 'none',
-                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23${role.color.replace('#','')}' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
                             backgroundRepeat: 'no-repeat',
-                            backgroundPosition: 'right 0.5rem center'
+                            backgroundPosition: 'right 0.55rem center'
                           }}
+                          onMouseEnter={e => { if (!isDisabledRole) { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.background = '#f8fafc'; } }}
+                          onMouseLeave={e => { if (!isDisabledRole) { e.currentTarget.style.borderColor = role.borderColor; e.currentTarget.style.background = role.bg; } }}
                         >
-                          <option value="user" style={{ background: 'white', color: '#334155', fontWeight: 500 }}>Khách hàng</option>
-                          <option value="sale" style={{ background: 'white', color: '#0369a1', fontWeight: 600 }}>Môi giới (Sale)</option>
-                          <option value="admin" style={{ background: 'white', color: '#991b1b', fontWeight: 700 }}>Quản trị viên</option>
+                          <option value="user" style={{ background: 'white', color: '#334155' }}>Khách hàng</option>
+                          <option value="sale" style={{ background: 'white', color: '#334155' }}>Môi giới (Sale)</option>
+                          <option value="admin" style={{ background: 'white', color: '#0f172a' }}>Quản trị viên</option>
                         </select>
                       </div>
                     </td>

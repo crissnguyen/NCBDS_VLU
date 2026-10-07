@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin, Bed, Bath, Maximize, ShieldCheck, Sparkles, Phone, MessageCircle, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { mediaUrl } from '../../services/api';
 import { dataService } from '../../services/data/dataService';
+import { evaluateProperty } from '../../utils/aiScoring';
 
 export default function PropertyDetail({ id, setCurrentPage }) {
   const [property, setProperty] = useState(null);
@@ -15,7 +16,21 @@ export default function PropertyDetail({ id, setCurrentPage }) {
 
     dataService.getProperty(id)
       .then(data => {
-        setProperty(data);
+        if (data) {
+          if (typeof data.aiScore !== 'number') {
+            const evalData = evaluateProperty(data);
+            setProperty({
+              ...data,
+              aiScore: evalData.aiScore,
+              trustScore: evalData.trustScore,
+              scoreCriteria: evalData.scoreCriteria,
+              scoreSummary: evalData.scoreSummary,
+              scoreSuggestions: evalData.scoreSuggestions,
+            });
+          } else {
+            setProperty(data);
+          }
+        }
         setLoading(false);
       })
       .catch(err => {
@@ -44,7 +59,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
   }
 
   const images = property.images && property.images.length > 0 
-    ? property.images.map(img => mediaUrl(img))
+    ? property.images.map(img => mediaUrl(img.url || img))
     : ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80'];
 
   const openLightbox = (idx) => {
@@ -117,16 +132,16 @@ export default function PropertyDetail({ id, setCurrentPage }) {
   const transDisplay = property.transactionType === 'sale' ? 'Bán' : 'Cho thuê';
 
   return (
-    <main style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '4rem' }}>
+    <main className="property-detail-page" style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '4rem' }}>
       {/* Custom Responsive Styles for Property Detail Page */}
       <style>{`
         .detail-banner-container {
           width: 100%; 
-          height: 50vh; 
-          border-radius: 24px; 
+          height: clamp(320px, 34vw, 480px); 
+          border-radius: 20px; 
           overflow: hidden; 
           position: relative; 
-          box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+          box-shadow: 0 8px 24px rgba(16,42,67,0.06);
           transition: height 0.3s;
         }
         .detail-banner-content {
@@ -141,9 +156,9 @@ export default function PropertyDetail({ id, setCurrentPage }) {
         }
         .detail-grid-layout {
           display: grid; 
-          grid-template-columns: 2.5fr 1fr; 
-          gap: 2rem; 
-          margin-top: 2rem;
+          grid-template-columns: minmax(0, 1fr) 360px; 
+          gap: 24px;
+          margin-top: 24px;
         }
         .detail-header-row {
           display: flex; 
@@ -153,22 +168,22 @@ export default function PropertyDetail({ id, setCurrentPage }) {
         }
         .detail-title-h1 {
           margin: 0 0 1rem 0; 
-          font-size: 2rem; 
-          fontWeight: 800; 
+          font-size: clamp(1.15rem, 1.35vw, 1.5rem); 
+          font-weight: 700; 
           color: #0f2a44; 
           line-height: 1.3;
           transition: font-size 0.2s;
         }
         .detail-price-text {
-          font-size: 2.25rem; 
+          font-size: 1.6rem; 
           font-weight: 800; 
           color: #0f766e; 
           line-height: 1;
         }
         .detail-specs-row {
           display: flex; 
-          gap: 2rem; 
-          margin-top: 2rem; 
+          gap: 24px;
+          margin-top: 24px; 
           padding-top: 2rem; 
           border-top: 1px solid #f1f5f9;
         }
@@ -176,9 +191,9 @@ export default function PropertyDetail({ id, setCurrentPage }) {
           position: sticky; 
           top: 7rem; 
           background: white; 
-          border-radius: 24px; 
-          padding: 2rem; 
-          box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+          border-radius: 20px; 
+          padding: 24px; 
+          box-shadow: 0 8px 24px rgba(16,42,67,0.06); 
           border: 1px solid #e2e8f0;
         }
 
@@ -218,10 +233,10 @@ export default function PropertyDetail({ id, setCurrentPage }) {
             text-align: left !important;
           }
           .detail-title-h1 {
-            font-size: 1.45rem;
+            font-size: 1.2rem;
           }
           .detail-price-text {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
           }
           .detail-specs-row {
             flex-direction: column;
@@ -233,7 +248,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
       `}</style>
 
       {/* Nút Quay Lại */}
-      <div className="container" style={{ paddingTop: '6rem', paddingBottom: '1rem' }}>
+      <div className="container" style={{ paddingTop: '1rem', paddingBottom: '0.65rem' }}>
         <button 
           onClick={() => setCurrentPage('search')} 
           style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', border: 'none', background: 'transparent', color: '#64748b', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer', padding: '0.5rem 0' }}
@@ -246,17 +261,25 @@ export default function PropertyDetail({ id, setCurrentPage }) {
       <div className="container">
         <div className="detail-banner-container">
           {renderImages()}
+          <button className="detail-gallery-button" onClick={() => openLightbox(0)}>
+            <Maximize size={15} /> Xem {images.length} ảnh
+          </button>
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,42,68,0.8) 0%, transparent 50%)', pointerEvents: 'none' }} />
           <div className="detail-banner-content">
             <div style={{ display: 'flex', gap: '0.75rem' }}>
               <span style={{ background: '#0f766e', color: 'white', padding: '0.4rem 1rem', borderRadius: 99, fontSize: '0.8rem', fontWeight: 700 }}>{transDisplay}</span>
               <span style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', color: 'white', padding: '0.4rem 1rem', borderRadius: 99, fontSize: '0.8rem', fontWeight: 600, border: '1px solid rgba(255,255,255,0.3)' }}>{typeDisplay}</span>
+              {typeof property.aiScore === 'number' && (
+                <div style={{ background: 'linear-gradient(135deg, #0f766e, #14b8a6)', color: 'white', padding: '0.45rem 1rem', borderRadius: 99, display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 700, fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(15,118,110,0.3)' }}>
+                  <Sparkles size={16} /> AI đánh giá: {property.aiScore}/100
+                </div>
+              )}
+              {typeof property.trustScore === 'number' && (
+                <div style={{ background: '#2563eb', color: 'white', padding: '0.45rem 1rem', borderRadius: 99, display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 700, fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(37,99,235,0.3)' }}>
+                  <ShieldCheck size={16} /> Độ uy tín: {property.trustScore}/100
+                </div>
+              )}
             </div>
-            {(property.trustScore || 90) >= 80 && (
-              <div style={{ background: '#2563eb', color: 'white', padding: '0.5rem 1rem', borderRadius: 12, display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.9rem', boxShadow: '0 4px 12px rgba(37,99,235,0.3)' }}>
-                <ShieldCheck size={18} /> Điểm uy tín: {property.trustScore || 90}/100
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -264,19 +287,19 @@ export default function PropertyDetail({ id, setCurrentPage }) {
       {/* Nội dung chi tiết */}
       <div className="container detail-grid-layout">
         {/* Cột trái */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div className="detail-main-column">
           
-          <div style={{ background: 'white', borderRadius: 24, padding: '2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid #e2e8f0' }}>
+          <section className="detail-section-card">
             <div className="detail-header-row">
               <div>
                 <h1 className="detail-title-h1">{property.title}</h1>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#64748b', fontSize: '0.85rem' }}>
                   <MapPin size={18} color="#0f766e" /> {property.location}
                 </div>
               </div>
-              <div style={{ textAlign: 'right' }}>
+              <div className="detail-price-block">
                 <div className="detail-price-text">{property.price}</div>
-                <div style={{ color: '#64748b', fontSize: '0.9rem', marginTop: '0.5rem' }}>Đã xác minh giá AI</div>
+                <div style={{ color: '#64748b', fontSize: '0.75rem', marginTop: '0.35rem' }}>Giá niêm yết</div>
               </div>
             </div>
 
@@ -294,16 +317,18 @@ export default function PropertyDetail({ id, setCurrentPage }) {
                 <div><div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>Diện tích</div><div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>{property.area || '-'} m²</div></div>
               </div>
             </div>
-          </div>
+          </section>
 
-          <div style={{ background: 'white', borderRadius: 24, padding: '2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', border: '1px solid #e2e8f0' }}>
+          <section className="detail-section-card">
             <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: 800, color: '#0f2a44', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Sparkles size={20} color="#0f766e" /> Mô tả chi tiết
             </h2>
             <div style={{ color: '#475569', lineHeight: 1.8, fontSize: '0.95rem', whiteSpace: 'pre-wrap' }}>
               {property.description}
             </div>
-          </div>
+          </section>
+
+
 
         </div>
 
@@ -332,7 +357,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
                 <ShieldCheck size={20} color="#0f766e" style={{ flexShrink: 0, marginTop: 2 }} />
                 <div style={{ fontSize: '0.85rem', color: '#475569', lineHeight: 1.5 }}>
                   <strong style={{ color: '#0f172a', display: 'block', marginBottom: '0.2rem' }}>Tin đăng đã được kiểm duyệt</strong>
-                  Thông tin và giá bán đã được AI phân tích và đối chiếu với dữ liệu thị trường.
+                  Liên hệ người đăng để xác nhận thông tin, pháp lý và giá trước khi giao dịch.
                 </div>
               </div>
             </div>

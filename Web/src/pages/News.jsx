@@ -37,7 +37,7 @@ export default function News() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f6f9fc', paddingBottom: '5rem', fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: '#f6f9fc', paddingBottom: '5rem' }}>
       <section style={{
         position: 'relative',
         background: `url("${fallbackImage}") center/cover no-repeat`,
@@ -47,10 +47,10 @@ export default function News() {
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(120deg, rgba(8,29,46,0.9), rgba(15,118,110,0.78))' }} />
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 1180, margin: '0 auto', display: 'grid', gridTemplateColumns: 'minmax(0, 1.1fr) 360px', gap: '2rem', alignItems: 'end' }}>
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', padding: '0.42rem 0.75rem', background: 'rgba(255,255,255,0.12)', color: '#dffcf6', borderRadius: 999, fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', border: '1px solid rgba(255,255,255,0.18)' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem', padding: '0.42rem 0.75rem', background: 'rgba(255,255,255,0.12)', color: '#dffcf6', borderRadius: 999, fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', border: '1px solid rgba(255,255,255,0.18)' }}>
               <Newspaper size={14} /> EstateAI Newsroom
             </span>
-            <h1 style={{ fontSize: 'clamp(2.1rem, 4vw, 3.45rem)', fontWeight: 900, margin: '1rem 0 1rem', color: '#ffffff', lineHeight: 1.08 }}>
+            <h1 style={{ fontSize: 'clamp(2rem, 3.4vw, 3.2rem)', fontWeight: 700, margin: '1rem 0 1rem', color: '#ffffff', lineHeight: 1.08 }}>
               Tin tức bất động sản và góc nhìn thị trường
             </h1>
             <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.84)', maxWidth: 680, margin: 0, lineHeight: 1.7 }}>
@@ -62,7 +62,7 @@ export default function News() {
             <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.72)', marginBottom: '0.35rem' }}>Đang theo dõi</div>
             <div style={{ display: 'grid', gap: '0.55rem' }}>
               {['Thị trường', 'Pháp lý', 'Quy hoạch'].map((item, i) => (
-                <div key={item} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.1)', borderRadius: 12, padding: '0.72rem 0.85rem', fontWeight: 800 }}>
+                <div key={item} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.1)', borderRadius: 12, padding: '0.72rem 0.85rem', fontWeight: 600 }}>
                   <span>{item}</span>
                   <span style={{ color: '#bff3e7' }}>{newsData.filter(n => n.category === item).length || i + 2}</span>
                 </div>
@@ -92,7 +92,7 @@ export default function News() {
           >
             <div style={{ minHeight: 340, position: 'relative', overflow: 'hidden' }}>
               <img src={featuredArticle.image || fallbackImage} alt={featuredArticle.title} style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
-              <span style={{ position: 'absolute', top: 18, left: 18, background: '#0f766e', color: 'white', padding: '0.42rem 0.75rem', borderRadius: 999, fontSize: '0.75rem', fontWeight: 800 }}>
+              <span style={{ position: 'absolute', top: 18, left: 18, background: '#0f766e', color: 'white', padding: '0.42rem 0.75rem', borderRadius: 999, fontSize: '0.75rem', fontWeight: 600 }}>
                 {featuredArticle.category}
               </span>
             </div>
@@ -102,9 +102,9 @@ export default function News() {
                 <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#cbd5e1' }} />
                 <span>{featuredArticle.sourceUrl ? 'Có URL nguồn' : 'Bài viết EstateAI'}</span>
               </div>
-              <h2 style={{ fontSize: 'clamp(1.55rem, 3vw, 2.3rem)', fontWeight: 900, color: '#0f172a', lineHeight: 1.2, margin: '0 0 1rem' }}>{featuredArticle.title}</h2>
+              <h2 style={{ fontSize: 'clamp(1.3rem, 2.2vw, 1.8rem)', fontWeight: 700, color: '#0f172a', lineHeight: 1.2, margin: '0 0 1rem' }}>{featuredArticle.title}</h2>
               <p style={{ color: '#475569', fontSize: '1rem', lineHeight: 1.7, margin: '0 0 1.5rem' }}>{featuredArticle.excerpt}</p>
-              <button type="button" style={{ alignSelf: 'flex-start', background: '#0f2a44', color: 'white', border: 'none', padding: '0.78rem 1.15rem', borderRadius: 10, fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '0.45rem', cursor: 'pointer' }}>
+              <button type="button" style={{ alignSelf: 'flex-start', background: 'transparent', color: '#0f766e', border: 'none', padding: '0.4rem 0', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.45rem', cursor: 'pointer' }}>
                 Đọc chi tiết <ArrowRight size={16} />
               </button>
             </div>
@@ -113,10 +113,10 @@ export default function News() {
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', margin: '3rem 0 1.4rem' }}>
           <div>
-            <div style={{ color: '#0f766e', fontSize: '0.78rem', fontWeight: 900, textTransform: 'uppercase', marginBottom: '0.35rem' }}>Cập nhật mới</div>
-            <h3 style={{ fontSize: '1.45rem', fontWeight: 900, color: '#0f172a', margin: 0 }}>Bài viết mới nhất</h3>
+            <div style={{ color: '#0f766e', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.35rem' }}>Cập nhật mới</div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>Bài viết mới nhất</h3>
           </div>
-          <button style={{ background: 'white', border: '1px solid #e2e8f0', color: '#0f766e', fontWeight: 800, padding: '0.6rem 0.85rem', borderRadius: 10, fontSize: '0.86rem', display: 'flex', alignItems: 'center', gap: '0.2rem', cursor: 'pointer' }}>
+          <button style={{ background: 'transparent', border: 'none', color: '#0f766e', fontWeight: 600, padding: '0.4rem 0', fontSize: '0.86rem', display: 'flex', alignItems: 'center', gap: '0.2rem', cursor: 'pointer' }}>
             Xem tất cả <ChevronRight size={16} />
           </button>
         </div>
@@ -134,15 +134,15 @@ export default function News() {
             >
               <div style={{ position: 'relative', height: 178, overflow: 'hidden' }}>
                 <img src={news.image || fallbackImage} alt={news.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                <div style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(255,255,255,0.95)', padding: '0.32rem 0.62rem', borderRadius: 999, fontSize: '0.72rem', fontWeight: 800, color: '#0f766e' }}>{news.category}</div>
+                <div style={{ position: 'absolute', top: 12, left: 12, background: 'rgba(255,255,255,0.95)', padding: '0.32rem 0.62rem', borderRadius: 999, fontSize: '0.72rem', fontWeight: 600, color: '#0f766e' }}>{news.category}</div>
               </div>
               <div style={{ padding: '1.15rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#94a3b8', fontSize: '0.76rem', fontWeight: 700, marginBottom: '0.65rem' }}>
                   <Clock size={12} /> {formatDate(news.createdAt)}
                 </div>
-                <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.02rem', fontWeight: 900, color: '#0f172a', lineHeight: 1.35 }}>{news.title}</h3>
+                <h3 style={{ margin: '0 0 0.65rem', fontSize: '1.02rem', fontWeight: 700, color: '#0f172a', lineHeight: 1.35 }}>{news.title}</h3>
                 <p style={{ color: '#64748b', fontSize: '0.88rem', lineHeight: 1.58, margin: '0 0 1rem', flex: 1 }}>{news.excerpt}</p>
-                <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '0.9rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#0f766e', fontWeight: 800, fontSize: '0.84rem' }}>
+                <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: '0.9rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#0f766e', fontWeight: 600, fontSize: '0.84rem' }}>
                   Đọc chi tiết
                   <ArrowRight size={15} />
                 </div>
@@ -163,7 +163,7 @@ export default function News() {
             <div style={{ position: 'relative', height: 310, overflow: 'hidden' }}>
               <img src={selectedArticle.image || fallbackImage} alt={selectedArticle.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               <button onClick={() => setSelectedArticle(null)} style={{ position: 'absolute', top: 16, right: 16, width: 38, height: 38, borderRadius: 12, border: '1px solid rgba(255,255,255,0.35)', background: 'rgba(15,23,42,0.58)', color: 'white', cursor: 'pointer' }}><X size={20} /></button>
-              <div style={{ position: 'absolute', left: 20, bottom: 20, background: '#0f766e', color: 'white', padding: '0.45rem 0.75rem', borderRadius: 999, fontSize: '0.78rem', fontWeight: 900 }}>{selectedArticle.category}</div>
+              <div style={{ position: 'absolute', left: 20, bottom: 20, background: '#0f766e', color: 'white', padding: '0.45rem 0.75rem', borderRadius: 999, fontSize: '0.78rem', fontWeight: 700 }}>{selectedArticle.category}</div>
             </div>
             <div style={{ padding: '2rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', color: '#64748b', fontSize: '0.84rem', fontWeight: 700, marginBottom: '1rem' }}>
@@ -171,13 +171,13 @@ export default function News() {
                 <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#cbd5e1' }} />
                 <span>Bởi {selectedArticle.author || 'Admin'}</span>
               </div>
-              <h2 style={{ margin: '0 0 1rem', color: '#0f172a', fontSize: 'clamp(1.55rem, 3vw, 2.35rem)', lineHeight: 1.22, fontWeight: 900 }}>{selectedArticle.title}</h2>
+              <h2 style={{ margin: '0 0 1rem', color: '#0f172a', fontSize: 'clamp(1.3rem, 2.2vw, 1.8rem)', lineHeight: 1.22, fontWeight: 700 }}>{selectedArticle.title}</h2>
               <p style={{ margin: '0 0 1.5rem', color: '#475569', fontSize: '1rem', lineHeight: 1.75, fontWeight: 600 }}>{selectedArticle.excerpt}</p>
               <div style={{ color: '#334155', fontSize: '0.98rem', lineHeight: 1.85, whiteSpace: 'pre-line' }}>
                 {selectedArticle.content || 'Bài viết này đang liên kết tới nguồn báo gốc. Bạn có thể mở liên kết bên dưới để đọc toàn bộ nội dung.'}
               </div>
               {selectedArticle.sourceUrl && (
-                <a href={selectedArticle.sourceUrl} target="_blank" rel="noreferrer" style={{ marginTop: '1.7rem', display: 'inline-flex', alignItems: 'center', gap: '0.45rem', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', textDecoration: 'none', padding: '0.82rem 1.1rem', borderRadius: 11, fontWeight: 900 }}>
+                <a href={selectedArticle.sourceUrl} target="_blank" rel="noreferrer" style={{ marginTop: '1.7rem', display: 'inline-flex', alignItems: 'center', gap: '0.45rem', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', textDecoration: 'none', padding: '0.82rem 1.1rem', borderRadius: 11, fontWeight: 700 }}>
                   Mở bài báo gốc <ExternalLink size={16} />
                 </a>
               )}

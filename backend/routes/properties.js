@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const prisma = require('../lib/prisma');
 const upload = require('../middleware/upload');
+const { evaluateProperty } = require('../services/ai/listingScore');
 
 /**
  * @swagger
@@ -80,11 +81,23 @@ router.get('/', async (req, res) => {
       orderBy: { createdAt: 'desc' }
     });
     
-    // Map PropertyImage objects back to array of base64 strings for frontend compatibility
-    const formatted = properties.map(p => ({
-      ...p,
-      images: p.images.map(img => img.url)
-    }));
+    // Map PropertyImage objects and compute AI score & trust score
+    const formatted = properties.map(p => {
+      const imgUrls = p.images.map(img => img.url);
+      const evalResult = evaluateProperty({ ...p, images: imgUrls });
+      return {
+        ...p,
+        images: imgUrls,
+        aiScore: evalResult.aiScore,
+        trustScore: evalResult.trustScore,
+        scoreCriteria: evalResult.scoreCriteria,
+        scoreSummary: evalResult.scoreSummary,
+        scoreSuggestions: evalResult.scoreSuggestions,
+      };
+    });
+
+    // Sắp xếp bài 80-100 điểm lên đầu, bài thấp điểm về sau
+    formatted.sort((a, b) => b.aiScore - a.aiScore);
     
     res.json(formatted);
   } catch (error) {
@@ -127,10 +140,17 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: "Không tìm thấy bất động sản" });
     }
     
-    // Format images to string array
+    // Format images and attach AI scores
+    const imgUrls = property.images.map(img => img.url);
+    const evalResult = evaluateProperty({ ...property, images: imgUrls });
     const formatted = {
       ...property,
-      images: property.images.map(img => img.url)
+      images: imgUrls,
+      aiScore: evalResult.aiScore,
+      trustScore: evalResult.trustScore,
+      scoreCriteria: evalResult.scoreCriteria,
+      scoreSummary: evalResult.scoreSummary,
+      scoreSuggestions: evalResult.scoreSuggestions,
     };
     
     res.json(formatted);

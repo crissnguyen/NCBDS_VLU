@@ -191,6 +191,123 @@ const INITIAL_CONTACTS = [
   }
 ];
 
+const INITIAL_LEADS = [
+  {
+    id: 'lead_1',
+    name: 'Đặng Hoàng Nam',
+    phone: '0988 123 456',
+    email: 'hoangnam.capital@gmail.com',
+    type: 'vip_buyer', // vip_buyer, vip_renter, high_visitor, hot_lead
+    totalPurchases: 4,
+    totalRentals: 1,
+    totalVisits: 168,
+    budget: '20 - 45 tỷ',
+    preferredType: 'Biệt thự, Căn hộ cao cấp',
+    preferredLocation: 'Nha Trang ven biển, TP.HCM',
+    leadScore: 96,
+    assignedSale: 'Nguyễn Duy Đức',
+    status: 'consulting', // hot, consulting, viewing, closed, nurturing
+    lastActive: '15 phút trước',
+    notes: 'Nhà đầu tư lớn, vừa chốt 1 căn biệt thự tháng trước, đang tìm thêm căn thứ 2 ven biển tài chính 30 tỷ.',
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: 'lead_2',
+    name: 'Lê Thị Bích Phượng',
+    phone: '0903 892 114',
+    email: 'phuong.le@vinasea.com',
+    type: 'vip_renter',
+    totalPurchases: 0,
+    totalRentals: 5,
+    totalVisits: 112,
+    budget: '35 - 70 triệu/tháng',
+    preferredType: 'Shophouse, Căn hộ 3PN',
+    preferredLocation: 'Bình Thạnh, TP.HCM & Cầu Giấy',
+    leadScore: 91,
+    assignedSale: 'Trần Hữu Phúc',
+    status: 'viewing',
+    lastActive: '2 giờ trước',
+    notes: 'Doanh nghiệp thuê dài hạn cho chuyên gia nước ngoài và văn phòng đại diện. Cần thuê thêm 2 căn trong tháng tới.',
+    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+  },
+  {
+    id: 'lead_3',
+    name: 'Vũ Minh Trí',
+    phone: '0918 776 230',
+    email: 'minhtri.tech@outlook.com',
+    type: 'high_visitor',
+    totalPurchases: 1,
+    totalRentals: 0,
+    totalVisits: 215,
+    budget: '3 - 6 tỷ',
+    preferredType: 'Đất nền thổ cư, Nhà phố',
+    preferredLocation: 'Cam Lâm, Khánh Hòa',
+    leadScore: 88,
+    assignedSale: 'Nguyễn Duy Đức',
+    status: 'hot',
+    lastActive: 'Hôm nay',
+    notes: 'Khách hàng truy cập website mỗi ngày (xem tin Đất nền Cam Lâm hơn 14 lần tuần này). Đã lưu 6 tin quan tâm.',
+    createdAt: new Date(Date.now() - 86400000 * 4).toISOString(),
+  },
+  {
+    id: 'lead_4',
+    name: 'Phạm Quang Khải',
+    phone: '0975 432 999',
+    email: 'khai.pham@vietreal.vn',
+    type: 'vip_buyer',
+    totalPurchases: 3,
+    totalRentals: 2,
+    totalVisits: 145,
+    budget: '15 - 30 tỷ',
+    preferredType: 'Shophouse thương mại',
+    preferredLocation: 'Thủ Đức, TP.HCM & Long Biên',
+    leadScore: 94,
+    assignedSale: 'Hoàng Anh Tuấn',
+    status: 'closed',
+    lastActive: 'Hôm qua',
+    notes: 'Nhà đầu tư chuyên săn shophouse khai thác dòng tiền cho thuê. Độ tin cậy và nguồn tài chính cực mạnh.',
+    createdAt: new Date(Date.now() - 86400000 * 6).toISOString(),
+  },
+  {
+    id: 'lead_5',
+    name: 'Trần Thanh Thảo',
+    phone: '0938 665 120',
+    email: 'thaotran.design@gmail.com',
+    type: 'high_visitor',
+    totalPurchases: 0,
+    totalRentals: 2,
+    totalVisits: 98,
+    budget: '15 - 25 triệu/tháng',
+    preferredType: 'Căn hộ 2PN Full nội thất',
+    preferredLocation: 'Quận Cầu Giấy, Hà Nội',
+    leadScore: 82,
+    assignedSale: 'Lê Thị Kim Ngân',
+    status: 'consulting',
+    lastActive: '3 ngày trước',
+    notes: 'Quan tâm dự án D\'Capitale và Masteri, thường xuyên so sánh giá thuê các dự án trung tâm.',
+    createdAt: new Date(Date.now() - 86400000 * 8).toISOString(),
+  },
+  {
+    id: 'lead_6',
+    name: 'Ngô Văn Hùng',
+    phone: '0909 332 118',
+    email: 'hung.ngo79@yahoo.com',
+    type: 'hot_lead',
+    totalPurchases: 0,
+    totalRentals: 0,
+    totalVisits: 54,
+    budget: '18 - 25 tỷ',
+    preferredType: 'Nhà phố liền kề',
+    preferredLocation: 'Sala Đại Quang Minh, TP.HCM',
+    leadScore: 85,
+    assignedSale: 'Nguyễn Duy Đức',
+    status: 'hot',
+    lastActive: '10 phút trước',
+    notes: 'Khách hàng tiềm năng mới gửi yêu cầu xem trực tiếp pháp lý căn Sala. Có tài chính sẵn sàng giải ngân nhanh.',
+    createdAt: new Date(Date.now() - 86400000 * 1).toISOString(),
+  }
+];
+
 export const localStore = {
   get: (key) => {
     try {
@@ -208,6 +325,10 @@ export const localStore = {
           localStore.set(key, INITIAL_CONTACTS);
           return INITIAL_CONTACTS;
         }
+        if (key === CONFIG.LOCAL_KEYS.LEADS) {
+          localStore.set(key, INITIAL_LEADS);
+          return INITIAL_LEADS;
+        }
         return [];
       }
       const parsed = JSON.parse(data);
@@ -222,6 +343,10 @@ export const localStore = {
       if (Array.isArray(parsed) && parsed.length === 0 && key === CONFIG.LOCAL_KEYS.CONTACTS) {
         localStore.set(key, INITIAL_CONTACTS);
         return INITIAL_CONTACTS;
+      }
+      if (Array.isArray(parsed) && parsed.length === 0 && key === CONFIG.LOCAL_KEYS.LEADS) {
+        localStore.set(key, INITIAL_LEADS);
+        return INITIAL_LEADS;
       }
       return parsed;
     } catch (e) {

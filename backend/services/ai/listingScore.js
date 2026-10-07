@@ -101,4 +101,23 @@ function generateFallbackScore(listing = {}, imageCount = 0) {
   };
 }
 
-module.exports = { CRITERIA, responseSchema, validateScore, generateFallbackScore };
+function evaluateProperty(property = {}) {
+  const images = property.images || [];
+  const imageCount = Array.isArray(images) ? images.length : 0;
+  const scoreData = generateFallbackScore(property, imageCount);
+  const aiScore = scoreData.score;
+  const trustScore = Math.min(99, Math.max(50, Math.round(
+    aiScore * 0.82 + (property.legalStatus ? 12 : 2) + (imageCount >= 3 ? 6 : 2)
+  )));
+
+  return {
+    aiScore,
+    trustScore,
+    scoreCriteria: scoreData.criteria,
+    scoreSummary: scoreData.summary,
+    scoreSuggestions: scoreData.suggestions,
+  };
+}
+
+module.exports = { CRITERIA, responseSchema, validateScore, generateFallbackScore, evaluateProperty };
+

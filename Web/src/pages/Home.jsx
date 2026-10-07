@@ -5,6 +5,7 @@ import PropertyCard from '../components/PropertyCard';
 import { SectionHeader } from '../components/ui';
 import { mediaUrl } from '../services/api';
 import { dataService } from '../services/data/dataService';
+import { enrichAndSortProperties } from '../utils/aiScoring';
 
 export default function Home({ setCurrentPage }) {
   const [featuredProperties, setFeaturedProperties] = useState([]);
@@ -13,9 +14,9 @@ export default function Home({ setCurrentPage }) {
     dataService.getProperties()
       .then(d => {
         if (Array.isArray(d)) {
-          // Lấy 6 tin mới nhất đã duyệt
           const approved = d.filter(p => p.status === 'Approved');
-          setFeaturedProperties(approved.slice(0, 6));
+          const sorted = enrichAndSortProperties(approved);
+          setFeaturedProperties(sorted.slice(0, 6));
         }
       })
       .catch(e => console.log(e));
@@ -88,7 +89,7 @@ export default function Home({ setCurrentPage }) {
           <SectionHeader
             eyebrow="AI đề xuất"
             title="Tin đáng xem hôm nay"
-            action={<button className="btn btn-ghost" onClick={() => setCurrentPage('search')}>Xem tất cả <ArrowRight size={16} style={{ marginLeft: 8 }} /></button>}
+            action={<button className="view-all-link" onClick={() => setCurrentPage('search')}>Xem tất cả <ArrowRight size={16} style={{ marginLeft: 8 }} /></button>}
           />
           <div className="marquee-wrapper">
             <div className="marquee-track">
@@ -100,7 +101,9 @@ export default function Home({ setCurrentPage }) {
                       ? mediaUrl(property.images[0])
                       : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80',
                     type: property.transactionType === 'sale' ? 'Bán' : 'Cho thuê',
-                    intent: property.propertyType === 'apartment' ? 'Căn hộ' : property.propertyType === 'house' ? 'Nhà phố' : 'Đất nền'
+                    intent: property.propertyType === 'apartment' ? 'Căn hộ' : property.propertyType === 'house' ? 'Nhà phố' : 'Đất nền',
+                    match: property.aiScore,
+                    trust: property.trustScore,
                   };
                   return (
                     <div className="marquee-item" key={`${property.id}-${index}`}>

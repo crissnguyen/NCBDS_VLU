@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { LayoutDashboard, Users, FileText, Settings, LogOut, User, Home, Check, PlusCircle, Image as ImageIcon, Bell, X, Menu, MessageSquare, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, Settings, LogOut, User, Home, Check, PlusCircle, Image as ImageIcon, Bell, X, Menu, MessageSquare, Sparkles, UserCheck } from 'lucide-react';
 import {
   AreaChart, Area, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
@@ -16,6 +16,7 @@ import AllPropertiesTab from './tabs/AllPropertiesTab';
 import SettingsTab from './tabs/SettingsTab';
 import NewsTab from './tabs/NewsTab';
 import ContactManagementTab from './tabs/ContactManagementTab';
+import PotentialCustomersTab from './tabs/PotentialCustomersTab';
 import AiModelTab from './tabs/AiModelTab';
 import { apiUrl } from '../../services/api';
 
@@ -172,10 +173,11 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     { icon: FileText, label: 'Phê duyệt tin', tab: 2, badge: pendingProperties.length },
     { icon: PlusCircle, label: 'Đăng tin mới', tab: 3 },
     { icon: FileText, label: 'Quản lý tin đăng', tab: 4 },
-    { icon: FileText, label: 'Quản lý tin tức', tab: 6 },
+    { icon: UserCheck, label: 'Khách tiềm năng & VIP', tab: 9 },
     { icon: MessageSquare, label: 'Ý kiến khách hàng', tab: 7 },
-    { icon: Settings, label: 'Cài đặt', tab: 5 },
+    { icon: FileText, label: 'Quản lý tin tức', tab: 6 },
     { icon: Sparkles, label: 'Mô hình AI', tab: 8 },
+    { icon: Settings, label: 'Cài đặt', tab: 5 },
   ];
 
   const navigationGroups = [
@@ -188,12 +190,16 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
       items: [navItems[2], navItems[3], navItems[4]]
     },
     {
-      title: "Khách hàng & Tin tức",
+      title: "Khách hàng & CRM",
       items: [navItems[5], navItems[6]]
     },
     {
-      title: "Cấu hình",
+      title: "Nội dung & AI",
       items: [navItems[7], navItems[8]]
+    },
+    {
+      title: "Cấu hình",
+      items: [navItems[9]]
     }
   ];
 
@@ -298,6 +304,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
           {activeTab === 4 && <AllPropertiesTab allProperties={allProperties} setEditingProperty={setEditingProperty} handleDeleteProperty={handleDeleteProperty} handleApproveProperty={handleApproveProperty} fetchData={fetchData} toast={toast} />}
           {activeTab === 6 && <NewsTab toast={toast} />}
           {activeTab === 7 && <ContactManagementTab toast={toast} />}
+          {activeTab === 9 && <PotentialCustomersTab toast={toast} />}
           {activeTab === 5 && <SettingsTab />}
           {activeTab === 8 && <AiModelTab />}
 </main>
