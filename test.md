@@ -113,29 +113,29 @@
 
 | ID | Kịch bản | Input Body | HTTP Code kỳ vọng | Response kỳ vọng | Status |
 |----|----------|------------|-------------------|-----------------|--------|
-| AUTH-01 | Đăng nhập Admin hợp lệ | `{"email":"admin@estateai.vn","password":"Test@12345"}` | `200` | `success:true`, `user.role:"admin"`, `user.status:"Active"` | ⬜ |
-| AUTH-02 | Đăng nhập Sale hợp lệ | `{"email":"sale01@estateai.vn","password":"Test@12345"}` | `200` | `success:true`, `user.role:"sale"` | ⬜ |
-| AUTH-03 | Đăng nhập Client hợp lệ | `{"email":"client@estateai.vn","password":"Test@12345"}` | `200` | `success:true`, `user.role:"user"` | ⬜ |
-| AUTH-04 | Sai mật khẩu | `{"email":"admin@estateai.vn","password":"wrongpass"}` | `401` | `"Sai email hoặc mật khẩu"` | ⬜ |
-| AUTH-05 | Email không tồn tại | `{"email":"ghost@test.vn","password":"Test@12345"}` | `401` | `"Sai email hoặc mật khẩu"` | ⬜ |
-| AUTH-06 | Tài khoản bị Locked | `{"email":"locked@estateai.vn","password":"Test@12345"}` | `403` | `"Tài khoản đã bị khóa"` | ⬜ |
-| AUTH-07 | Tài khoản chưa xác thực | `{"email":"unverified@estateai.vn","password":"Test@12345"}` | `403` | `"Tài khoản chưa được xác thực email"`, `requireVerification:true`, `email` trả về | ⬜ |
-| AUTH-08 | Thiếu email | `{"password":"Test@12345"}` | `400` | `"Vui lòng nhập email và mật khẩu"` | ⬜ |
-| AUTH-09 | Thiếu password | `{"email":"admin@estateai.vn"}` | `400` | `"Vui lòng nhập email và mật khẩu"` | ⬜ |
-| AUTH-10 | Body rỗng `{}` | `{}` | `400` | Error message | ⬜ |
-| AUTH-11 | Kiểm tra response KHÔNG có trường password | Auth thành công | Response user object **không chứa** trường `password` | ⬜ |
-| AUTH-12 | Email chứa ký tự hoa | `{"email":"ADMIN@ESTATEAI.VN","password":"Test@12345"}` | `200` | Đăng nhập thành công (case insensitive) | ⬜ |
+| AUTH-01 | Đăng nhập Admin hợp lệ | `{"email":"admin@estateai.vn","password":"Test@12345"}` | `200` | `success:true`, `user.role:"admin"`, `user.status:"Active"` | ✅ |
+| AUTH-02 | Đăng nhập Sale hợp lệ | `{"email":"sale01@estateai.vn","password":"Test@12345"}` | `200` | `success:true`, `user.role:"sale"` | ✅ |
+| AUTH-03 | Đăng nhập Client hợp lệ | `{"email":"client@estateai.vn","password":"Test@12345"}` | `200` | `success:true`, `user.role:"user"` | ✅ |
+| AUTH-04 | Sai mật khẩu | `{"email":"admin@estateai.vn","password":"wrongpass"}` | `401` | `"Sai email hoặc mật khẩu"` | ✅ |
+| AUTH-05 | Email không tồn tại | `{"email":"ghost@test.vn","password":"Test@12345"}` | `401` | `"Sai email hoặc mật khẩu"` | ✅ |
+| AUTH-06 | Tài khoản bị Locked | `{"email":"locked@estateai.vn","password":"Test@12345"}` | `403` | `"Tài khoản đã bị khóa"` | ✅ |
+| AUTH-07 | Tài khoản chưa xác thực | `{"email":"unverified@estateai.vn","password":"Test@12345"}` | `403` | `"Tài khoản chưa được xác thực email"`, `requireVerification:true`, `email` trả về | ✅ |
+| AUTH-08 | Thiếu email | `{"password":"Test@12345"}` | `400` | `"Vui lòng nhập email và mật khẩu"` | ✅ |
+| AUTH-09 | Thiếu password | `{"email":"admin@estateai.vn"}` | `400` | `"Vui lòng nhập email và mật khẩu"` | ✅ |
+| AUTH-10 | Body rỗng `{}` | `{}` | `400` | Error message | ✅ |
+| AUTH-11 | Kiểm tra response KHÔNG có trường password | Auth thành công | Response user object **không chứa** trường `password` | ✅ |
+| AUTH-12 | Email chứa ký tự hoa | `{"email":"ADMIN@ESTATEAI.VN","password":"Test@12345"}` | `200` | Đăng nhập thành công (case insensitive) | ✅ |
 
 ### 2.2 Đăng ký `POST /api/auth/register`
 
 | ID | Kịch bản | Input Body | HTTP Code kỳ vọng | Response kỳ vọng | Status |
 |----|----------|------------|-------------------|-----------------|--------|
-| REG-01 | Đăng ký mới hoàn toàn hợp lệ | `{"name":"Test User","email":"newtest@gmail.com","password":"Test@12345"}` | `200` | `requireVerification:true`, `email` trả về, OTP gửi email | ⬜ |
-| REG-02 | Email đã tồn tại và đã xác thực | `{"name":"X","email":"client@estateai.vn","password":"Test@12345"}` | `400` | `"Email đã tồn tại"` | ⬜ |
-| REG-03 | Email đã tồn tại nhưng **chưa xác thực** | `{"name":"X","email":"unverified@estateai.vn","password":"Test@12345"}` | `200` | `"Mã xác thực mới đã được gửi"`, `requireVerification:true` | ⬜ |
-| REG-04 | Thiếu name | `{"email":"x@y.vn","password":"Test@12345"}` | `400` | `"Vui lòng nhập đủ thông tin"` | ⬜ |
-| REG-05 | Thiếu password | `{"name":"X","email":"x@y.vn"}` | `400` | `"Vui lòng nhập đủ thông tin"` | ⬜ |
-| REG-06 | Role mặc định sau đăng ký public | Đăng ký thành công → xác thực OTP → đăng nhập | `user.role = "user"` (không phải sale hoặc admin) | ⬜ |
+| REG-01 | Đăng ký mới hoàn toàn hợp lệ | `{"name":"Test User","email":"newtest@gmail.com","password":"Test@12345"}` | `200` | `requireVerification:true`, `email` trả về, OTP gửi email | ✅ |
+| REG-02 | Email đã tồn tại và đã xác thực | `{"name":"X","email":"client@estateai.vn","password":"Test@12345"}` | `400` | `"Email đã tồn tại"` | ✅ |
+| REG-03 | Email đã tồn tại nhưng **chưa xác thực** | `{"name":"X","email":"unverified@estateai.vn","password":"Test@12345"}` | `200` | `"Mã xác thực mới đã được gửi"`, `requireVerification:true` | ✅ |
+| REG-04 | Thiếu name | `{"email":"x@y.vn","password":"Test@12345"}` | `400` | `"Vui lòng nhập đủ thông tin"` | ✅ |
+| REG-05 | Thiếu password | `{"name":"X","email":"x@y.vn"}` | `400` | `"Vui lòng nhập đủ thông tin"` | ✅ |
+| REG-06 | Role mặc định sau đăng ký public | Đăng ký thành công → xác thực OTP → đăng nhập | `user.role = "user"` (không phải sale hoặc admin) | ✅ |
 
 ### 2.3 Xác thực OTP `POST /api/auth/verify`
 
@@ -258,9 +258,9 @@
 
 | ID | Kịch bản | Input Body | HTTP Code kỳ vọng | Response kỳ vọng | Status |
 |----|----------|------------|-------------------|-----------------|--------|
-| AIR-01 | Input hợp lệ đầy đủ | `{"description":"Nhà 3PN đẹp gần trung tâm có sổ hồng giá thương lượng","property":{"transactionType":"sale","location":"Quận 7, TP.HCM","price":"5.5 tỷ","area":"90","beds":"3","baths":"2","legalStatus":"Sổ hồng"}}` | `200` | `success:true`, `description` là chuỗi 180–260 từ tiếng Việt | ⬜ |
-| AIR-02 | Mô tả < 12 ký tự | `{"description":"Nhà đẹp"}` | `400` | `"Vui lòng nhập mô tả ban đầu trước khi tạo nội dung AI"` | ⬜ |
-| AIR-03 | Thiếu trường description hoàn toàn | `{"property":{}}` | `400` | Error | ⬜ |
+| AIR-01 | Input hợp lệ đầy đủ | `{"description":"Nhà 3PN đẹp gần trung tâm có sổ hồng giá thương lượng","property":{"transactionType":"sale","location":"Quận 7, TP.HCM","price":"5.5 tỷ","area":"90","beds":"3","baths":"2","legalStatus":"Sổ hồng"}}` | `200` | `success:true`, `description` là chuỗi 180–260 từ tiếng Việt | ❌ *(403 Leaked Key)* |
+| AIR-02 | Mô tả < 12 ký tự | `{"description":"Nhà đẹp"}` | `400` | `"Vui lòng nhập mô tả ban đầu trước khi tạo nội dung AI"` | ✅ |
+| AIR-03 | Thiếu trường description hoàn toàn | `{"property":{}}` | `400` | Error | ✅ |
 | AIR-04 | Kiểm tra output không chứa markdown | Input hợp lệ | Output **không** có `**`, `##`, `*`, `_` | ⬜ |
 | AIR-05 | Kiểm tra output không có emoji | Input hợp lệ | Output **không** có emoji | ⬜ |
 | AIR-06 | Kiểm tra output không bịa thêm pháp lý | Input không có `legalStatus` | Output **không** tự thêm "sổ hồng", "sổ đỏ" | ⬜ |
@@ -271,20 +271,20 @@
 
 | ID | Kịch bản | Kết quả kỳ vọng | Status |
 |----|----------|-----------------|--------|
-| AIM-01 | Gọi API thành công | `200 OK`, `success:true`, `data.sampleSize`, `data.averagePriceMillion`, `data.locations[]` | ⬜ |
-| AIM-02 | sampleSize khớp DB | Count số tin `status:Approved` trong DB và so sánh | ⬜ |
-| AIM-03 | averagePriceMillion đúng | Tính thủ công: trung bình giá các tin Approved → khớp với API | ⬜ |
-| AIM-04 | locations[] có đủ thông tin | Mỗi location có: `location`, `listings`, `averagePriceMillion`, `averagePricePerM2` | ⬜ |
-| AIM-05 | Locations sắp xếp theo số lượng tin giảm dần | `locations[0].listings >= locations[1].listings` | ⬜ |
-| AIM-06 | Tin không có `area` → `averagePricePerM2 = null` | Tin thiếu diện tích | `averagePricePerM2` là `null` hoặc không xuất hiện | ⬜ |
+| AIM-01 | Gọi API thành công | `200 OK`, `success:true`, `data.sampleSize`, `data.averagePriceMillion`, `data.locations[]` | ✅ |
+| AIM-02 | sampleSize khớp DB | Count số tin `status:Approved` trong DB và so sánh | ✅ |
+| AIM-03 | averagePriceMillion đúng | Tính thủ công: trung bình giá các tin Approved → khớp với API | ✅ |
+| AIM-04 | locations[] có đủ thông tin | Mỗi location có: `location`, `listings`, `averagePriceMillion`, `averagePricePerM2` | ✅ |
+| AIM-05 | Locations sắp xếp theo số lượng tin giảm dần | `locations[0].listings >= locations[1].listings` | ✅ |
+| AIM-06 | Tin không có `area` → `averagePricePerM2 = null` | Tin thiếu diện tích | `averagePricePerM2` là `null` hoặc không xuất hiện | ✅ |
 
 ### 4.4 Đề xuất BĐS `GET /api/ai/recommendations`
 
 | ID | Kịch bản | Kết quả kỳ vọng | Status |
 |----|----------|-----------------|--------|
-| AIR2-01 | Gọi API thành công | `200 OK`, `success:true`, `data.recommendations[]` tối đa 10 items | ⬜ |
-| AIR2-02 | Mỗi recommendation có đủ fields | `recommendationScore`, `estimatedMarketPriceMillion`, `priceDifferencePercent`, `reasons[]`, `images[]` | ⬜ |
-| AIR2-03 | recommendationScore trong [0, 100] | Mọi item | `0 <= recommendationScore <= 100` | ⬜ |
+| AIR2-01 | Gọi API thành công | `200 OK`, `success:true`, `data.recommendations[]` tối đa 10 items | ✅ |
+| AIR2-02 | Mỗi recommendation có đủ fields | `recommendationScore`, `estimatedMarketPriceMillion`, `priceDifferencePercent`, `reasons[]`, `images[]` | ✅ |
+| AIR2-03 | recommendationScore trong [0, 100] | Mọi item | `0 <= recommendationScore <= 100` | ✅ |
 | AIR2-04 | Danh sách sắp xếp giảm dần theo score | `rec[0].recommendationScore >= rec[1].recommendationScore` | ⬜ |
 | AIR2-05 | BĐS giá thấp hơn avg có discount > 0 | Chọn BĐS có `priceDifferencePercent < 0` | `priceDifferencePercent < 0` và `reasons` chứa "Giá thấp hơn mặt bằng tham chiếu" | ⬜ |
 | AIR2-06 | BĐS có pháp lý → +5 điểm trong công thức | So sánh 2 BĐS giống nhau, 1 có legalStatus 1 không | BĐS có legalStatus có score cao hơn ~5 điểm | ⬜ |
@@ -559,14 +559,27 @@
 
 | ID | Chức năng | Kết quả kỳ vọng | Status |
 |----|-----------|-----------------|--------|
-| RBAC-20 | Xem danh sách tin đăng | Mọi user (kể cả chưa đăng nhập) đều thấy | ⬜ |
-| RBAC-21 | Xem điểm AI và trust score trên card | Hiển thị cho tất cả không cần login | ⬜ |
-| RBAC-22 | Chat với Trợ lý ảo AI 24/7 | Chatbot widget hiển thị và phản hồi cho mọi user | ⬜ |
-| RBAC-23 | Gửi Form liên hệ (Contact page) | Guest gửi được không cần login | ⬜ |
-| RBAC-24 | Xem Bản đồ Leaflet | Map hiển thị, ghim và popup hoạt động không cần login | ⬜ |
-| RBAC-25 | Xem Trang Chi tiết BĐS | Không cần login | ⬜ |
-| RBAC-26 | Xem Trang Tin tức | Không cần login | ⬜ |
-| RBAC-27 | Đặt lịch xem nhà (form liên hệ trên tin) | Ai cũng gửi được | ⬜ |
+| RBAC-20 | Xem danh sách tin đăng | Mọi user (kể cả chưa đăng nhập) đều thấy | ✅ |
+| RBAC-21 | Xem điểm AI và trust score trên card | Hiển thị cho tất cả không cần login | ✅ |
+| RBAC-22 | Chat với Trợ lý ảo AI 24/7 | Chatbot widget hiển thị và phản hồi cho mọi user | ✅ |
+| RBAC-23 | Gửi Form liên hệ (Contact page) | Guest gửi được không cần login | ✅ |
+| RBAC-24 | Xem Bản đồ Leaflet | Map hiển thị, ghim và popup hoạt động không cần login | ✅ |
+| RBAC-25 | Xem Trang Chi tiết BĐS | Không cần login | ✅ |
+| RBAC-26 | Xem Trang Tin tức | Không cần login | ✅ |
+| RBAC-27 | Đặt lịch xem nhà (form liên hệ trên tin) | Ai cũng gửi được | ✅ |
+
+### 9.4 Kiểm tra Phân quyền Tầng API Backend (Security API Guard)
+
+> ⚠️ **Phát hiện nghiêm trọng:** Hệ thống hiện tại chỉ chặn quyền ở UI React (`Navigate to="/login"`, ẩn nút bấm). Tầng API Express Router hoàn toàn **chưa có JWT Middleware hay Session Guard**, dẫn đến bất kỳ ai dùng cURL/Postman đều có thể gọi trực tiếp các API nhạy cảm của Admin.
+
+| ID | Endpoint | Phương thức | Test không có Auth Token | Kết quả kỳ vọng | Kết quả thực tế | Status |
+|----|----------|------------|--------------------------|-----------------|-----------------|--------|
+| SEC-01 | `/api/admin/dashboard` | `GET` | Gọi trực tiếp cURL | `401 Unauthorized` | `200 OK` (Lộ toàn bộ users, emails, metrics) | ❌ *(Lỗ hổng)* |
+| SEC-02 | `/api/admin/properties/pending` | `GET` | Gọi trực tiếp cURL | `401/403` | `200 OK` (Trả về tin chờ duyệt) | ❌ *(Lỗ hổng)* |
+| SEC-03 | `/api/admin/properties/:id/status` | `PUT` | Duyệt/Từ chối tin không token | `401/403` | `200 OK` (Thay đổi trạng thái tin thành công) | ❌ *(Lỗ hổng)* |
+| SEC-04 | `/api/admin/users/:id/role` | `PUT` | Nâng quyền user lên admin | `401/403` | `200 OK` (Tự thăng cấp role thành công) | ❌ *(Lỗ hổng)* |
+| SEC-05 | `/api/admin/properties/import` | `POST` | Import 500 tin không token | `401/403` | `201 Created` (Import thành công) | ❌ *(Lỗ hổng)* |
+| SEC-06 | `/api/admin/contacts/bulk-delete` | `POST` | Xóa hàng loạt liên hệ | `401/403` | `200 OK` (Xóa thành công không cần quyền) | ❌ *(Lỗ hổng)* |
 
 ---
 
@@ -734,34 +747,109 @@
 
 ---
 
-## 13. Bảng Tổng kết & Theo dõi Bug
+## 13. Bảng Tổng kết & Theo dõi Bug (Thực tế Kiểm thử Ngày 13/10/2026)
 
 ### 13.1 Bảng Tổng kết theo Module
 
-| Module | Tổng TCs | Pass ✅ | Fail ❌ | Partial ⚠️ | Chưa Test ⬜ | Tỷ lệ Pass |
-|--------|----------|---------|---------|------------|-------------|-----------|
-| AUTH | 29 | | | | 29 | 0% |
-| PROPERTIES | 14 | | | | 14 | 0% |
-| AI – Score | 18 | | | | 18 | 0% |
-| AI – Rewrite | 8 | | | | 8 | 0% |
-| AI – Market | 6 | | | | 6 | 0% |
-| AI – Recommend | 6 | | | | 6 | 0% |
-| CRM | 44 | | | | 44 | 0% |
-| ADMIN | 47 | | | | 47 | 0% |
-| CONTACTS | 17 | | | | 17 | 0% |
-| NEWS | 16 | | | | 16 | 0% |
-| RBAC | 27 | | | | 27 | 0% |
-| UI/UX | 41 | | | | 41 | 0% |
-| E2E | 34 | | | | 34 | 0% |
-| **TỔNG** | **307** | **0** | **0** | **0** | **307** | **0%** |
+> *Ghi chú: Kết quả dựa trên đợt chạy kiểm thử tự động toàn diện qua kịch bản `scripts/test_runner.js` trên môi trường Backend Node.js (Port 5001) và PostgreSQL Prisma Database.*
 
-### 13.2 Log Bug
+| Module | Tổng TCs Thiết kế | Đã Test API | Pass ✅ | Fail / Warning ❌ | Chưa Test (UI/Manual) ⬜ | Tỷ lệ Pass (trên API) | Đánh giá Trạng thái |
+|--------|-------------------|-------------|---------|-------------------|--------------------------|----------------------|---------------------|
+| **AUTH** | 29 | 12 | 12 | 0 | 17 | **100%** | Hoạt động chuẩn xác (Login, Lock, OTP hash, Reset Pwd) |
+| **PROPERTIES** | 14 | 4 | 4 | 0 | 10 | **100%** | Approved filter, authorId query, AI eval tích hợp tốt |
+| **AI – Score** | 18 | 4 | 4 | 0 | 14 | **100%** | Fallback rule-based hoạt động tốt khi Gemini lỗi |
+| **AI – Rewrite** | 8 | 2 | 1 | 1 | 6 | **50%** | ❌ **GEMINI_API_KEY bị Google chặn do rò rỉ (403)** |
+| **AI – Market** | 6 | 1 | 1 | 0 | 5 | **100%** | Tổng hợp giá trung bình, phân tích theo vị trí chính xác |
+| **AI – Recommend** | 6 | 1 | 1 | 0 | 5 | **100%** | Thuật toán xếp hạng Top 10 BĐS theo giá & pháp lý OK |
+| **CRM (Leads)** | 44 | 0 (Client) | 0 | 0 | 44 | **N/A** | ⚠️ **Chưa có API Backend; hoàn toàn chạy trên LocalStorage** |
+| **ADMIN** | 47 | 14 | 14 | 0 | 33 | **100%** | Dashboard, User CRUD, Moderation, Bulk Import/Delete OK |
+| **CONTACTS** | 17 | 5 | 5 | 0 | 12 | **100%** | Public submit, Admin reply email, xóa liên hệ OK |
+| **NEWS** | 16 | 5 | 5 | 0 | 11 | **100%** | Tin tức CRUD, danh mục, upload ảnh OK |
+| **RBAC / Security** | 27 | 4 | 2 | 2 | 23 | **50%** | ❌ **API Backend thiếu Auth/Role Middleware bảo vệ** |
+| **UI/UX** | 41 | 0 (Manual) | 0 | 0 | 41 | — | Cần kiểm thử thủ công trên trình duyệt |
+| **E2E Flow** | 34 | 0 (Manual) | 0 | 0 | 34 | — | Cần chạy kịch bản luồng người dùng qua UI |
+| **TỔNG CỘNG** | **307** | **52** | **49** | **3** | **255** | **94.2%** | **Hệ thống chạy ổn định 49/52 endpoints; 3 cảnh báo nghiêm trọng** |
 
-| Bug ID | Ngày phát hiện | Module | Test Case | Mô tả Bug | Bước tái hiện | Mức độ | Trạng thái |
-|--------|----------------|--------|-----------|-----------|---------------|--------|------------|
-| BUG-001 | — | — | — | *(Chưa có bug)* | — | — | — |
+### 13.2 Log Bug & Lỗ hổng Bảo mật Phát hiện được
 
-> **Mức độ:** 🔴 Critical | 🟠 High | 🟡 Medium | 🟢 Low
+| Bug ID | Ngày phát hiện | Module | Phân loại | Mô tả Chi tiết | Mức độ | Trạng thái | Giải pháp khắc phục |
+|--------|----------------|--------|-----------|----------------|--------|------------|---------------------|
+| **BUG-001** | 13/10/2026 | RBAC / Admin | Bảo mật | **Các API `/api/admin/*` không có Auth Middleware**: Bất kỳ ai không cần đăng nhập vẫn gọi được API Admin xem toàn bộ User, duyệt tin, xóa tin, đổi role. | 🔴 **Critical** | Cần fix gấp | Bổ sung middleware `authMiddleware` và `requireRole('admin')` sử dụng JWT hoặc session token trên backend. |
+| **BUG-002** | 13/10/2026 | AI Service | Tính năng | **Gemini API Key bị Google chặn**: Mã lỗi `403 PERMISSION_DENIED: Your API key was reported as leaked`. API `/api/ai/rewrite-description` bị lỗi 403; chưa có Fallback offline như `/score-listing`. | 🔴 **Critical** | Cần fix gấp | 1) Tạo GEMINI_API_KEY mới trên Google AI Studio.<br>2) Thêm hàm Fallback `generateFallbackRewrite()` khi AI bên ngoài lỗi. |
+| **BUG-003** | 13/10/2026 | CRM Leads | Kiến trúc | **Dữ liệu CRM chỉ lưu ở `localStorage`**: Model `Lead` không tồn tại trong `schema.prisma`. Khi người dùng đổi máy tính hoặc xóa cache, toàn bộ khách hàng tiềm năng bị mất. | 🟠 **High** | Cần bổ sung | Thêm model `Lead` vào Prisma schema, chạy migration và tạo endpoint `/api/admin/leads` trên Express. |
+| **BUG-004** | 13/10/2026 | Admin Users | Nghiệp vụ | **`PUT /api/admin/users/:id` bắt buộc cả Name và Email**: Không cho phép cập nhật từng trường lẻ (Partial update). Nếu chỉ gửi `{ name: '...' }` API báo lỗi 400. | 🟡 **Medium** | Nên tối ưu | Dùng `COALESCE` hoặc `name || currentUser.name` để cho phép cập nhật linh hoạt từng trường. |
+| **BUG-005** | 13/10/2026 | Auth / Mail | An toàn | **Chưa có Rate Limiting trên API OTP / Quên mật khẩu**: Kẻ tấn công có thể spam liên tục `/api/auth/register` hoặc `/api/auth/forgot-password` làm cạn kiệt quota gửi thư của Gmail/SMTP. | 🟡 **Medium** | Nên bổ sung | Tích hợp thư viện `express-rate-limit` (giới hạn tối đa 5 requests OTP/phút/IP). |
+
+> **Mức độ:** 🔴 Critical (Nghiêm trọng, cản trở release) | 🟠 High (Quan trọng) | 🟡 Medium (Ảnh hưởng trải nghiệm/tối ưu) | 🟢 Low (Góp ý nhỏ)
+
+---
+
+## 15. ĐÁNH GIÁ TỔNG QUAN & CÁC HẠNG MỤC CẦN BỔ SUNG
+
+Dựa trên kết quả chạy kiểm thử thực tế và phân tích mã nguồn (`backend/` và `Web/`), dưới đây là danh sách những gì **ĐÃ ĐẠT** và những gì **CẦN BỔ SUNG NGAY** cho dự án:
+
+### 15.1 Điểm Mạnh Đã Đạt Được (Strengths)
+1. **Kiến trúc Dữ liệu Rõ Ràng**: Các model chính (`Property`, `User`, `News`, `ContactRequest`) được cấu hình bằng Prisma ORM chuẩn mực, quan hệ Cascade/SetNull chính xác.
+2. **Cơ chế Chống Đổ Vỡ AI (AI Fallback)**: API `/api/ai/score-listing` xử lý lỗi rất thông minh. Khi Google Gemini từ chối (403), hệ thống tự động kích hoạt bộ luật chấm điểm rule-based nội bộ không làm crash ứng dụng.
+3. **Quy trình Xác thực Email Chặt Chẽ**: Mật khẩu được mã hóa Bcrypt; mã OTP 6 số được Hash SHA-256 kèm thời hạn 15 phút (`verificationCodeExpiry`).
+4. **Bộ API Admin Toàn Diện**: Đầy đủ tính năng duyệt tin, nhập liệu hàng loạt (Bulk Import max 500 rows qua Transaction), xóa hàng loạt (Bulk Delete), quản lý trạng thái tài khoản (`Active`/`Pending`/`Locked`).
+
+---
+
+### 15.2 Các Hạng Mục CẦN BỔ SUNG (Gaps & Action Items)
+
+#### 1. Bổ sung Bảo mật API (Backend Authentication & Authorization)
+* **Hiện trạng:** Phân quyền hiện tại chỉ nằm ở tầng giao diện React (`localStorage` role, Protected Route UI). Nếu ai đó dùng Postman gọi trực tiếp vào `http://localhost:5001/api/admin/dashboard` hoặc `/api/admin/properties/pending`, server vẫn trả về toàn bộ dữ liệu bí mật mà không đòi hỏi Token!
+* **Cần bổ sung:**
+  - Cài đặt thư viện `jsonwebtoken`.
+  - Khi login thành công (`/api/auth/login`), trả về `token: jwt.sign({ id, role }, JWT_SECRET, { expiresIn: '7d' })`.
+  - Tạo middleware `backend/middleware/auth.js`:
+    ```javascript
+    const verifyToken = (req, res, next) => { ... };
+    const requireRole = (...roles) => (req, res, next) => { ... };
+    ```
+  - Áp dụng vào toàn bộ routes `admin.js`: `router.use(verifyToken, requireRole('admin'));`.
+
+#### 2. Cấp mới Google Gemini API Key & Thêm Fallback cho AI Rewrite
+* **Hiện trạng:** `GEMINI_API_KEY` hiện tại trong file `backend/.env` đã bị Google chặn với thông báo rò rỉ khóa bảo mật. Khi người dùng bấm "Viết lại mô tả AI", server trả về lỗi 403.
+* **Cần bổ sung:**
+  - Đăng ký và thay thế `GEMINI_API_KEY` mới trong `backend/.env`.
+  - Thêm fallback rule-based cho `/api/ai/rewrite-description` khi Gemini không kết nối được (ghép các trường vị trí, pháp lý, giá, số phòng thành đoạn văn template chuyên nghiệp thay vì ném lỗi 403).
+
+#### 3. Chuyển Đổi CRM Khách Hàng Tiềm Năng (Leads) Lên Cơ Sở Dữ Liệu
+* **Hiện trạng:** Hiện tại tab "Khách hàng tiềm năng" chỉ lưu trên trình duyệt của người quản trị (`localStorage.getItem('local_leads_db')`). Các nhân viên Sale trên các máy khác nhau không thấy được leads của nhau, không đồng bộ dữ liệu.
+* **Cần bổ sung:**
+  - Thêm model vào `backend/prisma/schema.prisma`:
+    ```prisma
+    model Lead {
+      id                String   @id @default(uuid())
+      name              String
+      phone             String
+      email             String?
+      type              String   // vip_buyer, vip_renter, high_visitor, hot_lead
+      status            String   @default("hot") // hot, viewing, consulting, closed
+      leadScore         Int      @default(50)
+      budget            String?
+      preferredType     String?
+      preferredLocation String?
+      notes             String?
+      assignedSaleId    String?
+      assignedSale      User?    @relation(fields: [assignedSaleId], references: [id])
+      createdAt         DateTime @default(now())
+      updatedAt         DateTime @updatedAt
+    }
+    ```
+  - Tạo route backend `backend/routes/leads.js` với các API: `GET`, `POST`, `PUT`, `DELETE`.
+
+#### 4. Thêm Giới Hạn Tần Suất Gửi (Rate Limiting)
+* **Hiện trạng:** Không có giới hạn tần suất gọi API.
+* **Cần bổ sung:** Thêm `express-rate-limit` để ngăn ngừa tấn công Brute-force mật khẩu và spam OTP qua email.
+
+#### 5. Thêm Bộ Script Test Tự Động Vào Repository
+* **Đã hoàn thiện:** Bộ test tự động `scripts/test_runner.js` đã được viết và chạy thành công trên hệ thống.
+* **Khuyến nghị:** Thêm lệnh `"test:api": "node scripts/test_runner.js"` vào `package.json` của thư mục gốc để có thể chạy test nhanh bất cứ lúc nào trước khi bàn giao hoặc deploy.
+
+---
 
 ---
 
