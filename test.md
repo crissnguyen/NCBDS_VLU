@@ -248,7 +248,8 @@ Quy trình quản lý vòng đời tin đăng bất động sản theo tiêu chu
 ### 5.3. Phân hệ 3: AI Chấm điểm Tin đăng 5 Tiêu chí 100đ (AI LISTING QUALITY — 18 Test Cases)
 
 Hệ thống chấm điểm tin đăng tự động phân tích và lượng hóa chất lượng bài viết theo **Mục 5.6 trong `nghiepvu.md`**:
-$$\text{AIScore} = S_{\text{title}} + S_{\text{info}} + S_{\text{desc}} + S_{\text{cons}} + S_{\text{imgs}} \quad (\text{Thang điểm tối đa: } 100)$$
+$$\text{AIScore} = S_{\text{title}} + S_{\text{info}} + S_{\text{desc}} + S_{\text{cons}} + S_{\text{imgs}} \quad (\text{Max Score} = 100)$$
+*(Thang điểm chuẩn hóa tối đa: 100 điểm)*
 
 ```
                                     ┌────────────────────────┐
@@ -308,14 +309,16 @@ Theo quy định tại **Mục 4.2 `nghiepvu.md`**, phân hệ sử dụng Googl
 ### 5.5. Phân hệ 5: AI Thẩm định Giá tham chiếu & Đề xuất Đầu tư (VALUATION — 12 Test Cases)
 
 Phân hệ thực thi các giải thuật toán học tại **Mục 5.1 đến 5.5 `nghiepvu.md`**:
-$$\text{PricePerM2} = \frac{\text{PriceMillion}}{\text{Area}}, \quad \Delta P\% = \frac{\bar{P}_{\text{mặt bằng}} - P_{\text{tin}}}{\bar{P}_{\text{mặt bằng}}} \times 100\%$$
+$$\text{PricePerM2} = \frac{\text{PriceMillion}}{\text{Area}}, \quad \Delta P\% = \frac{\bar{P}_{\text{market}} - P_{\text{listing}}}{\bar{P}_{\text{market}}} \times 100\%$$
+*(trong đó $\bar{P}_{\text{market}}$ là giá trung bình mặt bằng thị trường, $P_{\text{listing}}$ là giá niêm yết của tin đăng)*.
+
 $$\text{RecommendationScore} = \min\left(100, \; 55 + \text{Discount} \times 0.8 + (\text{TrustScore} - 70) \times 0.35 + (\text{HasLegal} \times 5)\right)$$
 
 #### Bảng Kết Quả Thực Thi Chi Tiết:
 | Mã TC | Tên Kịch bản & Mục tiêu | Endpoint & Hành động | Kỳ vọng Kỹ thuật | Kết quả Thực tế trên Hệ thống | Đánh giá |
 |:---:|---|---|---|---|:---:|
 | **AIM-01** | Phân tích giá thị trường BĐS | `GET /api/ai/market-analysis` | 200 OK, trả về giá TB và phân bổ khu vực | HTTP 200 OK, mẫu dữ liệu: 14 tin, tính đúng giá TB thị trường | ✅ **PASS** |
-| **AIM-02** | Tính đúng đơn giá $/m^2$ | Kiểm tra `averagePricePerM2` | $\text{PricePerM2} = \text{Giá} / \text{Diện tích}$ | Tính toán chính xác từng phân vùng địa lý | ✅ **PASS** |
+| **AIM-02** | Tính đúng đơn giá `/m²` | Kiểm tra `averagePricePerM2` | `PricePerM2 = Giá / Diện tích` | Tính toán chính xác từng phân vùng địa lý | ✅ **PASS** |
 | **AIM-03** | Xử lý tin thiếu diện tích | Tin đăng không nhập `area` | Không crash phép chia cho 0, trả về null | `pricePerM2` trả về `null` an toàn không lỗi | ✅ **PASS** |
 | **AIM-04** | Xếp hạng khu vực theo số tin | Mảng `locations[]` | Sắp xếp giảm dần theo số lượng bài đăng | Khu vực nhiều tin nhất đứng đầu danh sách | ✅ **PASS** |
 | **AIM-05** | Chuẩn hóa đơn vị tiền tệ "tỷ" | Giá nhập: "2.85 tỷ" | Chuyển đổi thành 2,850 triệu đồng | Hàm `parsePriceMillion` parse thành 2850 chính xác | ✅ **PASS** |
@@ -333,7 +336,7 @@ $$\text{RecommendationScore} = \min\left(100, \; 55 + \text{Discount} \times 0.8
 
 Phân hệ CRM quản trị khách hàng tiềm năng phân loại 4 tệp khách: VIP Mua (`vip_buyer`), VIP Thuê (`vip_renter`), Tương tác cao (`high_visitor`), Khách nóng (`hot_lead`). Công thức chấm điểm **AI Lead Score (40–99 điểm)** quy định tại **Mục 5.8 `nghiepvu.md`**:
 $$\text{AI Lead Score} = \min\left(99, \; 50 + P_{\text{buy}} + P_{\text{rent}} + P_{\text{vis}} + B_{\text{status}} + B_{\text{type}}\right)$$
-*Trong đó: $P_{\text{buy}} = \min(24, N_{\text{mua}} \times 8)$, $P_{\text{rent}} = \min(15, N_{\text{thuê}} \times 5)$, $P_{\text{vis}} = \min(15, \lfloor N_{\text{xem}} / 10 \rfloor)$, $B_{\text{status}} \in \{10, 8, 5\}$, $B_{\text{type}} = 6$ (VIP Mua).*
+*Trong đó: $P_{\text{buy}} = \min(24, N_{\text{buy}} \times 8)$, $P_{\text{rent}} = \min(15, N_{\text{rent}} \times 5)$, $P_{\text{vis}} = \min(15, \lfloor N_{\text{view}} / 10 \rfloor)$, $B_{\text{status}} \in \{10, 8, 5\}$, $B_{\text{type}} = 6$ (VIP Mua).*
 
 #### Bảng Kiểm Chứng Toán Học & Nghiệp Vụ Toàn Diện (44 Test Cases):
 | Mã TC | Tên Kịch bản & Mục tiêu | Thông số Dữ liệu Đầu vào | Công thức & Điểm Kỳ vọng | Kết quả Thực tế trên Hệ thống | Đánh giá |
@@ -550,22 +553,22 @@ $$\text{AI Lead Score} = \min\left(99, \; 50 + P_{\text{buy}} + P_{\text{rent}} 
 
 Nhằm đáp ứng yêu cầu thẩm định tài chính của Hội đồng Giám khảo Khởi nghiệp, Nhà đầu tư Thiên thần (Angel Investors) và Hội đồng Khoa học, chương này xây dựng **Mô hình Dự toán Chi phí Vận hành (Operational Expenditures - OPEX)** và **Tổng Chi phí Sở hữu (Total Cost of Ownership - TCO)** cho hệ thống **EstateAI** trong giai đoạn 3 năm (2026 – 2029).
 
-Mô hình được xây dựng trên cơ sở đo kiểm thực tế từ hạ tầng kiểm thử (Node.js/Express, PostgreSQL Neon, Cloudinary, Google Gemini 2.5 Flash API) và đối chuẩn trực tiếp với Kế hoạch Kinh doanh tại Mục 8.2 của [nghiepvu.md](file:///Users/duyduc/Desktop/DEV_Project/real_estate_ai_website/nghiepvu.md) *(Tỷ giá quy đổi cố định: $1\text{ USD} = 25.000\text{ VNĐ}$)*.
+Mô hình được xây dựng trên cơ sở đo kiểm thực tế từ hạ tầng kiểm thử (Node.js/Express, PostgreSQL Neon, Cloudinary, Google Gemini 2.5 Flash API) và đối chuẩn trực tiếp với Kế hoạch Kinh doanh tại Mục 8.2 của [nghiepvu.md](file:///Users/duyduc/Desktop/DEV_Project/real_estate_ai_website/nghiepvu.md) *(Tỷ giá quy đổi cố định: 1 USD = 25.000 VNĐ)*.
 
 ---
 
 ### 9.1. Khung Phương Pháp Luận & Mô Hình Phân Bổ Chi Phí (Cost Structure Breakdown)
 
-Tổng Chi phí Vận hành Hệ thống hàng năm ($TCO_{OPEX}$) được cấu thành từ 4 trụ cột chính:
+Tổng Chi phí Vận hành Hệ thống hàng năm ($\text{TCO}_{\text{Annual}}$) được cấu thành từ 5 thành phần chính:
 
-$$\text{TCO}_{\text{Annual}} = C_{\text{Infra}} + C_{\text{AI}} + C_{\text{SaaS}} + C_{\text{HR\_Ops}} + C_{\text{Contingency}}$$
+$$\text{TCO}_{\text{Annual}} = C_{\text{Infra}} + C_{\text{AI}} + C_{\text{SaaS}} + C_{\text{DevOps}} + C_{\text{Reserve}}$$
 
 Trong đó:
 1. **$C_{\text{Infra}}$ (Cloud & Database Infrastructure):** Máy chủ tính toán API Gateway, Serverless Database, Bộ nhớ lưu trữ Media BĐS, Mạng phân phối nội dung (Edge CDN).
 2. **$C_{\text{AI}}$ (AI & LLM Token API Consumption):** Chi phí trả theo dung lượng Token đầu vào/đầu ra của Google Gemini 2.5 Flash cho các tác vụ Chấm điểm tin đăng, Viết lại mô tả, Trợ lý ảo tư vấn 24/7.
 3. **$C_{\text{SaaS}}$ (Third-party SaaS & Cyber Security):** Dịch vụ Email OTP giao dịch (Brevo/SendGrid), Tên miền, Chứng chỉ bảo mật SSL, Tường lửa chống tấn công DDoS (Cloudflare Pro), Giám sát lỗi & APM (Sentry).
-4. **$C_{\text{HR\_Ops}}$ (DevOps & Technical Maintenance):** Nhân sự Kỹ sư Hạ tầng Đám mây (DevOps/SRE), Kỹ sư An toàn thông tin (SecOps), Bảo trì vá lỗi và Kiểm thử xâm nhập định kỳ (Penetration Testing).
-5. **$C_{\text{Contingency}}$ (Dự phòng rủi ro kỹ thuật):** Quỹ dự phòng trượt giá và bùng nổ truy cập bất thường (5% tổng ngân sách).
+4. **$C_{\text{DevOps}}$ (DevOps & Technical Maintenance):** Nhân sự Kỹ sư Hạ tầng Đám mây (DevOps/SRE), Kỹ sư An toàn thông tin (SecOps), Bảo trì vá lỗi và Kiểm thử xâm nhập định kỳ (Penetration Testing).
+5. **$C_{\text{Reserve}}$ (Dự phòng rủi ro kỹ thuật):** Quỹ dự phòng trượt giá và bùng nổ truy cập bất thường (5% tổng ngân sách kỹ thuật).
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -591,14 +594,14 @@ Hệ thống được thiết kế theo kiến trúc Micro-Monolith tối ưu, c
 #### Bảng thông số kỹ thuật và định giá hạ tầng:
 | Thành phần Kiến trúc | Nhà cung cấp & Cấu hình | Năm 1 (5.000 tin) | Năm 2 (30.000 tin) | Năm 3 (120.000 tin) |
 |---|---|:---:|:---:|:---:|
-| **API Backend (Compute)** | Render Web Service / AWS ECS (Auto-scale 1 $\rightarrow$ 8 nodes) | \$25 / tháng | \$85 / tháng | \$280 / tháng |
-| **Cơ sở dữ liệu (PostgreSQL)** | Neon Serverless Postgres (Autoscaling CU, 10GB $\rightarrow$ 120GB Storage) | \$19 / tháng | \$65 / tháng | \$220 / tháng |
-| **Lưu trữ Hình ảnh (Media S3)** | Cloudinary Plus / AWS S3 + CloudFront (15K $\rightarrow$ 360K ảnh WebP) | \$25 / tháng | \$89 / tháng | \$310 / tháng |
-| **Frontend & Edge CDN** | Vercel Pro / Cloudflare Pages Enterprise edge caching | \$20 / tháng | \$40 / tháng | \$120 / tháng |
-| **Redis Cache (Phiên & Rate-limit)** | Upstash Serverless Redis (In-memory token bucket) | \$0 (Free tier) | \$15 / tháng | \$45 / tháng |
-| **TỔNG CHI PHÍ HẠ TẦNG / THÁNG** | — | **\$89 / tháng** | **\$294 / tháng** | **\$975 / tháng** |
-| **TỔNG CHI PHÍ HẠ TẦNG / NĂM (USD)** | — | **\$1.068 / năm** | **\$3.528 / năm** | **\$11.700 / năm** |
-| **QUY ĐỔI VNĐ** | $1\text{ USD} = 25.000\text{ VNĐ}$ | **26,7 triệu VNĐ** | **88,2 triệu VNĐ** | **292,5 triệu VNĐ** |
+| **API Backend (Compute)** | Render Web Service / AWS ECS (Auto-scale 1 – 8 nodes) | 25 USD / tháng | 85 USD / tháng | 280 USD / tháng |
+| **Cơ sở dữ liệu (PostgreSQL)** | Neon Serverless Postgres (Autoscaling CU, 10GB – 120GB) | 19 USD / tháng | 65 USD / tháng | 220 USD / tháng |
+| **Lưu trữ Hình ảnh (Media S3)** | Cloudinary Plus / AWS S3 + CloudFront (15K – 360K ảnh) | 25 USD / tháng | 89 USD / tháng | 310 USD / tháng |
+| **Frontend & Edge CDN** | Vercel Pro / Cloudflare Pages Enterprise edge caching | 20 USD / tháng | 40 USD / tháng | 120 USD / tháng |
+| **Redis Cache (Phiên & Rate-limit)** | Upstash Serverless Redis (In-memory token bucket) | Miễn phí (Free) | 15 USD / tháng | 45 USD / tháng |
+| **TỔNG CHI PHÍ HẠ TẦNG / THÁNG** | — | **89 USD / tháng** | **294 USD / tháng** | **975 USD / tháng** |
+| **TỔNG CHI PHÍ HẠ TẦNG / NĂM (USD)** | — | **1.068 USD / năm** | **3.528 USD / năm** | **11.700 USD / năm** |
+| **QUY ĐỔI VNĐ** | 1 USD = 25.000 VNĐ | **26,7 triệu VNĐ** | **88,2 triệu VNĐ** | **292,5 triệu VNĐ** |
 
 ---
 
@@ -607,16 +610,16 @@ Hệ thống được thiết kế theo kiến trúc Micro-Monolith tối ưu, c
 Một trong những lợi thế cạnh tranh cốt lõi của **EstateAI** là khai thác mô hình **Google Gemini 2.5 Flash** với chi phí vận hành siêu tối ưu so với các mô hình độc quyền khác như GPT-4o.
 
 #### 1. Đơn giá API niêm yết chính thức:
-- **Prompt / Input Token:** $\$0.075\text{ / } 1.000.000\text{ tokens}$ ($\approx \$0,000075\text{ / 1K tokens}$).
-- **Completion / Output Token:** $\$0.300\text{ / } 1.000.000\text{ tokens}$ ($\approx \$0,000300\text{ / 1K tokens}$).
+- **Prompt / Input Token:** 0,075 USD / 1.000.000 tokens (khoảng 0,000075 USD / 1K tokens).
+- **Completion / Output Token:** 0,300 USD / 1.000.000 tokens (khoảng 0,000300 USD / 1K tokens).
 
 #### 2. Định mức tiêu hao Token trung bình trên từng tác vụ:
 | Tính năng Nghiệp vụ | Input Tokens | Output Tokens | Chi phí / Lượt gọi (USD) | Chi phí / Lượt gọi (VNĐ) |
 |---|:---:|:---:|:---:|:---:|
-| **AI Chấm điểm 5 tiêu chí** (`/api/ai/score-listing`) | ~1.200 | ~300 | \$0.000180 | **4,5 VNĐ** |
-| **AI Viết lại Mô tả BĐS** (`/api/ai/rewrite-description`) | ~800 | ~600 | \$0.000240 | **6,0 VNĐ** |
-| **Trợ lý ảo AI Chatbot** (`/api/ai/chatbot`) | ~900 | ~350 | \$0.000173 | **4,3 VNĐ** |
-| **AI Thẩm định giá tham chiếu** (`/api/ai/valuation`) | *Chạy thuật toán Heuristic nội bộ* | *Zero token* | **\$0.000000** | **0 VNĐ** |
+| **AI Chấm điểm 5 tiêu chí** (`/api/ai/score-listing`) | ~1.200 | ~300 | 0,000180 USD | **4,5 VNĐ** |
+| **AI Viết lại Mô tả BĐS** (`/api/ai/rewrite-description`) | ~800 | ~600 | 0,000240 USD | **6,0 VNĐ** |
+| **Trợ lý ảo AI Chatbot** (`/api/ai/chatbot`) | ~900 | ~350 | 0,000173 USD | **4,3 VNĐ** |
+| **AI Thẩm định giá tham chiếu** (`/api/ai/valuation`) | *Giải thuật Heuristic nội bộ* | *Zero token* | **0,000000 USD** | **0 VNĐ** |
 
 #### 3. Dự phóng tổng lượng Token và ngân sách AI hàng năm:
 | Chỉ số Dự phóng | Năm 1 (2026 - 2027) | Năm 2 (2027 - 2028) | Năm 3 (2028 - 2029) |
@@ -627,11 +630,11 @@ Một trong những lợi thế cạnh tranh cốt lõi của **EstateAI** là k
 | **Tổng số Lượt gọi API Google Gemini** | 135.000 lượt | 990.000 lượt | 4.860.000 lượt |
 | **Tổng Tokens Đầu vào (Input Tokens)** | 126.000.000 | 918.000.000 | 4.482.000.000 |
 | **Tổng Tokens Đầu ra (Output Tokens)** | 51.000.000 | 369.000.000 | 1.791.000.000 |
-| **Chi phí API Gemini Đầu vào (Input Cost)** | \$9.45 | \$68.85 | \$336.15 |
-| **Chi phí API Gemini Đầu ra (Output Cost)** | \$15.30 | \$110.70 | \$537.30 |
-| **Chi phí LLM Token cơ sở / Năm** | \$24.75 | \$179.55 | \$873.45 |
-| **Dự phòng AI Retry & Cache Miss (Factor x2.0)** | \$49.50 | \$359.10 | \$1.746.90 |
-| **TỔNG CHI PHÍ AI TOKEN / NĂM (USD)** | **\$74 / năm** | **\$538 / năm** | **\$2.620 / năm** |
+| **Chi phí API Gemini Đầu vào (Input Cost)** | 9,45 USD | 68,85 USD | 336,15 USD |
+| **Chi phí API Gemini Đầu ra (Output Cost)** | 15,30 USD | 110,70 USD | 537,30 USD |
+| **Chi phí LLM Token cơ sở / Năm** | 24,75 USD | 179,55 USD | 873,45 USD |
+| **Dự phòng AI Retry & Cache Miss (Hệ số x2.0)** | 49,50 USD | 359,10 USD | 1.746,90 USD |
+| **TỔNG CHI PHÍ AI TOKEN / NĂM (USD)** | **74 USD / năm** | **538 USD / năm** | **2.620 USD / năm** |
 | **QUY ĐỔI VNĐ** | **1,85 triệu VNĐ** | **13,45 triệu VNĐ** | **65,50 triệu VNĐ** |
 
 > **Nhận xét chuyên môn:** Nhờ kiến trúc kết hợp **Heuristic Math Engine** cho định giá tự động và chỉ ủy thác cho LLM các tác vụ ngôn ngữ tự nhiên, chi phí AI trên mỗi tin đăng chỉ tốn **dưới 10 VNĐ/tin**, tạo ra tỷ suất lợi nhuận gộp kỹ thuật áp đảo so với các đối thủ sử dụng giải pháp độc quyền nặng nề.
@@ -642,14 +645,14 @@ Một trong những lợi thế cạnh tranh cốt lõi của **EstateAI** là k
 
 | Hạng mục Dịch vụ | Chức năng Phụ trợ | Năm 1 | Năm 2 | Năm 3 |
 |---|---|:---:|:---:|:---:|
-| **Transactional Email (Brevo / SendGrid)** | Gửi mã OTP xác thực, thông báo lead mới, digest định kỳ (15.000 $\rightarrow$ 350.000 emails/tháng) | \$15 / tháng | \$35 / tháng | \$95 / tháng |
-| **Bảo mật WAF & DDoS (Cloudflare Pro)** | Chống bot cào dữ liệu, lọc tấn công DDoS L7, tối ưu SSL Wildcard | \$20 / tháng | \$20 / tháng | \$60 / tháng |
-| **Theo dõi lỗi & Hiệu năng (Sentry APM)** | Giám sát Realtime Exception Backend & React Client Tracing | \$0 (Developer tier) | \$26 / tháng | \$80 / tháng |
-| **Tên miền Quốc gia & SSL EV (.vn, .com)** | Nhận diện thương hiệu chính thức và bảo chứng uy tín doanh nghiệp | \$5 / tháng | \$5 / tháng | \$10 / tháng |
-| **Bản đồ GIS & Reverse Geocoding** | Leaflet OSM + Mapbox Backup Geocoding API | \$0 (Free quota) | \$15 / tháng | \$45 / tháng |
-| **TỔNG CHI PHÍ PHỤ TRỢ / THÁNG** | — | **\$40 / tháng** | **\$101 / tháng** | **\$290 / tháng** |
-| **TỔNG CHI PHÍ PHỤ TRỢ / NĂM (USD)** | — | **\$480 / năm** | **\$1.212 / năm** | **\$3.480 / năm** |
-| **QUY ĐỔI VNĐ** | $1\text{ USD} = 25.000\text{ VNĐ}$ | **12,0 triệu VNĐ** | **30,3 triệu VNĐ** | **87,0 triệu VNĐ** |
+| **Transactional Email (Brevo / SendGrid)** | Gửi mã OTP xác thực, thông báo lead mới, digest định kỳ | 15 USD / tháng | 35 USD / tháng | 95 USD / tháng |
+| **Bảo mật WAF & DDoS (Cloudflare Pro)** | Chống bot cào dữ liệu, lọc tấn công DDoS L7, tối ưu SSL Wildcard | 20 USD / tháng | 20 USD / tháng | 60 USD / tháng |
+| **Theo dõi lỗi & Hiệu năng (Sentry APM)** | Giám sát Realtime Exception Backend & React Client Tracing | Miễn phí (Dev Tier) | 26 USD / tháng | 80 USD / tháng |
+| **Tên miền Quốc gia & SSL EV (.vn, .com)** | Nhận diện thương hiệu chính thức và bảo chứng uy tín doanh nghiệp | 5 USD / tháng | 5 USD / tháng | 10 USD / tháng |
+| **Bản đồ GIS & Reverse Geocoding** | Leaflet OSM + Mapbox Backup Geocoding API | Miễn phí (Quota free) | 15 USD / tháng | 45 USD / tháng |
+| **TỔNG CHI PHÍ PHỤ TRỢ / THÁNG** | — | **40 USD / tháng** | **101 USD / tháng** | **290 USD / tháng** |
+| **TỔNG CHI PHÍ PHỤ TRỢ / NĂM (USD)** | — | **480 USD / năm** | **1.212 USD / năm** | **3.480 USD / năm** |
+| **QUY ĐỔI VNĐ** | 1 USD = 25.000 VNĐ | **12,0 triệu VNĐ** | **30,3 triệu VNĐ** | **87,0 triệu VNĐ** |
 
 ---
 
@@ -681,11 +684,11 @@ Dưới đây là bảng phân bổ minh bạch toàn bộ cơ cấu cấu thàn
 | **1. Hạ tầng Đám mây & Database ($C_{\text{Infra}}$)** | 26,7 triệu VNĐ | 88,2 triệu VNĐ | 292,5 triệu VNĐ | **1,5%** |
 | **2. Trí tuệ Nhân tạo & LLM API ($C_{\text{AI}}$)** | 1,85 triệu VNĐ | 13,45 triệu VNĐ | 65,5 triệu VNĐ | **0,3%** |
 | **3. Dịch vụ Phụ trợ & Bảo mật ($C_{\text{SaaS}}$)** | 12,0 triệu VNĐ | 30,3 triệu VNĐ | 87,0 triệu VNĐ | **0,5%** |
-| **4. Nhân sự Kỹ thuật & DevOps ($C_{\text{HR\_Ops}}$)** | 370,0 triệu VNĐ | 740,0 triệu VNĐ | 1.500,0 triệu VNĐ | **10,2%** |
-| **5. Dự phòng Kỹ thuật & Sự cố (5% Tech OPEX)** | 20,45 triệu VNĐ | 43,6 triệu VNĐ | 97,25 triệu VNĐ | **0,6%** |
-| **👉 TIỂU TỔNG CHI PHÍ VẬN HÀNH KỸ THUẬT (TECH OPEX)** | **431,0 triệu VNĐ** | **915,55 triệu VNĐ** | **2.042,25 triệu VNĐ** | **13,1%** |
+| **4. Nhân sự Kỹ thuật & DevOps ($C_{\text{DevOps}}$)** | 370,0 triệu VNĐ | 740,0 triệu VNĐ | 1.500,0 triệu VNĐ | **10,2%** |
+| **5. Dự phòng Kỹ thuật & Sự cố ($C_{\text{Reserve}}$)** | 20,45 triệu VNĐ | 43,6 triệu VNĐ | 97,25 triệu VNĐ | **0,6%** |
+| **👉 TIỂU TỔNG CHI PHÍ KỸ THUẬT (TECH OPEX)** | **431,0 triệu VNĐ** | **915,55 triệu VNĐ** | **2.042,25 triệu VNĐ** | **13,1%** |
 | **6. Chi phí Vận hành Kinh doanh, Sales & CSKH** | 469,0 triệu VNĐ | 1.984,45 triệu VNĐ | 6.957,75 triệu VNĐ | **31,9%** |
-| **7. Chi phí Tiếp thị Tăng trưởng (User Acquisition & Ads)** | 700,0 triệu VNĐ | 3.600,0 triệu VNĐ | 13.000,0 triệu VNĐ | **55,0%** |
+| **7. Chi phí Tiếp thị Tăng trưởng (Marketing & Ads)** | 700,0 triệu VNĐ | 3.600,0 triệu VNĐ | 13.000,0 triệu VNĐ | **55,0%** |
 | **🎯 TỔNG CHI PHÍ VẬN HÀNH TOÀN DIỆN (TCO OPEX)** | **1.600.000.000 VNĐ** | **6.500.000.000 VNĐ** | **22.000.000.000 VNĐ** | **100.0%** |
 | **TƯƠNG ĐƯƠNG (TỶ VNĐ)** | **1,6 TỶ VNĐ** | **6,5 TỶ VNĐ** | **22,0 TỶ VNĐ** | — |
 
@@ -709,25 +712,28 @@ Dưới đây là bảng phân bổ minh bạch toàn bộ cơ cấu cấu thàn
 Để chứng minh tính khả thi kinh tế cho Hội đồng Đánh giá, các chỉ số kinh tế đơn vị được phân tích chặt chẽ:
 
 #### 1. Chi phí Vận hành Kỹ thuật trên Mỗi Tin Đăng (Tech Cost per Active Listing):
-$$\text{Cost per Listing} = \frac{\text{Tổng Chi phí Kỹ thuật (Hạ tầng + AI + SaaS + DevOps)}}{\text{Số lượng Tin đăng Hoạt động}}$$
-- **Năm 1:** $\frac{431.000.000\text{ VNĐ}}{5.000\text{ tin}} = \mathbf{86.200\text{ VNĐ/tin/năm}}$ ($\approx 7.180\text{ VNĐ/tin/tháng}$).
-- **Năm 2:** $\frac{915.550.000\text{ VNĐ}}{30.000\text{ tin}} = \mathbf{30.518\text{ VNĐ/tin/năm}}$ ($\approx 2.543\text{ VNĐ/tin/tháng}$).
-- **Năm 3:** $\frac{2.042.250.000\text{ VNĐ}}{120.000\text{ tin}} = \mathbf{17.018\text{ VNĐ/tin/năm}}$ ($\approx 1.418\text{ VNĐ/tin/tháng}$).
+$$\text{CostPerListing} = \frac{\text{TechCost}_{\text{Annual}}}{\text{ActiveListings}}$$
+
+- **Năm 1:** `431.000.000 VNĐ / 5.000 tin` = **86.200 VNĐ / tin / năm** (khoảng **7.180 VNĐ / tin / tháng**).
+- **Năm 2:** `915.550.000 VNĐ / 30.000 tin` = **30.518 VNĐ / tin / năm** (khoảng **2.543 VNĐ / tin / tháng**).
+- **Năm 3:** `2.042.250.000 VNĐ / 120.000 tin` = **17.018 VNĐ / tin / năm** (khoảng **1.418 VNĐ / tin / tháng**).
 
 *Nhận xét:* Chi phí kỹ thuật trên mỗi tin giảm **80,3%** từ Năm 1 sang Năm 3 nhờ tính co giãn quy mô (Economies of Scale) của kiến trúc đám mây.
 
 #### 2. Chi phí Hạ tầng & AI trên Mỗi Môi Giới Đăng Ký (Cloud & AI Cost per Agent Pro):
-$$\text{Tech Infra Cost per Agent} = \frac{C_{\text{Infra}} + C_{\text{AI}} + C_{\text{SaaS}}}{\text{Số Môi giới Pro}}$$
-- **Năm 1:** $\frac{40.550.000\text{ VNĐ}}{500\text{ môi giới}} = \mathbf{81.100\text{ VNĐ/môi giới/năm}}$ ($\approx \mathbf{6.758\text{ VNĐ/môi giới/tháng}}$).
-- **So sánh với Doanh thu:** Gói đăng ký Agent Pro dự kiến là **$300.000\text{ – }500.000\text{ VNĐ/tháng}$**.
+$$\text{TechInfraCostPerAgent} = \frac{C_{\text{Infra}} + C_{\text{AI}} + C_{\text{SaaS}}}{\text{TotalAgents}}$$
+
+- **Năm 1:** `40.550.000 VNĐ / 500 môi giới` = **81.100 VNĐ / môi giới / năm** (khoảng **6.758 VNĐ / môi giới / tháng**).
+- **So sánh với Doanh thu:** Gói đăng ký Agent Pro dự kiến là **300.000 – 500.000 VNĐ / tháng**.
 - **Biên Lợi Nhuận Gộp Kỹ thuật (Gross Technical Margin):**
-  $$\text{Margin} = \frac{300.000 - 6.758}{300.000} \approx \mathbf{97,7\%}$$
+  $$\text{Margin} = \frac{300.000 - 6.758}{300.000} \approx 97{,}7\%$$
 
 #### 3. Điểm Hòa Vốn Hạ Tầng Cốt Lõi (Infrastructure Break-Even Point):
-- Chi phí thuần cho Hạ tầng Cloud + AI API + Phụ trợ trong Năm 1 là: $40.550.000\text{ VNĐ/năm} \approx \mathbf{3.380.000\text{ VNĐ/tháng}}$.
-- Giá gói Agent Pro tối thiểu: $300.000\text{ VNĐ/tháng}$.
+- Chi phí thuần cho Hạ tầng Cloud + AI API + Phụ trợ trong Năm 1 là: **40.550.000 VNĐ / năm** (tương đương **3.380.000 VNĐ / tháng**).
+- Giá gói Agent Pro tối thiểu: **300.000 VNĐ / tháng**.
 - **Số lượng Môi giới cần thiết để hòa vốn hạ tầng:**
-  $$\text{Break-even Agents} = \frac{3.380.000}{300.000} \approx \mathbf{12\text{ Môi giới trả phí}}$$
+  $$\text{BreakEvenAgents} = \frac{3.380.000}{300.000} \approx 11{,}27 \approx 12\text{ agents}$$
+  *(Hệ thống chỉ cần tối thiểu **12 Môi giới trả phí** để hòa vốn toàn bộ chi phí kỹ thuật)*.
 
 > **KẾT LUẬN THẨM ĐỊNH TÀI CHÍNH:**  
 > Hệ thống **EstateAI** có khả năng tự trang trải toàn bộ chi phí hạ tầng điện toán đám mây và trí tuệ nhân tạo ngay khi chỉ có **12 môi giới đăng ký gói trả phí** (đạt 2,4% chỉ tiêu 500 môi giới Năm 1). Đây là minh chứng tuyệt đối cho độ an toàn tài chính, khả năng mở rộng không giới hạn và tính khả thi thương mại cấp doanh nghiệp của dự án.
