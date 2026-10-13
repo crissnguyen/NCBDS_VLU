@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const prisma = require('../lib/prisma');
+const { verifyToken, requireRole } = require('../middleware/auth');
+
+// Bảo mật cấp API: Bắt buộc xác thực JWT Token và quyền Quản trị viên (Admin)
+router.use(verifyToken, requireRole('admin'));
 
 const systemSettings = {
   emailNotifications: true,
@@ -521,27 +525,34 @@ router.put('/users/:id', async (req, res) => {
     const { id } = req.params;
     const { name, email } = req.body;
 
-    if (!name || !email) {
-      return res.status(400).json({ success: false, message: "Vui lòng nhập đầy đủ tên và email" });
+    if (!name && !email) {
+      return res.status(400).json({ success: false, message: "Vui lòng nhập tên hoặc email cần cập nhật" });
     }
 
-    const normalized = normalizeEmail(email);
+    const updateData = {};
+    if (name && typeof name === 'string') {
+      updateData.name = name.trim();
+    }
 
-    // Kiểm tra trùng email (loại trừ tài khoản hiện tại)
-    const existing = await prisma.user.findFirst({
-      where: {
-        email: { equals: normalized, mode: 'insensitive' },
-        NOT: { id }
+    if (email && typeof email === 'string') {
+      const normalized = normalizeEmail(email);
+      // Kiểm tra trùng email (loại trừ tài khoản hiện tại)
+      const existing = await prisma.user.findFirst({
+        where: {
+          email: { equals: normalized, mode: 'insensitive' },
+          NOT: { id }
+        }
+      });
+
+      if (existing) {
+        return res.status(400).json({ success: false, message: "Email này đã được sử dụng bởi tài khoản khác" });
       }
-    });
-
-    if (existing) {
-      return res.status(400).json({ success: false, message: "Email này đã được sử dụng bởi tài khoản khác" });
+      updateData.email = normalized;
     }
 
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: { name, email: normalized },
+      data: updateData,
       select: {
         id: true,
         name: true,

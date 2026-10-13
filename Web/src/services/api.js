@@ -19,3 +19,35 @@ export const mediaUrl = (src) => {
 };
 
 export const isLocalApi = API_ORIGIN.includes('localhost') || API_ORIGIN.includes('127.0.0.1');
+
+export const getAuthToken = () => {
+  try {
+    return localStorage.getItem('token') || '';
+  } catch {
+    return '';
+  }
+};
+
+export const getCurrentUser = () => {
+  try {
+    const raw = localStorage.getItem('currentUser');
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+export const authHeaders = (customHeaders = {}) => {
+  const token = getAuthToken();
+  const user = getCurrentUser();
+  return {
+    ...customHeaders,
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+    ...(user?.id ? { 'x-user-id': user.id } : {}),
+  };
+};
+
+export const authFetch = (url, options = {}) => {
+  const headers = authHeaders(options.headers || {});
+  return fetch(url, { ...options, headers });
+};

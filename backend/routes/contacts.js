@@ -1,6 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const prisma = require('../lib/prisma');
+const rateLimit = require('express-rate-limit');
+
+const contactLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  message: {
+    success: false,
+    message: 'Bạn gửi liên hệ quá nhanh. Vui lòng chờ 1 phút trước khi gửi lại.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 /**
  * @swagger
@@ -35,7 +47,7 @@ const prisma = require('../lib/prisma');
  *       201:
  *         description: Đã tạo yêu cầu liên hệ thành công
  */
-router.post('/', async (req, res) => {
+router.post('/', contactLimiter, async (req, res) => {
   try {
     const { name, email, phone, subject, message } = req.body;
     

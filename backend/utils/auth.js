@@ -31,6 +31,23 @@ const sanitizeUser = (user) => {
   return safeUser;
 };
 
+const jwt = require('jsonwebtoken');
+const { env } = require('../config/env');
+
+const generateToken = (user) => {
+  if (!user || !user.id) return null;
+  return jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+      role: user.role || 'client',
+      name: user.name || '',
+    },
+    env.jwtSecret,
+    { expiresIn: '7d' }
+  );
+};
+
 module.exports = {
   normalizeEmail,
   normalizeOtp,
@@ -40,4 +57,5 @@ module.exports = {
   otpMatches,
   getOtpExpiry,
   sanitizeUser,
+  generateToken,
 };

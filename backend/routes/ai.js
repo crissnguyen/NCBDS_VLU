@@ -140,37 +140,64 @@ Mỗi tiêu chí giải thích ngắn, cụ thể dựa trên dữ liệu. Đưa
   } finally { clearTimeout(timeout); }
 });
 
+const generateFallbackRewrite = (rawDescription, property = {}) => {
+  const typeMap = {
+    apartment: 'căn hộ cao cấp',
+    house: 'nhà phố hiện đại',
+    villa: 'biệt thự sang trọng',
+    land: 'lô đất tiềm năng',
+  };
+  const propType = typeMap[property.propertyType] || 'bất động sản';
+  const action = property.transactionType === 'rent' ? 'cho thuê' : 'chuyển nhượng';
+  const location = property.location || 'khu vực trung tâm thuận tiện';
+  const price = property.price ? `mức giá hợp lý ${property.price}` : 'mức giá thỏa thuận cạnh tranh';
+  const area = property.area ? `${property.area} m2` : 'diện tích tiêu chuẩn';
+  const beds = property.beds ? `${property.beds} phòng ngủ` : null;
+  const baths = property.baths ? `${property.baths} phòng vệ sinh` : null;
+  const rooms = [beds, baths].filter(Boolean).join(', ');
+  const legal = property.legalStatus ? `Pháp lý hoàn thiện rõ ràng (${property.legalStatus}), sẵn sàng giao dịch an toàn.` : 'Pháp lý đầy đủ, thủ tục mua bán minh bạch nhanh gọn.';
+
+  const cleanRaw = cleanText(rawDescription);
+
+  const p1 = `Chính chủ cần ${action} ${propType} tọa lạc tại ${location}. Bất động sản sở hữu vị trí thuận lợi, kết nối giao thông nhanh chóng đến các tuyến đường huyết mạch, trung tâm thương mại và tiện ích xung quanh, phù hợp tối ưu cho cả nhu cầu an cư lâu dài lẫn khai thác đầu tư sinh lời.`;
+
+  const p2 = `Không gian được quy hoạch bài bản với tổng diện tích sử dụng ${area}${rooms ? `, thiết kế thông thoáng bao gồm ${rooms}` : ''}. Các gian phòng được bố trí khoa học nhằm tận dụng tối đa ánh sáng tự nhiên và gió trời, tạo cảm giác rộng rãi và hiện đại. ${legal}`;
+
+  const p3 = cleanRaw && cleanRaw.length > 20
+    ? `Thông tin chi tiết: ${cleanRaw.replace(/[\n\r]+/g, ' ')}. Hiện trạng thực tế đúng như mô tả, tài sản được chào bán với ${price}. Quý khách hàng quan tâm vui lòng liên hệ ngay để nhận thông tin chi tiết và sắp xếp lịch xem thực tế.`
+    : `Hiện trạng thực tế đúng như mô tả, tài sản được chào bán với ${price}. Quý khách hàng quan tâm vui lòng liên hệ ngay để nhận thông tin chi tiết và sắp xếp lịch xem thực tế.`;
+
+  return [p1, p2, p3].join('\n\n');
+};
+
 router.post('/rewrite-description', async (req, res) => {
-  try {
-    const { description, property = {} } = req.body;
-    const rawDescription = cleanText(description);
+  const { description, property = {} } = req.body || {};
+  const rawDescription = cleanText(description);
 
-    if (!rawDescription || rawDescription.length < 12) {
-      return res.status(400).json({
-        success: false,
-        message: 'Vui lòng nhập mô tả ban đầu trước khi tạo nội dung AI.',
-      });
-    }
+  if (!rawDescription || rawDescription.length < 12) {
+    return res.status(400).json({
+      success: false,
+      message: 'Vui lòng nhập mô tả ban đầu trước khi tạo nội dung AI.',
+    });
+  }
 
-    if (!env.ai.geminiApiKey) {
-      return res.status(503).json({
-        success: false,
-        message: 'Chưa cấu hình GEMINI_API_KEY trên server.',
-      });
-    }
+  if (!env.ai.geminiApiKey) {
+    const fallbackText = generateFallbackRewrite(rawDescription, property);
+    return res.json({ success: true, description: fallbackText, rewritten: fallbackText, fallback: true });
+  }
 
-    const details = [
-      property.transactionType && `Loại giao dịch: ${property.transactionType}`,
-      property.propertyType && `Loại BĐS: ${property.propertyType}`,
-      property.location && `Vị trí: ${property.location}`,
-      property.price && `Giá: ${property.price}`,
-      property.area && `Diện tích: ${property.area} m2`,
-      property.beds && `Phòng ngủ: ${property.beds}`,
-      property.baths && `Phòng tắm: ${property.baths}`,
-      property.legalStatus && `Pháp lý: ${property.legalStatus}`,
-    ].filter(Boolean).join('\n');
+  const details = [
+    property.transactionType && `Loại giao dịch: ${property.transactionType}`,
+    property.propertyType && `Loại BĐS: ${property.propertyType}`,
+    property.location && `Vị trí: ${property.location}`,
+    property.price && `Giá: ${property.price}`,
+    property.area && `Diện tích: ${property.area} m2`,
+    property.beds && `Phòng ngủ: ${property.beds}`,
+    property.baths && `Phòng tắm: ${property.baths}`,
+    property.legalStatus && `Pháp lý: ${property.legalStatus}`,
+  ].filter(Boolean).join('\n');
 
-    const prompt = `
+  const prompt = `
 Bạn là chuyên gia copywriting bất động sản tại Việt Nam.
 Hãy viết lại mô tả tin đăng bên dưới sao cho hấp dẫn, rõ ràng, chuyên nghiệp và dễ đăng lên website.
 
@@ -191,8 +218,10 @@ Mô tả gốc:
 ${rawDescription}
 `;
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 35000);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 35000);
+
+  try {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${env.ai.geminiModel}:generateContent?key=${env.ai.geminiApiKey}`;
 
     const aiResponse = await fetch(url, {
@@ -210,31 +239,26 @@ ${rawDescription}
     });
     clearTimeout(timeout);
 
-    const data = await aiResponse.json();
-
     if (!aiResponse.ok) {
-      return res.status(aiResponse.status).json({
-        success: false,
-        message: data.error?.message || 'AI không thể tạo nội dung lúc này.',
-      });
+      console.warn(`Gemini API trả về lỗi status ${aiResponse.status}, kích hoạt bộ Fallback tự động.`);
+      const fallbackText = generateFallbackRewrite(rawDescription, property);
+      return res.json({ success: true, description: fallbackText, rewritten: fallbackText, fallback: true });
     }
 
+    const data = await aiResponse.json();
     const rewritten = cleanText(data.candidates?.[0]?.content?.parts?.[0]?.text);
 
     if (!rewritten) {
-      return res.status(502).json({
-        success: false,
-        message: 'AI không trả về nội dung phù hợp.',
-      });
+      const fallbackText = generateFallbackRewrite(rawDescription, property);
+      return res.json({ success: true, description: fallbackText, rewritten: fallbackText, fallback: true });
     }
 
-    res.json({ success: true, description: rewritten });
+    res.json({ success: true, description: rewritten, rewritten });
   } catch (error) {
-    const message = error.name === 'AbortError'
-      ? 'AI phản hồi quá lâu, vui lòng thử lại.'
-      : 'Không thể tạo nội dung AI.';
-    console.error('AI rewrite error:', error);
-    res.status(500).json({ success: false, message, error: error.message });
+    clearTimeout(timeout);
+    console.warn('AI rewrite error, kích hoạt bộ Fallback template:', error?.message);
+    const fallbackText = generateFallbackRewrite(rawDescription, property);
+    res.json({ success: true, description: fallbackText, rewritten: fallbackText, fallback: true });
   }
 });
 

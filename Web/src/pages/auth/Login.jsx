@@ -28,6 +28,7 @@ export default function Login({ setUserRole, setCurrentUser, setCurrentPage }) {
       const data = await response.json();
 
       if (data.success) {
+        if (data.token) localStorage.setItem('token', data.token);
         setUserRole(data.user.role);
         if (setCurrentUser) setCurrentUser(data.user);
         if (data.user.role === 'admin') {

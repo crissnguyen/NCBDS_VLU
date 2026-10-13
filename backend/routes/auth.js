@@ -16,7 +16,20 @@ const {
   otpMatches,
   getOtpExpiry,
   sanitizeUser,
+  generateToken,
 } = require('../utils/auth');
+const rateLimit = require('express-rate-limit');
+
+const authLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  message: {
+    success: false,
+    message: 'Bạn đã thực hiện quá nhiều yêu cầu trong thời gian ngắn. Vui lòng thử lại sau 1 phút.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 const findUserByEmail = (email) => prisma.user.findFirst({
   where: {
@@ -120,10 +133,12 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ success: false, message: "Sai email hoặc mật khẩu" });
     }
     
-    // Trả về thông tin user (không bao gồm password)
+    // Trả về thông tin user và mã token xác thực JWT
+    const token = generateToken(user);
     res.json({
       success: true,
       message: "Đăng nhập thành công",
+      token,
       user: sanitizeUser(user)
     });
     
@@ -162,7 +177,7 @@ router.post('/login', async (req, res) => {
  *       400:
  *         description: Lỗi đầu vào
  */
-router.post('/register', async (req, res) => {
+router.post('/register', authLimiter, async (req, res) => {
   try {
     const email = normalizeEmail(req.body.email);
     const { password, name } = req.body;
@@ -346,7 +361,7 @@ router.post('/resend-verification', async (req, res) => {
  *     summary: Quên mật khẩu
  *     tags: [Auth]
  */
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', authLimiter, async (req, res) => {
   try {
     const email = normalizeEmail(req.body.email);
     if (!email) {

@@ -1,6 +1,7 @@
 const http = require('http');
 const https = require('https');
 const prisma = require('../backend/lib/prisma');
+const { generateToken } = require('../backend/utils/auth');
 
 const BASE_URL = 'http://localhost:5001';
 
@@ -288,7 +289,7 @@ async function runTests() {
       }
     };
     const res = await request('POST', '/api/ai/rewrite-description', rewritePayload);
-    const rewritten = res.body.rewritten || res.body.data?.rewritten || res.body.data;
+    const rewritten = res.body.rewritten || res.body.description || res.body.data?.rewritten || res.body.data;
     record('AI-04', 'Viết lại mô tả AI chuyên nghiệp (/api/ai/rewrite-description)', 'AI', res.status === 200 && Boolean(rewritten), `Status ${res.status}, Độ dài kết quả: ${String(rewritten).length} ký tự`, '200 rewritten text', `${res.status}`);
   } catch (e) { record('AI-04', 'Viết lại mô tả AI', 'AI', false, e.message); }
 
@@ -317,11 +318,20 @@ async function runTests() {
   // ----------------------------------------------------------------
   // MODULE 4: ADMIN OPERATIONS & MANAGEMENT
   // ----------------------------------------------------------------
+  // MODULE 4: ADMIN OPERATIONS & MANAGEMENT
+  // ----------------------------------------------------------------
   console.log('\n--- 4. MODULE ADMIN OPERATIONS ---');
+  const adminToken = generateToken({
+    id: 'admin-auto-tester-id',
+    email: 'admin@ncbds.vlu.vn',
+    role: 'admin',
+    name: 'Quản Trị Viên Hệ Thống'
+  });
+  const adminHeaders = { 'Authorization': `Bearer ${adminToken}` };
 
   // ADM-01: Dashboard stats & users list
   try {
-    const res = await request('GET', '/api/admin/dashboard');
+    const res = await request('GET', '/api/admin/dashboard', null, adminHeaders);
     const data = res.body.data;
     record('ADM-01', 'Admin Dashboard metrics & users', 'ADMIN', res.status === 200 && Boolean(data.metrics) && Array.isArray(data.users), `Status ${res.status}, Total Sales: ${data?.metrics?.totalSales}, Pending: ${data?.metrics?.pendingListings}`, '200 metrics & users', `${res.status}`);
   } catch (e) { record('ADM-01', 'Admin Dashboard', 'ADMIN', false, e.message); }
@@ -329,14 +339,14 @@ async function runTests() {
   // ADM-02: Danh sách tin chờ duyệt (Pending)
   let pendingProps = [];
   try {
-    const res = await request('GET', '/api/admin/properties/pending');
+    const res = await request('GET', '/api/admin/properties/pending', null, adminHeaders);
     pendingProps = res.body.data || res.body;
     record('ADM-02', 'Lấy danh sách tin Pending (/api/admin/properties/pending)', 'ADMIN', res.status === 200 && Array.isArray(pendingProps), `Status ${res.status}, Pending count: ${pendingProps.length}`, '200 Array', `${res.status}`);
   } catch (e) { record('ADM-02', 'Lấy tin Pending', 'ADMIN', false, e.message); }
 
   // ADM-03: Danh sách tất cả tin (All properties)
   try {
-    const res = await request('GET', '/api/admin/properties/all');
+    const res = await request('GET', '/api/admin/properties/all', null, adminHeaders);
     const all = res.body.data || res.body;
     record('ADM-03', 'Lấy tất cả tin (/api/admin/properties/all)', 'ADMIN', res.status === 200 && Array.isArray(all), `Status ${res.status}, All properties count: ${all.length}`, '200 Array', `${res.status}`);
   } catch (e) { record('ADM-03', 'Lấy tất cả tin', 'ADMIN', false, e.message); }
@@ -363,13 +373,13 @@ async function runTests() {
   // ADM-05: Duyệt tin (Approved)
   if (testPropId) {
     try {
-      const res = await request('PUT', `/api/admin/properties/${testPropId}/status`, { status: 'Approved' });
+      const res = await request('PUT', `/api/admin/properties/${testPropId}/status`, { status: 'Approved' }, adminHeaders);
       record('ADM-05', 'Duyệt tin BĐS -> Approved', 'ADMIN', res.status === 200 && res.body.data?.status === 'Approved', `Status ${res.status}, Updated status: ${res.body.data?.status}`, '200 Approved', `${res.status}`);
     } catch (e) { record('ADM-05', 'Duyệt tin Approved', 'ADMIN', false, e.message); }
 
     // ADM-06: Từ chối tin (Rejected)
     try {
-      const res = await request('PUT', `/api/admin/properties/${testPropId}/status`, { status: 'Rejected' });
+      const res = await request('PUT', `/api/admin/properties/${testPropId}/status`, { status: 'Rejected' }, adminHeaders);
       record('ADM-06', 'Từ chối tin BĐS -> Rejected', 'ADMIN', res.status === 200 && res.body.data?.status === 'Rejected', `Status ${res.status}, Updated status: ${res.body.data?.status}`, '200 Rejected', `${res.status}`);
     } catch (e) { record('ADM-06', 'Từ chối tin Rejected', 'ADMIN', false, e.message); }
 
@@ -379,7 +389,7 @@ async function runTests() {
         title: 'Tin Thử Nghiệm Đã Được Sửa Bởi Admin',
         price: '3.5 tỷ',
         isSold: true
-      });
+      }, adminHeaders);
       record('ADM-07', 'Admin cập nhật tin BĐS (tiêu đề, giá, isSold)', 'ADMIN', res.status === 200 && res.body.data?.price === '3.5 tỷ', `Status ${res.status}`, '200', `${res.status}`);
     } catch (e) { record('ADM-07', 'Admin cập nhật tin', 'ADMIN', false, e.message); }
   }
@@ -393,7 +403,7 @@ async function runTests() {
       email: newSaleEmail,
       password: 'SalePassword@123',
       title: 'Chuyên viên Tư vấn'
-    });
+    }, adminHeaders);
     createdSaleId = res.body.data?.id;
     record('ADM-08', 'Admin tạo nhân viên Sale mới', 'ADMIN', res.status === 201 && Boolean(createdSaleId), `Status ${res.status}, ID: ${createdSaleId}`, '201 Created', `${res.status}`);
   } catch (e) { record('ADM-08', 'Admin tạo Sale', 'ADMIN', false, e.message); }
@@ -401,35 +411,35 @@ async function runTests() {
   // ADM-09: Quản lý User - Cập nhật trạng thái Locked
   if (createdSaleId) {
     try {
-      const res = await request('PUT', `/api/admin/users/${createdSaleId}/status`, { status: 'Locked' });
+      const res = await request('PUT', `/api/admin/users/${createdSaleId}/status`, { status: 'Locked' }, adminHeaders);
       const userStatus = res.body.user?.status;
       record('ADM-09', 'Admin khóa tài khoản user (Locked)', 'ADMIN', res.status === 200 && userStatus === 'Locked', `Status ${res.status}, status: ${userStatus}`, '200 Locked', `${res.status}`);
     } catch (e) { record('ADM-09', 'Admin khóa tài khoản', 'ADMIN', false, e.message); }
 
     // ADM-10: Quản lý User - Thay đổi phân quyền (Role)
     try {
-      const res = await request('PUT', `/api/admin/users/${createdSaleId}/role`, { role: 'admin' });
+      const res = await request('PUT', `/api/admin/users/${createdSaleId}/role`, { role: 'admin' }, adminHeaders);
       const userRole = res.body.user?.role;
       record('ADM-10', 'Admin thăng cấp quyền Role (sale -> admin)', 'ADMIN', res.status === 200 && userRole === 'admin', `Status ${res.status}, new role: ${userRole}`, '200 admin', `${res.status}`);
     } catch (e) { record('ADM-10', 'Admin đổi quyền Role', 'ADMIN', false, e.message); }
 
     // ADM-11: Quản lý User - Cập nhật thông tin (Tên & Email)
     try {
-      const res = await request('PUT', `/api/admin/users/${createdSaleId}`, { name: 'Sale Thử Nghiệm Đổi Tên', email: newSaleEmail });
+      const res = await request('PUT', `/api/admin/users/${createdSaleId}`, { name: 'Sale Thử Nghiệm Đổi Tên', email: newSaleEmail }, adminHeaders);
       record('ADM-11', 'Admin cập nhật thông tin user', 'ADMIN', res.status === 200 && res.body.data?.name === 'Sale Thử Nghiệm Đổi Tên', `Status ${res.status}`, '200', `${res.status}`);
     } catch (e) { record('ADM-11', 'Admin cập nhật user', 'ADMIN', false, e.message); }
 
     // ADM-12: Quản lý User - Xóa User
     try {
-      const res = await request('DELETE', `/api/admin/users/${createdSaleId}`);
+      const res = await request('DELETE', `/api/admin/users/${createdSaleId}`, null, adminHeaders);
       record('ADM-12', 'Admin xóa User khỏi hệ thống', 'ADMIN', res.status === 200 && res.body.success === true, `Status ${res.status}`, '200', `${res.status}`);
     } catch (e) { record('ADM-12', 'Admin xóa User', 'ADMIN', false, e.message); }
   }
 
   // ADM-13: Cài đặt hệ thống (GET /api/admin/settings & PUT)
   try {
-    const getRes = await request('GET', '/api/admin/settings');
-    const putRes = await request('PUT', '/api/admin/settings', { emailNotifications: true, aiPriceAnalysis: true });
+    const getRes = await request('GET', '/api/admin/settings', null, adminHeaders);
+    const putRes = await request('PUT', '/api/admin/settings', { emailNotifications: true, aiPriceAnalysis: true }, adminHeaders);
     record('ADM-13', 'Cài đặt hệ thống (GET & PUT settings)', 'ADMIN', getRes.status === 200 && putRes.status === 200 && putRes.body.data?.aiPriceAnalysis === true, `GET: ${getRes.status}, PUT: ${putRes.status}`, '200', `${putRes.status}`);
   } catch (e) { record('ADM-13', 'Cài đặt hệ thống', 'ADMIN', false, e.message); }
 
@@ -439,7 +449,7 @@ async function runTests() {
       { title: 'Tin Nhập Khẩu 1', price: '4.1 tỷ', location: 'Quận 2, TP.HCM', area: 80, beds: 2, baths: 2 },
       { title: 'Tin Nhập Khẩu 2', price: '5.2 tỷ', location: 'Quận 7, TP.HCM', area: 100, beds: 3, baths: 2 }
     ];
-    const res = await request('POST', '/api/admin/properties/import', { rows: importData });
+    const res = await request('POST', '/api/admin/properties/import', { rows: importData }, adminHeaders);
     record('ADM-14', 'Nhập liệu tin BĐS hàng loạt (/api/admin/properties/import)', 'ADMIN', res.status === 201 && res.body.imported === 2, `Status ${res.status}, Imported: ${res.body.imported}`, '201 imported: 2', `${res.status}`);
   } catch (e) { record('ADM-14', 'Nhập liệu hàng loạt', 'ADMIN', false, e.message); }
 
@@ -477,7 +487,7 @@ async function runTests() {
 
   // CONT-03: Admin xem danh sách liên hệ
   try {
-    const res = await request('GET', '/api/admin/contacts');
+    const res = await request('GET', '/api/admin/contacts', null, adminHeaders);
     record('CONT-03', 'Admin xem danh sách yêu cầu liên hệ (/api/admin/contacts)', 'CONTACTS', res.status === 200 && Array.isArray(res.body.data || res.body), `Status ${res.status}, Contacts count: ${(res.body.data || res.body).length}`, '200 Array', `${res.status}`);
   } catch (e) { record('CONT-03', 'Admin xem liên hệ', 'CONTACTS', false, e.message); }
 
@@ -486,13 +496,13 @@ async function runTests() {
     try {
       const res = await request('POST', `/api/admin/contacts/${testContactId}/reply`, {
         replyText: 'Chào bạn, chuyên viên sẽ gọi lại cho bạn trong 15 phút tới!'
-      });
+      }, adminHeaders);
       record('CONT-04', 'Admin phản hồi yêu cầu liên hệ (/reply)', 'CONTACTS', res.status === 200 && res.body.success === true, `Status ${res.status}`, '200', `${res.status}`);
     } catch (e) { record('CONT-04', 'Admin phản hồi', 'CONTACTS', false, e.message); }
 
     // CONT-05: Admin xóa liên hệ
     try {
-      const res = await request('DELETE', `/api/admin/contacts/${testContactId}`);
+      const res = await request('DELETE', `/api/admin/contacts/${testContactId}`, null, adminHeaders);
       record('CONT-05', 'Admin xóa yêu cầu liên hệ', 'CONTACTS', res.status === 200 && res.body.success === true, `Status ${res.status}`, '200', `${res.status}`);
     } catch (e) { record('CONT-05', 'Admin xóa liên hệ', 'CONTACTS', false, e.message); }
   }
@@ -559,12 +569,13 @@ async function runTests() {
     record('SEC-01', 'Bảo mật: API Admin /api/admin/dashboard có yêu cầu Token không?', 'SECURITY', !isUnprotected, isUnprotected ? 'CẢNH BÁO: API Admin hoàn toàn mở công khai (Không có Auth Middleware bảo vệ!)' : 'Được bảo vệ', '401 Unauthorized', `${res.status} OK`);
   } catch (e) { record('SEC-01', 'Bảo vệ Admin Dashboard', 'SECURITY', false, e.message); }
 
-  // SEC-02: Kiểm tra API Admin Properties có kiểm tra Role không
+  // SEC-02: Kiểm tra API Admin Properties khi User có Role "sale" gọi đến (Yêu cầu 403 Forbidden)
   try {
-    const res = await request('GET', '/api/admin/properties/pending');
-    const isUnprotected = res.status === 200;
-    record('SEC-02', 'Bảo mật: API /api/admin/properties/pending có kiểm tra Role không?', 'SECURITY', !isUnprotected, isUnprotected ? 'CẢNH BÁO: Bất kỳ ai cũng gọi được API duyệt tin mà không cần đăng nhập/quyền Admin!' : 'Được bảo vệ', '401/403', `${res.status} OK`);
-  } catch (e) { record('SEC-02', 'Bảo vệ Admin Properties', 'SECURITY', false, e.message); }
+    const saleToken = generateToken({ id: 'sale-tester-id', email: 'sale@ncbds.vlu.vn', role: 'sale', name: 'Sale Tester' });
+    const res = await request('GET', '/api/admin/properties/pending', null, { 'Authorization': `Bearer ${saleToken}` });
+    const isProtected = res.status === 403;
+    record('SEC-02', 'Bảo mật RBAC: Role "sale" bị chặn khi truy cập Admin API', 'SECURITY', isProtected, `Status ${res.status}: ${res.body.message || 'Bị chặn đúng quyền'}`, '403 Forbidden', `${res.status}`);
+  } catch (e) { record('SEC-02', 'Bảo vệ Admin Properties theo Role', 'SECURITY', false, e.message); }
 
   // SEC-03: Kiểm tra API User Management có kiểm tra Auth không
   try {

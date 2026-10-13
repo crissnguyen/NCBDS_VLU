@@ -48,6 +48,7 @@ const env = {
     geminiApiKey: process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY,
     geminiModel: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
   },
+  jwtSecret: process.env.JWT_SECRET || 'estateai_super_secret_jwt_key_2026_ncbds_vlu',
 };
 
 module.exports = { env };
