@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, Mail, ShieldAlert, CheckCircle2, AlertCircle } from 'lucide-react';
 import { LabeledField, IS } from '../../../components/DashboardShared';
-import { apiUrl } from '../../../services/api';
+import { apiUrl, authHeaders } from '../../../services/api';
 
 export default function EditUserModal({ user, onClose, onSuccess, toast }) {
   const [form, setForm] = useState({
@@ -28,7 +28,7 @@ export default function EditUserModal({ user, onClose, onSuccess, toast }) {
     try {
       const res = await fetch(apiUrl(`admin/users/${user.id}`), {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(form)
       });
       const result = await res.json();

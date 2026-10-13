@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, Eye, EyeOff } from 'lucide-react';
 import { LabeledField, IS } from '../../../components/DashboardShared';
-import { apiUrl } from '../../../services/api';
+import { apiUrl, authHeaders } from '../../../services/api';
 
 export default function AddEmployeeModal({ onClose, onSuccess, toast }) {
   const [form, setForm] = useState({ name: '', email: '', password: '', title: 'Chuyên viên Môi giới', performance: '' });
@@ -19,7 +19,7 @@ export default function AddEmployeeModal({ onClose, onSuccess, toast }) {
     try {
       const res = await fetch(apiUrl('admin/users'), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(form)
       });
       const result = await res.json();

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { LabeledField, IS } from '../../../components/DashboardShared';
-import { apiUrl } from '../../../services/api';
+import { apiUrl, authHeaders } from '../../../services/api';
 
 export default function EditPropertyModal({ property, onClose, onSuccess, toast }) {
   const [form, setForm] = useState({
@@ -30,7 +30,7 @@ export default function EditPropertyModal({ property, onClose, onSuccess, toast 
     try {
       const res = await fetch(apiUrl(`admin/properties/${property.id}`), {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(form)
       });
       const result = await res.json();

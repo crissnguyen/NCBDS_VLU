@@ -1,6 +1,7 @@
 import { CONFIG } from './config';
 import { localStore } from './localStore';
 import { enrichAndSortProperties } from '../../utils/aiScoring';
+import { authHeaders } from '../api';
 
 const fileToBase64 = (file) => new Promise((resolve, reject) => {
   if (!file || !(file instanceof File)) {
@@ -178,7 +179,7 @@ export const dataService = {
     }
     const res = await fetch(`${CONFIG.API_BASE}/admin/properties/import`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ rows }),
     });
     return await res.json();
@@ -248,7 +249,9 @@ export const dataService = {
     if (dataService.isLocalMode()) {
       return { success: true, data: localStore.get(CONFIG.LOCAL_KEYS.CONTACTS) };
     }
-    const res = await fetch(`${CONFIG.API_BASE}/admin/contacts`);
+    const res = await fetch(`${CONFIG.API_BASE}/admin/contacts`, {
+      headers: authHeaders()
+    });
     return await res.json();
   },
 
@@ -278,7 +281,7 @@ export const dataService = {
     }
     const res = await fetch(`${CONFIG.API_BASE}/admin/contacts/${id}/reply`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ replyText, subject })
     });
     return await res.json();
@@ -291,7 +294,7 @@ export const dataService = {
     }
     const res = await fetch(`${CONFIG.API_BASE}/admin/contacts`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(contactData)
     });
     return await res.json();
@@ -304,7 +307,7 @@ export const dataService = {
     }
     const res = await fetch(`${CONFIG.API_BASE}/admin/contacts/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(contactData)
     });
     return await res.json();
@@ -316,7 +319,8 @@ export const dataService = {
       return { success: true };
     }
     const res = await fetch(`${CONFIG.API_BASE}/admin/contacts/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: authHeaders()
     });
     return await res.json();
   },
@@ -328,7 +332,7 @@ export const dataService = {
     }
     const res = await fetch(`${CONFIG.API_BASE}/admin/contacts/bulk-delete`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ ids })
     });
     return await res.json();
@@ -354,7 +358,7 @@ export const dataService = {
     }
     const res = await fetch(`${CONFIG.API_BASE}/admin/properties/bulk-delete`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ ids })
     });
     return await res.json();

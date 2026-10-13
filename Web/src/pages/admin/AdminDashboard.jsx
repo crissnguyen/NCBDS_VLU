@@ -18,7 +18,7 @@ import NewsTab from './tabs/NewsTab';
 import ContactManagementTab from './tabs/ContactManagementTab';
 import PotentialCustomersTab from './tabs/PotentialCustomersTab';
 import AiModelTab from './tabs/AiModelTab';
-import { apiUrl } from '../../services/api';
+import { apiUrl, authHeaders } from '../../services/api';
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export default function AdminDashboard({ currentUser, setCurrentPage, setUserRole, setCurrentUser }) {
@@ -39,7 +39,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
   const fetchData = useCallback(async (silent = false) => {
     try {
       if (!silent) setLoading(true);
-      const requestOptions = { cache: 'no-store' };
+      const requestOptions = { cache: 'no-store', headers: authHeaders() };
       const refreshKey = `?refresh=${Date.now()}`;
       const [dRes, pRes, aRes] = await Promise.all([
         fetch(apiUrl('admin/dashboard') + refreshKey, requestOptions),
@@ -82,7 +82,8 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     if (window.confirm('Bạn có chắc chắn muốn xóa vĩnh viễn người dùng này? Các bài đăng của họ sẽ bị gỡ tên tác giả nhưng vẫn tồn tại trên hệ thống.')) {
       try {
         const res = await fetch(apiUrl(`admin/users/${userId}`), {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: authHeaders()
         });
         const data = await res.json();
         if (data.success) {
@@ -102,7 +103,8 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
 
     try {
       const res = await fetch(apiUrl(`admin/users/${userId}/role`), {
-        method: 'PUT', headers: { 'Content-Type': 'application/json' },
+        method: 'PUT',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ role: newRole })
       });
       const r = await res.json();
@@ -124,7 +126,8 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     if (m.type === 'user') {
       try {
         const res = await fetch(apiUrl(`admin/users/${m.userId}/status`), {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          method: 'PUT',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
           body: JSON.stringify({ status: m.newStatus })
         });
         const r = await res.json();
@@ -138,7 +141,8 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
     if (m.type === 'property') {
       try {
         const res = await fetch(apiUrl(`admin/properties/${m.propertyId}/status`), {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          method: 'PUT',
+          headers: authHeaders({ 'Content-Type': 'application/json' }),
           body: JSON.stringify({ status: m.action === 'approve' ? 'Approved' : 'Rejected' })
         });
         const r = await res.json();
@@ -154,7 +158,10 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
   const handleDeleteProperty = async (propertyId) => {
     if (!window.confirm("Bạn có chắc chắn muốn xóa tin đăng này?")) return;
     try {
-      const res = await fetch(apiUrl(`admin/properties/${propertyId}`), { method: 'DELETE' });
+      const res = await fetch(apiUrl(`admin/properties/${propertyId}`), {
+        method: 'DELETE',
+        headers: authHeaders()
+      });
       const result = await res.json();
       if (result.success) {
         toast.success("Thành công", "Đã xóa tin đăng.");

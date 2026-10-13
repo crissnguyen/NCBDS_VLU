@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Check, Mail, ShieldCheck, Sparkles, Wrench } from 'lucide-react';
-import { apiUrl } from '../../../services/api';
+import { apiUrl, authHeaders } from '../../../services/api';
 
 const items = [
   { key: 'emailNotifications', title: 'Thông báo email tự động', desc: 'Gửi email khi có tin đăng mới hoặc cần phê duyệt', icon: Mail },
@@ -16,7 +16,7 @@ export default function SettingsTab() {
 
   useEffect(() => {
     let active = true;
-    fetch(apiUrl('admin/settings'), { cache: 'no-store' })
+    fetch(apiUrl('admin/settings'), { cache: 'no-store', headers: authHeaders() })
       .then(res => res.json())
       .then(result => { if (active && result.success) setSettings(result.data); else if (active) setError(result.message || 'Không thể tải cài đặt.'); })
       .catch(() => { if (active) setError('Không thể kết nối máy chủ.'); });
@@ -28,7 +28,11 @@ export default function SettingsTab() {
     const next = !settings[key];
     setSaving(key); setError(''); setSettings(current => ({ ...current, [key]: next }));
     try {
-      const res = await fetch(apiUrl('admin/settings'), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ [key]: next }) });
+      const res = await fetch(apiUrl('admin/settings'), {
+        method: 'PUT',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ [key]: next })
+      });
       const result = await res.json();
       if (!res.ok || !result.success) throw new Error(result.message || 'Không thể lưu cài đặt.');
       setSettings(result.data);

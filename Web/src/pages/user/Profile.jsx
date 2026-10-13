@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { UserCircle2, Mail, Calendar, ShieldCheck, MapPin, LogOut, Eye, EyeOff } from 'lucide-react';
 import { Field } from '../../components/ui';
-import { apiUrl } from '../../services/api';
+import { apiUrl, authHeaders } from '../../services/api';
 
 export default function Profile({ currentUser, setCurrentPage, setCurrentUser }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -19,7 +19,7 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
         try {
           const res = await fetch(apiUrl('auth/profile'), {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: authHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({ email: currentUser.email })
           });
           const data = await res.json();
@@ -61,7 +61,7 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
     try {
       const res = await fetch(apiUrl('auth/profile'), {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           id: currentUser.id,
           name: form.name,

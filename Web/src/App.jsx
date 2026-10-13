@@ -40,8 +40,12 @@ function App() {
   }, [currentPage]);
 
   useEffect(() => {
-    if (userRole) localStorage.setItem('userRole', userRole);
-    else localStorage.removeItem('userRole');
+    if (userRole) {
+      localStorage.setItem('userRole', userRole);
+    } else {
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('token');
+    }
   }, [userRole]);
 
   useEffect(() => {
