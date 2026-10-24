@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { CheckCircle, AlertCircle, Info, X, ImagePlus, Sparkles } from 'lucide-react';
 import { apiUrl } from '../services/api';
 import { dataService } from '../services/data/dataService';
+import PropertyDocumentImport from './PropertyDocumentImport';
 
 // ─── Toast System ─────────────────────────────────────────────────────────────
 export function useToast() {
@@ -137,12 +138,13 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
   const [form, setForm] = useState({
     transactionType: 'sale', propertyType: 'apartment',
     location: '', price: '', area: '', beds: '', baths: '',
-    legalStatus: 'pink-book', description: '', title: ''
+    legalStatus: 'unknown', description: '', title: ''
   });
   const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
+  const [documentImportKey, setDocumentImportKey] = useState(0);
   const [provinces, setProvinces] = useState([]);
   const [scoreResult, setScoreResult] = useState(null);
   const [scoreLoading, setScoreLoading] = useState(false);
@@ -190,6 +192,19 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
   }, []);
 
   const handleChange = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
+
+  const handleDocumentImport = (property, { onlyEmpty }) => {
+    setForm(previous => {
+      const next = { ...previous };
+      for (const field of Object.keys(previous)) {
+        const value = property[field];
+        if (value === undefined || value === null || String(value).trim() === '') continue;
+        if (onlyEmpty && previous[field] !== '' && previous[field] !== 'unknown') continue;
+        next[field] = String(value);
+      }
+      return next;
+    });
+  };
 
   const handleImages = e => {
     const files = Array.from(e.target.files || []).filter(file => file.type.startsWith('image/'));
@@ -251,8 +266,9 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
       const result = await dataService.createProperty(fd);
       if (result.success) {
         toast.success('Đăng tin thành công!', currentUser?.role === 'admin' ? `Tin "${autoTitle()}" đã được duyệt.` : `Tin "${autoTitle()}" đã được gửi và đang chờ Admin duyệt.`);
-        setForm({ transactionType: 'sale', propertyType: 'apartment', location: '', price: '', area: '', beds: '', baths: '', legalStatus: 'pink-book', description: '', title: '' });
+        setForm({ transactionType: 'sale', propertyType: 'apartment', location: '', price: '', area: '', beds: '', baths: '', legalStatus: 'unknown', description: '', title: '' });
         setImages([]); setPreviews([]);
+        setDocumentImportKey(previous => previous + 1);
         // Chờ đồng bộ lại dữ liệu cha trước khi kết thúc luồng đăng tin,
         // để danh sách/dashboard cập nhật ngay mà không cần reload trang.
         if (onSuccess) await onSuccess();
@@ -311,6 +327,7 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
         </div>
 
         <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          <PropertyDocumentImport key={documentImportKey} onApply={handleDocumentImport} disabled={loading || aiLoading} />
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <LabeledField label="Loại giao dịch" required>
               <select name="transactionType" value={form.transactionType} onChange={handleChange} style={IS}>
@@ -333,12 +350,10 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <LabeledField label="Vị trí / Khu vực" required>
-              <select name="location" value={form.location} onChange={handleChange} style={{ ...IS, appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23475569%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.8rem center', backgroundSize: '1rem' }}>
-                <option value="" disabled>-- Chọn Tỉnh / Thành phố --</option>
-                {provinces.map(p => (
-                  <option key={p.code} value={p.name}>{p.name}</option>
-                ))}
-              </select>
+              <input name="location" list="property-location-suggestions" value={form.location} onChange={handleChange} placeholder="Nhập địa chỉ hoặc chọn tỉnh / thành phố" style={IS} />
+              <datalist id="property-location-suggestions">
+                {provinces.map(p => <option key={p.code} value={p.name} />)}
+              </datalist>
             </LabeledField>
             <LabeledField label="Giá" required>
               <input name="price" value={form.price} onChange={handleChange} placeholder="VD: 2.85 Tỷ" style={IS} />

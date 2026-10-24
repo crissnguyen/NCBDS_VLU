@@ -3,6 +3,7 @@ import { ArrowLeft, MapPin, Bed, Bath, Maximize, ShieldCheck, Sparkles, Phone, M
 import { mediaUrl } from '../../services/api';
 import { dataService } from '../../services/data/dataService';
 import { evaluateProperty } from '../../utils/aiScoring';
+import PropertyDescription from '../../components/PropertyDescription';
 
 export default function PropertyDetail({ id, setCurrentPage }) {
   const [property, setProperty] = useState(null);
@@ -323,9 +324,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
             <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: 800, color: '#0f2a44', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Sparkles size={20} color="#0f766e" /> Mô tả chi tiết
             </h2>
-            <div style={{ color: '#475569', lineHeight: 1.8, fontSize: '0.95rem', whiteSpace: 'pre-wrap' }}>
-              {property.description}
-            </div>
+            <PropertyDescription value={property.description} />
           </section>
 
 

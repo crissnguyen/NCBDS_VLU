@@ -76,6 +76,7 @@ const aiRoute = require('./routes/ai');
 const newsRoute = require('./routes/news');
 const contactsRoute = require('./routes/contacts');
 
+app.use('/api/properties', require('./routes/propertyDocuments'));
 app.use('/api/properties', propertiesRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/admin', adminRoute);
