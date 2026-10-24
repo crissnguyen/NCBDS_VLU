@@ -8,19 +8,26 @@ const fallbackImage = 'https://images.unsplash.com/photo-1486406146926-c627a92ad
 export default function News() {
   const [newsData, setNewsData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const [selectedArticle, setSelectedArticle] = useState(null);
 
   useEffect(() => {
+    let active = true;
     dataService.getNews()
       .then(data => {
+        if (!active) return;
         if (data.success) setNewsData(data.data);
         setLoading(false);
       })
       .catch(err => {
+        if (!active) return;
         console.error('Lỗi khi tải tin tức:', err);
+        setLoadError('Không thể tải tin tức lúc này. Vui lòng thử lại.');
         setLoading(false);
       });
-  }, []);
+    return () => { active = false; };
+  }, [loadAttempt]);
 
   const featuredArticle = newsData.find(n => n.featured) || newsData[0];
   const gridArticles = newsData.filter(n => n.id !== featuredArticle?.id);
@@ -73,6 +80,12 @@ export default function News() {
       </section>
 
       <main style={{ maxWidth: 1180, margin: '-4.3rem auto 0', padding: '0 1.25rem', position: 'relative', zIndex: 10 }}>
+        {(loadError || newsData.length === 0) && (
+          <div role={loadError ? 'alert' : 'status'} style={{ padding: '2rem', textAlign: 'center', background: 'white', borderRadius: 16 }}>
+            <p>{loadError || 'Chưa có tin tức được đăng.'}</p>
+            {loadError && <button className="btn btn-ghost" onClick={() => { setLoadError(''); setLoading(true); setLoadAttempt(attempt => attempt + 1); }}>Thử lại</button>}
+          </div>
+        )}
         {featuredArticle && (
           <motion.article
             initial={{ opacity: 0, y: 28 }}

@@ -2,6 +2,7 @@ import { CONFIG } from './config';
 import { localStore } from './localStore';
 import { enrichAndSortProperties } from '../../utils/aiScoring';
 import { authHeaders } from '../api';
+import { getJson } from '../request';
 
 const fileToBase64 = (file) => new Promise((resolve, reject) => {
   if (!file || !(file instanceof File)) {
@@ -26,8 +27,11 @@ export const dataService = {
     if (dataService.isLocalMode()) {
       return { success: true, data: localStore.get(CONFIG.LOCAL_KEYS.NEWS) };
     }
-    const res = await fetch(`${CONFIG.API_BASE}/news`);
-    return await res.json();
+    const result = await getJson(`${CONFIG.API_BASE}/news`);
+    if (!result.success || !Array.isArray(result.data)) {
+      throw new Error('Không thể tải tin tức lúc này. Vui lòng thử lại.');
+    }
+    return result;
   },
 
   createNews: async (formData) => {
@@ -109,8 +113,10 @@ export const dataService = {
       if (authorId) params.set('authorId', authorId);
       if (refresh) params.set('refresh', refresh);
       const query = params.toString() ? `?${params.toString()}` : '';
-      const res = await fetch(`${CONFIG.API_BASE}/properties${query}`, { cache: 'no-store' });
-      list = await res.json();
+      list = await getJson(`${CONFIG.API_BASE}/properties${query}`, { cache: 'no-store' });
+      if (!Array.isArray(list)) {
+        throw new Error('Không thể tải danh sách bất động sản lúc này. Vui lòng thử lại.');
+      }
     }
     return enrichAndSortProperties(Array.isArray(list) ? list : []);
   },
@@ -120,8 +126,7 @@ export const dataService = {
     if (dataService.isLocalMode()) {
       item = localStore.get(CONFIG.LOCAL_KEYS.PROPERTIES).find(property => property.id === id) || null;
     } else {
-      const res = await fetch(`${CONFIG.API_BASE}/properties/${id}`);
-      item = await res.json();
+      item = await getJson(`${CONFIG.API_BASE}/properties/${id}`);
     }
     if (item && typeof item === 'object') {
       const [enriched] = enrichAndSortProperties([item]);

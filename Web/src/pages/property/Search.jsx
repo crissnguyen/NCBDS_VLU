@@ -10,6 +10,8 @@ export default function Search({ setCurrentPage }) {
   const [allProperties, setAllProperties] = useState([]);
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const [provinces, setProvinces] = useState([]);
   const [marketData, setMarketData] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
@@ -44,8 +46,10 @@ export default function Search({ setCurrentPage }) {
   };
 
   useEffect(() => {
+    let active = true;
     dataService.getProperties()
       .then(data => {
+        if (!active) return;
         const approved = Array.isArray(data) ? data.filter(p => p.status === 'Approved') : [];
         const sorted = enrichAndSortProperties(approved);
         setAllProperties(sorted);
@@ -53,10 +57,15 @@ export default function Search({ setCurrentPage }) {
         setLoading(false);
       })
       .catch(err => {
+        if (!active) return;
         console.error("Lỗi fetch properties:", err);
+        setLoadError('Không thể tải danh sách bất động sản lúc này. Vui lòng thử lại.');
         setLoading(false);
       });
+    return () => { active = false; };
+  }, [loadAttempt]);
 
+  useEffect(() => {
     // Lấy danh sách tỉnh thành Việt Nam
     fetch('https://provinces.open-api.vn/api/')
       .then(res => res.json())
@@ -321,6 +330,11 @@ export default function Search({ setCurrentPage }) {
             {loading ? (
               <div style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1', color: '#64748b' }}>
                 Đang tải danh sách bất động sản...
+              </div>
+            ) : loadError ? (
+              <div role="alert" style={{ padding: '2rem', textAlign: 'center', gridColumn: '1 / -1', color: '#64748b' }}>
+                <p>{loadError}</p>
+                <button className="btn btn-ghost" onClick={() => { setLoadError(''); setLoading(true); setLoadAttempt(attempt => attempt + 1); }}>Thử lại</button>
               </div>
             ) : properties.length === 0 ? (
               <div style={{ padding: '3rem', textAlign: 'center', gridColumn: '1 / -1', color: '#64748b', background: 'white', borderRadius: 16, border: '1px solid #e2e8f0' }}>

@@ -11,18 +11,34 @@ import { enrichAndSortProperties } from '../utils/aiScoring';
 
 export default function Home({ setCurrentPage }) {
   const [featuredProperties, setFeaturedProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [loadAttempt, setLoadAttempt] = useState(0);
 
   useEffect(() => {
+    let active = true;
     dataService.getProperties()
       .then(d => {
-        if (Array.isArray(d)) {
+        if (active && Array.isArray(d)) {
           const approved = d.filter(p => p.status === 'Approved');
           const sorted = enrichAndSortProperties(approved);
           setFeaturedProperties(sorted.slice(0, 6));
         }
       })
-      .catch(e => console.log(e));
-  }, []);
+      .catch(() => {
+        if (active) setLoadError('Không thể tải tin đăng lúc này. Vui lòng thử lại.');
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => { active = false; };
+  }, [loadAttempt]);
+
+  const retryLoad = () => {
+    setLoading(true);
+    setLoadError('');
+    setLoadAttempt(attempt => attempt + 1);
+  };
 
   return (
     <main>
@@ -41,7 +57,7 @@ export default function Home({ setCurrentPage }) {
           />
           <div className="marquee-wrapper">
             <div className="marquee-track">
-              {featuredProperties.length > 0 ? (
+              {!loading && !loadError && featuredProperties.length > 0 ? (
                 [...featuredProperties, ...featuredProperties, ...featuredProperties].map((property, index) => {
                   const mappedProperty = {
                     ...property,
@@ -64,7 +80,10 @@ export default function Home({ setCurrentPage }) {
                   );
                 })
               ) : (
-                <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b', width: '100%' }}>Đang tải tin mới...</div>
+                <div role={loadError ? 'alert' : 'status'} style={{ textAlign: 'center', padding: '2rem', color: '#64748b', width: '100%' }}>
+                  {loading ? 'Đang tải tin mới...' : loadError || 'Chưa có tin đăng được duyệt.'}
+                  {loadError && <button className="btn btn-ghost" onClick={retryLoad}>Thử lại</button>}
+                </div>
               )}
             </div>
           </div>
