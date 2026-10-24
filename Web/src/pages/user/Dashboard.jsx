@@ -71,8 +71,8 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
               <Home size={18} color="white" />
             </div>
             <div>
-              <div style={{ color: 'white', fontWeight: 800, fontSize: '1.05rem' }}>Estate<span style={{ color: '#38bdf8' }}>AI</span></div>
-              <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.67rem', fontWeight: 600, letterSpacing: '0.08em' }}>BROKER PRO</div>
+              <div style={{ color: 'white', fontWeight: 'var(--font-weight-subheading)', fontSize: '1.05rem' }}>Estate<span style={{ color: '#38bdf8' }}>AI</span></div>
+              <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.67rem', fontWeight: 'var(--font-weight-subheading)', letterSpacing: '0.08em' }}>BROKER PRO</div>
             </div>
           </div>
         </div>
@@ -85,7 +85,7 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
             <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg, #0f766e, #0891b2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><User size={15} color="white" /></div>
             <div style={{ flex: 1, overflow: 'hidden' }}>
-              <div style={{ color: 'white', fontWeight: 600, fontSize: '0.82rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{currentUser?.name || 'Môi giới'}</div>
+              <div style={{ color: 'white', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.82rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{currentUser?.name || 'Môi giới'}</div>
               <div style={{ color: 'rgba(255,255,255,0.38)', fontSize: '0.7rem' }}>Sale</div>
             </div>
             <button onClick={() => { setUserRole?.(null); setCurrentUser?.(null); setCurrentPage?.('home'); }} title="Đăng xuất"
@@ -105,15 +105,15 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
               <Menu size={24} color="#0f172a" />
             </button>
             <div>
-              <h2 style={{ margin: 0, fontWeight: 700, fontSize: '1rem', color: '#0f172a' }}>{navItems.find(n => n.tab === activeTab)?.label}</h2>
+              <h2 style={{ margin: 0, fontWeight: 'var(--font-weight-heading)', fontSize: '1rem', color: '#0f172a' }}>{navItems.find(n => n.tab === activeTab)?.label}</h2>
               <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 1 }}>{new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={14} color="white" /></div>
-              <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#0f172a' }}>{currentUser?.name || 'Môi giới'}</span>
-              <span style={{ background: '#e0f2fe', color: '#0369a1', fontSize: '0.68rem', fontWeight: 700, padding: '2px 8px', borderRadius: 99 }}>Sale</span>
+              <span style={{ fontWeight: 'var(--font-weight-subheading)', fontSize: '0.85rem', color: '#0f172a' }}>{currentUser?.name || 'Môi giới'}</span>
+              <span style={{ background: '#e0f2fe', color: '#0369a1', fontSize: '0.68rem', fontWeight: 'var(--font-weight-subheading)', padding: '2px 8px', borderRadius: 99 }}>Sale</span>
             </div>
           </div>
         </header>
@@ -123,7 +123,7 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
           {activeTab === 0 && (
             <>
               <div className="dark-surface" style={{ background: 'linear-gradient(120deg, #0f2a44 0%, #0f766e 100%)', borderRadius: 14, padding: '1.5rem 2rem', color: 'white' }}>
-                <h1 style={{ fontSize: '1.35rem', fontWeight: 800, margin: '0 0 0.2rem' }}>Chào mừng, {currentUser?.name?.split(' ').pop() || 'Môi giới'}! 👋</h1>
+                <h1 style={{ fontSize: '1.35rem', fontWeight: 'var(--font-weight-heading)', margin: '0 0 0.2rem' }}>Chào mừng, {currentUser?.name?.split(' ').pop() || 'Môi giới'}! 👋</h1>
                 <p style={{ color: '#e2f3f1', margin: 0, fontSize: '0.875rem' }}>
                   Bạn đang có <strong style={{ color: 'white' }}>{properties.length} tin đăng</strong> trên hệ thống.
                 </p>
@@ -136,20 +136,20 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
               </div>
               <div style={{ background: 'white', borderRadius: 14, border: '1px solid #e2e8f0', padding: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>Tin đăng gần đây</h3>
-                  <button onClick={() => setActiveTab(2)} style={{ background: 'none', border: 'none', color: '#0f766e', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>Xem tất cả</button>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 'var(--font-weight-subheading)' }}>Tin đăng gần đây</h3>
+                  <button onClick={() => setActiveTab(2)} style={{ background: 'none', border: 'none', color: '#0f766e', fontWeight: 'var(--font-weight-button)', fontSize: '0.85rem', cursor: 'pointer' }}>Xem tất cả</button>
                 </div>
                 <div className="responsive-table-wrapper">
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Tin đăng', 'Khu vực', 'Giá', 'Trạng thái'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.8rem',fontWeight:600,color:'#475467',background:'#fafafa'}}>{h}</th>)}</tr></thead>
+                    <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Tin đăng', 'Khu vực', 'Giá', 'Trạng thái'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.8rem',fontWeight:'var(--font-weight-subheading)',color:'#475467',background:'#fafafa'}}>{h}</th>)}</tr></thead>
                   <tbody>
                     {properties.slice(0, 5).map((p, idx) => (
                       <tr key={p.id} style={{ borderBottom: idx < 4 ? '1px solid #f8fafc' : 'none' }}>
-                        <td style={{ padding: '0.875rem 1.125rem', fontWeight: 600, color: '#0f172a' }}>{p.title}</td>
+                        <td style={{ padding: '0.875rem 1.125rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>{p.title}</td>
                         <td style={{ padding: '0.875rem 1.125rem', color: '#64748b', fontSize: '0.85rem' }}>{p.location}</td>
-                        <td style={{ padding: '0.875rem 1.125rem', fontWeight: 700, color: '#0f766e' }}>{p.price}</td>
+                        <td style={{ padding: '0.875rem 1.125rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f766e' }}>{p.price}</td>
                         <td style={{ padding: '0.875rem 1.125rem' }}>
-                          <span style={{ padding: '4px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700, background: statusBg[p.status], color: statusColor[p.status] }}>
+                          <span style={{ padding: '4px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 'var(--font-weight-subheading)', background: statusBg[p.status], color: statusColor[p.status] }}>
                             {statusLabel[p.status]}
                           </span>
                         </td>
@@ -172,23 +172,23 @@ export default function Dashboard({ currentUser, setCurrentPage, setUserRole, se
           {activeTab === 2 && (
             <div style={{ background: 'white', borderRadius: 14, border: '1px solid #e2e8f0', overflow: 'hidden' }}>
               <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800 }}>Tất cả tin đăng của bạn</h3>
-                <button onClick={() => setActiveTab(1)} style={{ background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', border: 'none', borderRadius: 8, padding: '0.5rem 1rem', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem' }}>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 'var(--font-weight-subheading)' }}>Tất cả tin đăng của bạn</h3>
+                <button onClick={() => setActiveTab(1)} style={{ background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', border: 'none', borderRadius: 8, padding: '0.5rem 1rem', fontWeight: 'var(--font-weight-button)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem' }}>
                   <PlusCircle size={14} /> Thêm tin mới
                 </button>
               </div>
               <div className="responsive-table-wrapper">
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Mã tin', 'Tiêu đề', 'Khu vực', 'Mức giá', 'Trạng thái'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.8rem',fontWeight:600,color:'#475467',background:'#fafafa'}}>{h}</th>)}</tr></thead>
+                  <thead><tr style={{ borderBottom: '1px solid #f1f5f9' }}>{['Mã tin', 'Tiêu đề', 'Khu vực', 'Mức giá', 'Trạng thái'].map(h=><th key={h} style={{padding:'0.875rem 1.125rem',textAlign:'left',fontSize:'0.8rem',fontWeight:'var(--font-weight-subheading)',color:'#475467',background:'#fafafa'}}>{h}</th>)}</tr></thead>
                 <tbody>
                   {properties.map((p, idx) => (
                     <tr key={p.id} style={{ borderBottom: idx < properties.length - 1 ? '1px solid #f8fafc' : 'none' }} onMouseOver={e => e.currentTarget.style.background = '#fafafa'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                       <td style={{ padding: '0.875rem 1.125rem', fontSize: '0.8rem', color: '#94a3b8' }}>#{p.id.substring(0,6).toUpperCase()}</td>
-                      <td style={{ padding: '0.875rem 1.125rem', fontWeight: 600, color: '#0f172a' }}>{p.title}</td>
+                      <td style={{ padding: '0.875rem 1.125rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>{p.title}</td>
                       <td style={{ padding: '0.875rem 1.125rem', color: '#64748b', fontSize: '0.85rem' }}>{p.location}</td>
-                      <td style={{ padding: '0.875rem 1.125rem', fontWeight: 700, color: '#0f766e' }}>{p.price}</td>
+                      <td style={{ padding: '0.875rem 1.125rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f766e' }}>{p.price}</td>
                       <td style={{ padding: '0.875rem 1.125rem' }}>
-                        <span style={{ padding: '4px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 700, background: statusBg[p.status], color: statusColor[p.status] }}>
+                        <span style={{ padding: '4px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 'var(--font-weight-subheading)', background: statusBg[p.status], color: statusColor[p.status] }}>
                           {statusLabel[p.status]}
                         </span>
                       </td>

@@ -149,7 +149,7 @@ export default function VerifyAccount({ setCurrentPage, userEmail }) {
                     height: '55px',
                     fontSize: '1.5rem',
                     textAlign: 'center',
-                    fontWeight: 'bold',
+                    fontWeight: 'var(--font-weight-body)',
                     border: '1px solid #cbd5e1',
                     borderRadius: '10px',
                     color: 'var(--primary)',
@@ -169,7 +169,7 @@ export default function VerifyAccount({ setCurrentPage, userEmail }) {
             )}
 
             {success && (
-              <div style={{ color: 'var(--primary)', fontSize: '0.9rem', textAlign: 'center', fontWeight: 500 }}>
+              <div style={{ color: 'var(--primary)', fontSize: '0.9rem', textAlign: 'center', fontWeight: 'var(--font-weight-medium)' }}>
                 {success}
               </div>
             )}
@@ -184,7 +184,7 @@ export default function VerifyAccount({ setCurrentPage, userEmail }) {
             </button>
             
             <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-              Chưa nhận được email? <button type="button" onClick={handleResend} disabled={isResending} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer', padding: 0 }}>{isResending ? 'Đang gửi...' : 'Gửi lại'}</button>
+              Chưa nhận được email? <button type="button" onClick={handleResend} disabled={isResending} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'var(--font-weight-button)', cursor: 'pointer', padding: 0 }}>{isResending ? 'Đang gửi...' : 'Gửi lại'}</button>
             </div>
             
             <div style={{ textAlign: 'center', marginTop: '1rem' }}>

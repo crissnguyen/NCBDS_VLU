@@ -365,7 +365,7 @@ export default function ContactManagementTab({ toast }) {
       ) : filteredContacts.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '3.5rem 1.5rem', background: 'white' }}>
           <MessageSquare size={36} color="#cbd5e1" style={{ marginBottom: '0.5rem' }} />
-          <div style={{ fontWeight: 600, color: '#101828' }}>Không tìm thấy liên hệ nào</div>
+          <div style={{ fontWeight: 'var(--font-weight-subheading)', color: '#101828' }}>Không tìm thấy liên hệ nào</div>
           <div style={{ fontSize: '0.8rem', color: '#667085', marginTop: 2 }}>Hệ thống chưa nhận được thông tin liên hệ nào trùng khớp.</div>
         </div>
       ) : (
@@ -414,7 +414,7 @@ export default function ContactManagementTab({ toast }) {
                     {/* Subject & Message */}
                     <td style={{ maxWidth: '340px' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                        <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f766e' }}>{contact.subject}</span>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f766e' }}>{contact.subject}</span>
                         <p style={{ margin: 0, color: '#334155', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', fontSize: '0.8rem' }} title={contact.message}>
                           "{contact.message}"
                         </p>
@@ -428,11 +428,11 @@ export default function ContactManagementTab({ toast }) {
                     {/* Status Badge */}
                     <td style={{ textAlign: 'center' }}>
                       {contact.status === 'Replied' ? (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.74rem', fontWeight: 600, color: '#027a48', background: '#ecfdf5', border: '1px solid #a6f4c5', padding: '2px 8px', borderRadius: 999, whiteSpace: 'nowrap' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.74rem', fontWeight: 'var(--font-weight-subheading)', color: '#027a48', background: '#ecfdf5', border: '1px solid #a6f4c5', padding: '2px 8px', borderRadius: 999, whiteSpace: 'nowrap' }}>
                           <Check size={12} /> Đã trả lời
                         </span>
                       ) : (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.74rem', fontWeight: 600, color: '#b54708', background: '#fffaeb', border: '1px solid #fedf89', padding: '2px 8px', borderRadius: 999, whiteSpace: 'nowrap' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.74rem', fontWeight: 'var(--font-weight-subheading)', color: '#b54708', background: '#fffaeb', border: '1px solid #fedf89', padding: '2px 8px', borderRadius: 999, whiteSpace: 'nowrap' }}>
                           <AlertCircle size={12} /> Chờ trả lời
                         </span>
                       )}
@@ -510,7 +510,7 @@ export default function ContactManagementTab({ toast }) {
                                   borderRadius: 6,
                                   color: '#0f766e',
                                   fontSize: '0.82rem',
-                                  fontWeight: 500,
+                                  fontWeight: 'var(--font-weight-button)',
                                   cursor: 'pointer',
                                   textAlign: 'left',
                                   transition: 'background 0.12s'
@@ -540,7 +540,7 @@ export default function ContactManagementTab({ toast }) {
                                 borderRadius: 6,
                                 color: '#344054',
                                 fontSize: '0.82rem',
-                                fontWeight: 500,
+                                fontWeight: 'var(--font-weight-button)',
                                 cursor: 'pointer',
                                 textAlign: 'left',
                                 transition: 'background 0.12s'
@@ -571,7 +571,7 @@ export default function ContactManagementTab({ toast }) {
                                 borderRadius: 6,
                                 color: '#d92d20',
                                 fontSize: '0.82rem',
-                                fontWeight: 500,
+                                fontWeight: 'var(--font-weight-button)',
                                 cursor: 'pointer',
                                 textAlign: 'left',
                                 transition: 'background 0.12s'
@@ -604,7 +604,7 @@ export default function ContactManagementTab({ toast }) {
             {/* Modal Header */}
             <div className="dark-surface" style={{ background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#ffffff' }}>Soạn phản hồi gửi khách hàng</h3>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 'var(--font-weight-subheading)', color: '#ffffff' }}>Soạn phản hồi gửi khách hàng</h3>
                 <p style={{ margin: '0.2rem 0 0', color: '#e2f3f1', fontSize: '0.78rem' }}>Gửi thư tới: {selectedContact.name} &lt;{selectedContact.email}&gt;</p>
               </div>
               <button
@@ -620,13 +620,13 @@ export default function ContactManagementTab({ toast }) {
 
               {/* Original Query details */}
               <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: 12, border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#64748b', marginBottom: '0.35rem' }}>Yêu cầu gốc của khách hàng:</div>
+                <div style={{ fontSize: '0.78rem', fontWeight: 'var(--font-weight-subheading)', color: '#64748b', marginBottom: '0.35rem' }}>Yêu cầu gốc của khách hàng:</div>
                 <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: 1.4, whiteSpace: 'pre-line' }}>"{selectedContact.message}"</p>
               </div>
 
               {/* Subject */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>Tiêu đề Email:</label>
+                <label style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#64748b' }}>Tiêu đề Email:</label>
                 <input
                   type="text"
                   value={replySubject}
@@ -638,7 +638,7 @@ export default function ContactManagementTab({ toast }) {
 
               {/* Content text */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>Nội dung trả lời:</label>
+                <label style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#64748b' }}>Nội dung trả lời:</label>
                 <textarea
                   placeholder="Nhập câu trả lời chi tiết cho khách hàng ở đây..."
                   value={replyText}
@@ -654,7 +654,7 @@ export default function ContactManagementTab({ toast }) {
                 <button
                   type="button"
                   onClick={() => setSelectedContact(null)}
-                  style={{ background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, padding: '0.6rem 1.25rem', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}
+                  style={{ background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, padding: '0.6rem 1.25rem', fontSize: '0.875rem', fontWeight: 'var(--font-weight-button)', cursor: 'pointer' }}
                 >
                   Hủy
                 </button>
@@ -668,7 +668,7 @@ export default function ContactManagementTab({ toast }) {
                     borderRadius: 10,
                     padding: '0.6rem 1.5rem',
                     fontSize: '0.875rem',
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-button)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
@@ -695,7 +695,7 @@ export default function ContactManagementTab({ toast }) {
           >
             {/* Modal Header */}
             <div className="dark-surface" style={{ background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#ffffff' }}>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 'var(--font-weight-subheading)', color: '#ffffff' }}>
                 {modalMode === 'add' ? 'Thêm mới khách hàng liên hệ' : 'Chỉnh sửa thông tin liên hệ'}
               </h3>
               <button
@@ -711,7 +711,7 @@ export default function ContactManagementTab({ toast }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>Họ và tên *</label>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#64748b' }}>Họ và tên *</label>
                   <input
                     type="text"
                     value={formName}
@@ -722,7 +722,7 @@ export default function ContactManagementTab({ toast }) {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>Số điện thoại *</label>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#64748b' }}>Số điện thoại *</label>
                   <input
                     type="text"
                     value={formPhone}
@@ -734,7 +734,7 @@ export default function ContactManagementTab({ toast }) {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>Địa chỉ email *</label>
+                <label style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#64748b' }}>Địa chỉ email *</label>
                 <input
                   type="email"
                   value={formEmail}
@@ -745,7 +745,7 @@ export default function ContactManagementTab({ toast }) {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>Chủ đề cần tư vấn *</label>
+                <label style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#64748b' }}>Chủ đề cần tư vấn *</label>
                 <input
                   type="text"
                   value={formSubject}
@@ -756,7 +756,7 @@ export default function ContactManagementTab({ toast }) {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>Nội dung lời nhắn *</label>
+                <label style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#64748b' }}>Nội dung lời nhắn *</label>
                 <textarea
                   value={formMessage}
                   onChange={(e) => setFormMessage(e.target.value)}
@@ -768,7 +768,7 @@ export default function ContactManagementTab({ toast }) {
 
               {/* Status */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>Trạng thái xử lý</label>
+                <label style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#64748b' }}>Trạng thái xử lý</label>
                 <select
                   value={formStatus}
                   onChange={(e) => setFormStatus(e.target.value)}
@@ -782,7 +782,7 @@ export default function ContactManagementTab({ toast }) {
               {/* Reply Text (optional) */}
               {formStatus === 'Replied' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                  <label style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>Nội dung đã phản hồi</label>
+                  <label style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#64748b' }}>Nội dung đã phản hồi</label>
                   <textarea
                     value={formReplyText}
                     onChange={(e) => setFormReplyText(e.target.value)}
@@ -798,7 +798,7 @@ export default function ContactManagementTab({ toast }) {
                 <button
                   type="button"
                   onClick={() => setIsAddEditModalOpen(false)}
-                  style={{ background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, padding: '0.6rem 1.25rem', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer' }}
+                  style={{ background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, padding: '0.6rem 1.25rem', fontSize: '0.875rem', fontWeight: 'var(--font-weight-button)', cursor: 'pointer' }}
                 >
                   Hủy
                 </button>
@@ -811,7 +811,7 @@ export default function ContactManagementTab({ toast }) {
                     borderRadius: 10,
                     padding: '0.6rem 1.5rem',
                     fontSize: '0.875rem',
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-button)',
                     cursor: 'pointer',
                     boxShadow: '0 4px 12px rgba(15, 118, 110, 0.2)'
                   }}
@@ -838,7 +838,7 @@ export default function ContactManagementTab({ toast }) {
                 <Trash2 size={28} />
               </div>
 
-              <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>Xác nhận xóa</h3>
+              <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>Xác nhận xóa</h3>
 
               <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b', lineHeight: 1.5 }}>
                 Bạn có chắc chắn muốn xóa yêu cầu liên hệ của <strong style={{ color: '#0f172a' }}>"{deleteConfirm.contactName}"</strong> không?
@@ -849,7 +849,7 @@ export default function ContactManagementTab({ toast }) {
                 <button
                   type="button"
                   onClick={() => setDeleteConfirm({ isOpen: false, contactId: null, contactName: '' })}
-                  style={{ flex: 1, background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, padding: '0.75rem 1.25rem', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                  style={{ flex: 1, background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, padding: '0.75rem 1.25rem', fontSize: '0.875rem', fontWeight: 'var(--font-weight-button)', cursor: 'pointer', transition: 'all 0.2s' }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = '#e2e8f0'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = '#f1f5f9'; }}
                 >
@@ -866,7 +866,7 @@ export default function ContactManagementTab({ toast }) {
                     borderRadius: 10,
                     padding: '0.75rem 1.25rem',
                     fontSize: '0.875rem',
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-button)',
                     cursor: 'pointer',
                     boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
                     transition: 'all 0.2s'
@@ -895,7 +895,7 @@ export default function ContactManagementTab({ toast }) {
                 <Trash2 size={28} />
               </div>
               
-              <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>Xác nhận xóa hàng loạt</h3>
+              <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>Xác nhận xóa hàng loạt</h3>
               
               <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b', lineHeight: 1.5 }}>
                 Bạn có chắc chắn muốn xóa <strong style={{ color: '#ef4444' }}>{selectedIds.length}</strong> yêu cầu liên hệ đã chọn không? Hành động này không thể hoàn tác.
@@ -906,7 +906,7 @@ export default function ContactManagementTab({ toast }) {
                 <button 
                   type="button"
                   onClick={() => setIsBulkDeleteOpen(false)}
-                  style={{ flex: 1, background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, padding: '0.75rem 1.25rem', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                  style={{ flex: 1, background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, padding: '0.75rem 1.25rem', fontSize: '0.875rem', fontWeight: 'var(--font-weight-button)', cursor: 'pointer', transition: 'all 0.2s' }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = '#e2e8f0'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = '#f1f5f9'; }}
                 >
@@ -923,7 +923,7 @@ export default function ContactManagementTab({ toast }) {
                     borderRadius: 10,
                     padding: '0.75rem 1.25rem',
                     fontSize: '0.875rem',
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-button)',
                     cursor: 'pointer',
                     boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
                     transition: 'all 0.2s'

@@ -212,7 +212,7 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
                   <FileText size={18} color="#0284c7" />
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>Duyệt Tin Đăng Chi Tiết</h3>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>Duyệt Tin Đăng Chi Tiết</h3>
                   <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: 1 }}>Mã tin: {selectedProperty.id?.substring(0, 8)}...</div>
                 </div>
               </div>
@@ -251,7 +251,7 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
                         alt="Property Preview" 
                         style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'all 0.3s ease' }} 
                       />
-                      <div style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(4px)', color: 'white', padding: '4px 10px', borderRadius: 20, fontSize: '0.72rem', fontWeight: 600 }}>
+                      <div style={{ position: 'absolute', top: 12, right: 12, background: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(4px)', color: 'white', padding: '4px 10px', borderRadius: 20, fontSize: '0.72rem', fontWeight: 'var(--font-weight-subheading)' }}>
                         Ảnh {(selectedProperty._activeImgIdx || 0) + 1} / {selectedProperty.images.length}
                       </div>
                     </div>
@@ -290,7 +290,7 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
                 ) : (
                   <div style={{ height: 160, background: '#f8fafc', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 8, border: '1px dashed #cbd5e1' }}>
                     <ImageIcon size={32} color="#94a3b8" />
-                    <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 500 }}>Chưa có hình ảnh nào được tải lên</span>
+                    <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 'var(--font-weight-medium)' }}>Chưa có hình ảnh nào được tải lên</span>
                   </div>
                 )}
               </div>
@@ -298,46 +298,46 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
               {/* Title & Location */}
               <div>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
-                  <span style={{ background: selectedProperty.transactionType === 'sale' ? '#ecfdf5' : '#f0f9ff', color: selectedProperty.transactionType === 'sale' ? '#047857' : '#0369a1', padding: '3px 10px', borderRadius: 6, fontSize: '0.72rem', fontWeight: 700 }}>
+                  <span style={{ background: selectedProperty.transactionType === 'sale' ? '#ecfdf5' : '#f0f9ff', color: selectedProperty.transactionType === 'sale' ? '#047857' : '#0369a1', padding: '3px 10px', borderRadius: 6, fontSize: '0.72rem', fontWeight: 'var(--font-weight-subheading)' }}>
                     {getTransactionTypeLabel(selectedProperty.transactionType).toUpperCase()}
                   </span>
-                  <span style={{ background: '#f5f3ff', color: '#6d28d9', padding: '3px 10px', borderRadius: 6, fontSize: '0.72rem', fontWeight: 700 }}>
+                  <span style={{ background: '#f5f3ff', color: '#6d28d9', padding: '3px 10px', borderRadius: 6, fontSize: '0.72rem', fontWeight: 'var(--font-weight-subheading)' }}>
                     {getPropertyTypeLabel(selectedProperty.propertyType).toUpperCase()}
                   </span>
                 </div>
-                <h2 style={{ margin: '0 0 0.6rem 0', fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', lineHeight: 1.35 }}>
+                <h2 style={{ margin: '0 0 0.6rem 0', fontSize: '1.35rem', fontWeight: 'var(--font-weight-heading)', color: '#0f172a', lineHeight: 'var(--line-height-heading)' }}>
                   {selectedProperty.title}
                 </h2>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#475569', fontSize: '0.85rem' }}>
                   <MapPin size={15} color="#0f766e" style={{ flexShrink: 0 }} />
-                  <span style={{ fontWeight: 500 }}>{selectedProperty.location}</span>
+                  <span style={{ fontWeight: 'var(--font-weight-medium)' }}>{selectedProperty.location}</span>
                 </div>
               </div>
 
               {/* Specifications Cards Grid */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.85rem' }}>
                 <div className="spec-card" style={{ background: '#fdf2f8', padding: '0.85rem 0.5rem', borderRadius: 14, textAlign: 'center', border: '1px solid #fce7f3' }}>
-                  <div style={{ fontSize: '0.67rem', color: '#db2777', fontWeight: 700, letterSpacing: '0.05em', marginBottom: 4 }}>GIÁ YÊU CẦU</div>
-                  <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#be185d' }}>{selectedProperty.price || 'Liên hệ'}</div>
+                  <div style={{ fontSize: '0.67rem', color: '#db2777', fontWeight: 'var(--font-weight-subheading)', letterSpacing: '0.05em', marginBottom: 4 }}>GIÁ YÊU CẦU</div>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 'var(--font-weight-subheading)', color: '#be185d' }}>{selectedProperty.price || 'Liên hệ'}</div>
                 </div>
                 <div className="spec-card" style={{ background: '#f0fdf4', padding: '0.85rem 0.5rem', borderRadius: 14, textAlign: 'center', border: '1px solid #dcfce7' }}>
-                  <div style={{ fontSize: '0.67rem', color: '#16a34a', fontWeight: 700, letterSpacing: '0.05em', marginBottom: 4 }}>DIỆN TÍCH</div>
-                  <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#15803d' }}>{selectedProperty.area ? `${selectedProperty.area} m²` : '--'}</div>
+                  <div style={{ fontSize: '0.67rem', color: '#16a34a', fontWeight: 'var(--font-weight-subheading)', letterSpacing: '0.05em', marginBottom: 4 }}>DIỆN TÍCH</div>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 'var(--font-weight-subheading)', color: '#15803d' }}>{selectedProperty.area ? `${selectedProperty.area} m²` : '--'}</div>
                 </div>
                 <div className="spec-card" style={{ background: '#eff6ff', padding: '0.85rem 0.5rem', borderRadius: 14, textAlign: 'center', border: '1px solid #dbeafe' }}>
-                  <div style={{ fontSize: '0.67rem', color: '#2563eb', fontWeight: 700, letterSpacing: '0.05em', marginBottom: 4 }}>PHÒNG NGỦ</div>
-                  <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#1d4ed8' }}>{selectedProperty.beds ? `${selectedProperty.beds} PN` : '--'}</div>
+                  <div style={{ fontSize: '0.67rem', color: '#2563eb', fontWeight: 'var(--font-weight-subheading)', letterSpacing: '0.05em', marginBottom: 4 }}>PHÒNG NGỦ</div>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 'var(--font-weight-subheading)', color: '#1d4ed8' }}>{selectedProperty.beds ? `${selectedProperty.beds} PN` : '--'}</div>
                 </div>
                 <div className="spec-card" style={{ background: '#fbf7f0', padding: '0.85rem 0.5rem', borderRadius: 14, textAlign: 'center', border: '1px solid #f3e8d2' }}>
-                  <div style={{ fontSize: '0.67rem', color: '#b45309', fontWeight: 700, letterSpacing: '0.05em', marginBottom: 4 }}>PHÒNG TẮM</div>
-                  <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#92400e' }}>{selectedProperty.baths ? `${selectedProperty.baths} WC` : '--'}</div>
+                  <div style={{ fontSize: '0.67rem', color: '#b45309', fontWeight: 'var(--font-weight-subheading)', letterSpacing: '0.05em', marginBottom: 4 }}>PHÒNG TẮM</div>
+                  <div style={{ fontSize: '1.05rem', fontWeight: 'var(--font-weight-subheading)', color: '#92400e' }}>{selectedProperty.baths ? `${selectedProperty.baths} WC` : '--'}</div>
                 </div>
               </div>
 
               {/* Extra Metadata Section */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div style={{ background: '#f8fafc', padding: '1rem 1.25rem', borderRadius: 14, border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#64748b', fontWeight: 700 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#64748b', fontWeight: 'var(--font-weight-subheading)' }}>
                     <Info size={13} color="#0f766e" /> Pháp lý & người đăng
                   </div>
                   <div style={{ fontSize: '0.85rem', color: '#334155' }}>
@@ -348,21 +348,21 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
                   </div>
                 </div>
                 <div style={{ background: '#f8fafc', padding: '1rem 1.25rem', borderRadius: 14, border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#64748b', fontWeight: 700 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#64748b', fontWeight: 'var(--font-weight-subheading)' }}>
                     <ShieldCheck size={13} color="#0f766e" /> Kiểm duyệt thông tin
                   </div>
                   <div style={{ fontSize: '0.85rem', color: '#334155' }}>
-                    Liên hệ tác giả: <span style={{ color: '#0284c7', fontWeight: 600 }}>{selectedProperty.author?.email || 'N/A'}</span>
+                    Liên hệ tác giả: <span style={{ color: '#0284c7', fontWeight: 'var(--font-weight-subheading)' }}>{selectedProperty.author?.email || 'N/A'}</span>
                   </div>
                   <div style={{ fontSize: '0.85rem', color: '#334155' }}>
-                    Trạng thái tin đăng: <span style={{ color: '#d97706', fontWeight: 700 }}>Chờ duyệt hệ thống</span>
+                    Trạng thái tin đăng: <span style={{ color: '#d97706', fontWeight: 'var(--font-weight-subheading)' }}>Chờ duyệt hệ thống</span>
                   </div>
                 </div>
               </div>
 
               {/* Description */}
               <div>
-                <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   📝 Mô tả chi tiết
                 </h4>
                 <div style={{ 
@@ -389,7 +389,7 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
               <button 
                 className="action-btn-close"
                 onClick={() => setSelectedProperty(null)}
-                style={{ padding: '0.65rem 1.35rem', borderRadius: 10, fontWeight: 700, cursor: 'pointer', fontSize: '0.875rem' }}
+                style={{ padding: '0.65rem 1.35rem', borderRadius: 10, fontWeight: 'var(--font-weight-button)', cursor: 'pointer', fontSize: '0.875rem' }}
               >
                 Đóng
               </button>
@@ -401,7 +401,7 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
                     handleApproveProperty(selectedProperty.id, 'reject');
                     setSelectedProperty(null);
                   }} 
-                  style={{ borderRadius: 10, padding: '0.65rem 1.35rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem' }}
+                  style={{ borderRadius: 10, padding: '0.65rem 1.35rem', fontWeight: 'var(--font-weight-button)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem' }}
                 >
                   <X size={15} /> Từ chối
                 </button>
@@ -411,7 +411,7 @@ export default function PendingPropertiesTab({ pendingProperties, handleApproveP
                     handleApproveProperty(selectedProperty.id, 'approve');
                     setSelectedProperty(null);
                   }} 
-                  style={{ color: 'white', border: 'none', borderRadius: 10, padding: '0.65rem 1.35rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem' }}
+                  style={{ color: 'white', border: 'none', borderRadius: 10, padding: '0.65rem 1.35rem', fontWeight: 'var(--font-weight-button)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.875rem' }}
                 >
                   <Check size={15} /> Phê duyệt ngay
                 </button>

@@ -54,8 +54,12 @@ export default function Hero({ setCurrentPage }) {
       
       <div className="container hero-immersive__content">
         <div className="hero-copy" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', margin: '0 auto' }}>
-          <span className="eyebrow-glass">EstateAI Vietnam</span>
-          <h1 className="hero-title">Tìm nhà đúng giá bằng AI</h1>
+          <h1 className="hero-title">
+            <span className="hero-title__line">Tìm nhà đúng</span>{' '}
+            <span className="hero-title__line hero-title__line--accent">
+              <span className="hero-title__gradient">giá bằng AI</span>
+            </span>
+          </h1>
           <p className="hero-subtitle">Gợi ý bất động sản, kiểm tra giá và rủi ro pháp lý trong vài giây.</p>
 
           <div className="search-glass-pill" style={{ marginTop: '1.5rem' }}>

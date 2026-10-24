@@ -139,7 +139,7 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                           alignItems: 'center', 
                           justifyContent: 'center', 
                           color: '#0f2a44', 
-                          fontWeight: 700, 
+                          fontWeight: 'var(--font-weight-subheading)',
                           fontSize: '0.8rem', 
                           border: '1px solid #e2e8f0',
                           flexShrink: 0 
@@ -147,7 +147,7 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                           {user.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <div style={{ fontWeight: 700, fontSize: '0.82rem', color: '#0f2a44' }}>{user.name}</div>
+                          <div style={{ fontWeight: 'var(--font-weight-subheading)', fontSize: '0.82rem', color: '#0f2a44' }}>{user.name}</div>
                           <div style={{ fontSize: '0.74rem', color: '#64748b' }}>{user.email}</div>
                         </div>
                       </div>
@@ -181,7 +181,7 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                             background: role.bg, 
                             color: role.color, 
                             fontSize: '0.76rem', 
-                            fontWeight: 600, 
+                            fontWeight: 'var(--font-weight-body)',
                             outline: 'none', 
                             cursor: isDisabledRole ? 'not-allowed' : 'pointer',
                             opacity: isDisabledRole ? 0.65 : 1,
@@ -212,14 +212,14 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                         padding: '3px 9px', 
                         borderRadius: 12, 
                         fontSize: '0.72rem', 
-                        fontWeight: 700 
+                        fontWeight: 'var(--font-weight-subheading)'
                       }}>
                         {statusLabel[user.status] || user.status}
                       </span>
                     </td>
 
                     {/* Property Count */}
-                    <td style={{ padding: '0.75rem 1rem', textAlign: 'center', fontWeight: 700, fontSize: '0.85rem', color: '#0f2a44' }}>
+                    <td style={{ padding: '0.75rem 1rem', textAlign: 'center', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.85rem', color: '#0f2a44' }}>
                       {user._count?.properties || 0}
                     </td>
 
@@ -229,7 +229,7 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                         <div style={{ width: 48, height: 5, borderRadius: 3, background: '#f1f5f9' }}>
                           <div style={{ width: user.performance || '0%', height: '100%', background: parseInt(user.performance) > 80 ? '#0f766e' : '#f59e0b', borderRadius: 3 }} />
                         </div>
-                        <span style={{ fontSize: '0.72rem', fontWeight: 700, color: parseInt(user.performance) > 80 ? '#0f766e' : '#f59e0b' }}>
+                        <span style={{ fontSize: '0.72rem', fontWeight: 'var(--font-weight-subheading)', color: parseInt(user.performance) > 80 ? '#0f766e' : '#f59e0b' }}>
                           {user.performance || '-'}
                         </span>
                       </div>
@@ -300,7 +300,7 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                                 borderRadius: 6,
                                 color: '#344054',
                                 fontSize: '0.82rem',
-                                fontWeight: 500,
+                                fontWeight: 'var(--font-weight-button)',
                                 cursor: 'pointer',
                                 textAlign: 'left',
                                 transition: 'background 0.12s'
@@ -329,7 +329,7 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                                 borderRadius: 6,
                                 color: user.status === 'Active' ? '#b42318' : '#027a48',
                                 fontSize: '0.82rem',
-                                fontWeight: 500,
+                                fontWeight: 'var(--font-weight-button)',
                                 cursor: 'pointer',
                                 textAlign: 'left',
                                 transition: 'background 0.12s'
@@ -360,7 +360,7 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
                                 borderRadius: 6,
                                 color: '#d92d20',
                                 fontSize: '0.82rem',
-                                fontWeight: 500,
+                                fontWeight: 'var(--font-weight-button)',
                                 cursor: 'pointer',
                                 textAlign: 'left',
                                 transition: 'background 0.12s'
@@ -385,7 +385,7 @@ export default function UserManagementTab({ users, currentUser, handleRoleChange
         {filteredUsers.length === 0 && (
           <div style={{ padding: '2.5rem 1.25rem', textAlign: 'center', color: '#94a3b8' }}>
             <Users size={32} style={{ margin: '0 auto 0.4rem', opacity: 0.25 }} />
-            <p style={{ margin: 0, fontWeight: 600, fontSize: '0.82rem' }}>Không tìm thấy nhân viên nào</p>
+            <p style={{ margin: 0, fontWeight: 'var(--font-weight-subheading)', fontSize: '0.82rem' }}>Không tìm thấy nhân viên nào</p>
           </div>
         )}
       </div>

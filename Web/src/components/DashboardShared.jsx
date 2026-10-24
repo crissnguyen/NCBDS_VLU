@@ -38,7 +38,7 @@ export function Toasts({ toasts, remove }) {
           <div key={t.id} style={{ background: c.bg, border: `1px solid ${c.border}`, borderRadius: 12, padding: '0.875rem 1.125rem', display: 'flex', gap: '0.6rem', minWidth: 300, maxWidth: 380, boxShadow: '0 6px 20px rgba(0,0,0,0.1)', pointerEvents: 'all', animation: 'toastSlide 0.25s ease' }}>
             <c.Icon size={18} color={c.icon} style={{ flexShrink: 0, marginTop: 1 }} />
             <div style={{ flex: 1 }}>
-              {t.title && <div style={{ fontWeight: 700, color: c.icon, fontSize: '0.85rem' }}>{t.title}</div>}
+              {t.title && <div style={{ fontWeight: 'var(--font-weight-subheading)', color: c.icon, fontSize: '0.85rem' }}>{t.title}</div>}
               <div style={{ fontSize: '0.8rem', color: c.icon, opacity: 0.8 }}>{t.msg}</div>
             </div>
             <button onClick={() => remove(t.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: c.icon, opacity: 0.5, padding: 0 }}><X size={14} /></button>
@@ -58,10 +58,10 @@ export function StatCard({ icon: Icon, label, value, change, up = true, color = 
         <Icon size={22} color={color} />
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a', lineHeight: 1 }}>{value}</div>
+        <div style={{ fontSize: '1.6rem', fontWeight: 'var(--font-weight-heading)', color: '#0f172a', lineHeight: 1 }}>{value}</div>
         <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: 3 }}>{label}</div>
       </div>
-      <span style={{ fontSize: '0.72rem', fontWeight: 700, color: up ? '#0f766e' : '#ef4444', background: up ? '#d8f3ef' : '#fee2e2', padding: '3px 8px', borderRadius: 99, flexShrink: 0 }}>
+      <span style={{ fontSize: '0.72rem', fontWeight: 'var(--font-weight-subheading)', color: up ? '#0f766e' : '#ef4444', background: up ? '#d8f3ef' : '#fee2e2', padding: '3px 8px', borderRadius: 99, flexShrink: 0 }}>
         {up ? '↑' : '↓'} {change}
       </span>
     </div>
@@ -83,7 +83,7 @@ export function SidebarItem({ icon: Icon, label, active, badge, onClick }) {
     >
       <Icon size={17} />
       <span style={{ flex: 1 }}>{label}</span>
-      {badge > 0 && <span style={{ background: '#ef4444', color: 'white', borderRadius: 99, fontSize: '0.68rem', fontWeight: 700, padding: '1px 6px' }}>{badge}</span>}
+      {badge > 0 && <span style={{ background: '#ef4444', color: 'white', borderRadius: 99, fontSize: '0.68rem', fontWeight: 'var(--font-weight-subheading)', padding: '1px 6px' }}>{badge}</span>}
     </button>
   );
 }
@@ -94,7 +94,7 @@ export const IS = { border: '1px solid #e2e8f0', borderRadius: 8, padding: '0.6r
 export function LabeledField({ label, required, children }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569' }}>{label}{required && <span style={{ color: '#ef4444' }}> *</span>}</label>
+      <label style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#475569' }}>{label}{required && <span style={{ color: '#ef4444' }}> *</span>}</label>
       {children}
     </div>
   );
@@ -322,7 +322,7 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
     <div className="post-property-grid">
       <div style={{ background: 'white', borderRadius: 16, border: '1px solid #e2e8f0', overflow: 'hidden' }}>
         <div className="dark-surface" style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid #f1f5f9', background: 'linear-gradient(135deg, #0f2a44, #0f766e)' }}>
-          <h3 style={{ margin: 0, color: 'white', fontWeight: 700, fontSize: '1rem' }}>📋 Thông tin bất động sản</h3>
+          <h3 style={{ margin: 0, color: 'white', fontWeight: 'var(--font-weight-subheading)', fontSize: '1rem' }}>📋 Thông tin bất động sản</h3>
           <p style={{ margin: '0.2rem 0 0', color: '#e2f3f1', fontSize: '0.8rem' }}>Điền đầy đủ thông tin để tăng cơ hội tiếp cận khách hàng</p>
         </div>
 
@@ -382,7 +382,7 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
           </LabeledField>
 
           <div>
-            <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '0.35rem' }}>Hình ảnh</label>
+            <label style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#475569', display: 'block', marginBottom: '0.35rem' }}>Hình ảnh</label>
             <div style={{
               position: 'relative',
               minHeight: 118,
@@ -404,11 +404,11 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
                 <ImagePlus size={25} color="#0f766e" />
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ margin: 0, fontSize: '0.92rem', color: '#0f172a', fontWeight: 800 }}>Tải ảnh bất động sản</p>
-                <p style={{ margin: '0.25rem 0 0', fontSize: '0.78rem', color: '#64748b', fontWeight: 600 }}>Tối thiểu 1 ảnh, ảnh đầu tiên là ảnh đại diện</p>
+                <p style={{ margin: 0, fontSize: '0.92rem', color: '#0f172a', fontWeight: 'var(--font-weight-body)' }}>Tải ảnh bất động sản</p>
+                <p style={{ margin: '0.25rem 0 0', fontSize: '0.78rem', color: '#64748b', fontWeight: 'var(--font-weight-subheading)' }}>Tối thiểu 1 ảnh, ảnh đầu tiên là ảnh đại diện</p>
                 <p style={{ margin: '0.2rem 0 0', fontSize: '0.72rem', color: '#94a3b8' }}>JPG, PNG, WEBP · Tối đa 10 ảnh · Mỗi ảnh dưới 10MB</p>
               </div>
-              <div style={{ padding: '0.42rem 0.72rem', borderRadius: 9, background: images.length >= 1 ? '#d8f3ef' : '#fff7ed', color: images.length >= 1 ? '#0f766e' : '#c2410c', fontSize: '0.74rem', fontWeight: 800, whiteSpace: 'nowrap', flexShrink: 0 }}>
+              <div style={{ padding: '0.42rem 0.72rem', borderRadius: 9, background: images.length >= 1 ? '#d8f3ef' : '#fff7ed', color: images.length >= 1 ? '#0f766e' : '#c2410c', fontSize: '0.74rem', fontWeight: 'var(--font-weight-subheading)', whiteSpace: 'nowrap', flexShrink: 0 }}>
                 {images.length}/10 · {images.length >= 1 ? 'Có thể đăng' : 'Cần ảnh'}
               </div>
             </div>
@@ -426,7 +426,7 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
                   }}>
                     <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     <button type="button" onClick={() => removeImage(i)} style={{ position: 'absolute', top: 6, right: 6, width: 22, height: 22, borderRadius: 7, background: 'rgba(7,24,39,0.72)', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={12} /></button>
-                    {i === 0 && <div style={{ position: 'absolute', bottom: 6, left: 6, background: 'rgba(15,118,110,0.92)', color: 'white', fontSize: '0.66rem', fontWeight: 800, borderRadius: 7, padding: '0.22rem 0.45rem' }}>Đại diện</div>}
+                    {i === 0 && <div style={{ position: 'absolute', bottom: 6, left: 6, background: 'rgba(15,118,110,0.92)', color: 'white', fontSize: '0.66rem', fontWeight: 'var(--font-weight-subheading)', borderRadius: 7, padding: '0.22rem 0.45rem' }}>Đại diện</div>}
                   </div>
                 ))}
               </div>
@@ -435,7 +435,7 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
 
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', alignItems: 'center', marginBottom: '0.35rem' }}>
-              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569' }}>Mô tả chi tiết</label>
+              <label style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', color: '#475569' }}>Mô tả chi tiết</label>
               <button
                 type="button"
                 onClick={handleGenerateAIDescription}
@@ -447,7 +447,7 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
                   borderRadius: 9,
                   padding: '0.42rem 0.68rem',
                   fontSize: '0.74rem',
-                  fontWeight: 800,
+                  fontWeight: 'var(--font-weight-button)',
                   cursor: aiLoading ? 'not-allowed' : 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -471,8 +471,8 @@ export function PostPropertyForm({ currentUser, toast, onSuccess }) {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid #f1f5f9' }}>
-            <button style={{ padding: '0.6rem 1.25rem', borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', color: '#475569', fontWeight: 600, cursor: 'pointer', fontSize: '0.875rem' }}>💾 Lưu nháp</button>
-            <button onClick={handleSubmit} disabled={loading} style={{ padding: '0.6rem 1.5rem', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #0f766e, #0891b2)', color: 'white', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', fontSize: '0.875rem', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: '0 2px 8px rgba(15,118,110,0.3)' }}>
+            <button style={{ padding: '0.6rem 1.25rem', borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', color: '#475569', fontWeight: 'var(--font-weight-button)', cursor: 'pointer', fontSize: '0.875rem' }}>💾 Lưu nháp</button>
+            <button onClick={handleSubmit} disabled={loading} style={{ padding: '0.6rem 1.5rem', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #0f766e, #0891b2)', color: 'white', fontWeight: 'var(--font-weight-button)', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '0.875rem', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: '0 2px 8px rgba(15,118,110,0.3)' }}>
               {loading ? '⏳ Đang xử lý...' : <><Sparkles size={15} /> Đăng tin</>}
             </button>
           </div>

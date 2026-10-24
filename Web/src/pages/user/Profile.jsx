@@ -101,7 +101,7 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
               <UserCircle2 size={44} />
             </div>
             <div>
-              <h2 style={{ fontSize: '1.5rem', margin: '0 0 0.5rem 0', fontWeight: 700 }}>{currentUser.name || 'Người dùng mới'}</h2>
+              <h2 style={{ fontSize: '1.5rem', margin: '0 0 0.5rem 0', fontWeight: 'var(--font-weight-heading)' }}>{currentUser.name || 'Người dùng mới'}</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.95rem' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Mail size={16} /> {currentUser.email}</span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><ShieldCheck size={16} /> Vai trò: <strong style={{ color: 'var(--text-main)' }}>{currentUser.role === 'admin' ? 'Quản trị viên' : (currentUser.role === 'sale' ? 'Môi giới' : 'Khách hàng')}</strong></span>
@@ -110,7 +110,7 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
           </div>
 
           <div className="flex flex-col gap-5">
-            <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem', fontWeight: 600 }}>Chi tiết thông tin</h3>
+            <h3 style={{ fontSize: '1.15rem', marginBottom: '0.5rem', fontWeight: 'var(--font-weight-subheading)' }}>Chi tiết thông tin</h3>
             
             {success && <div style={{ color: '#16a34a', background: '#f0fdf4', padding: '1rem', borderRadius: '8px', fontSize: '0.9rem', border: '1px solid #bbf7d0' }}>{success}</div>}
             {error && <div style={{ color: '#dc2626', background: '#fef2f2', padding: '1rem', borderRadius: '8px', fontSize: '0.9rem', border: '1px solid #fecaca' }}>{error}</div>}
@@ -123,11 +123,11 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
                   value={isEditing ? form.name : (currentUser.name || '')} 
                   onChange={handleChange}
                   disabled={!isEditing} 
-                  style={{ background: isEditing ? 'white' : '#f8fafc', color: '#334155', fontWeight: 500, outline: isEditing ? '1px solid var(--primary)' : 'none' }} 
+                  style={{ background: isEditing ? 'white' : '#f8fafc', color: '#334155', fontWeight: 'var(--font-weight-body)', outline: isEditing ? '1px solid var(--primary)' : 'none' }}
                 />
               </Field>
               <Field label="Địa chỉ Email">
-                <input type="email" value={currentUser.email} disabled style={{ background: '#f8fafc', color: '#94a3b8', fontWeight: 500 }} title="Không thể thay đổi email" />
+                <input type="email" value={currentUser.email} disabled style={{ background: '#f8fafc', color: '#94a3b8', fontWeight: 'var(--font-weight-body)' }} title="Không thể thay đổi email" />
               </Field>
               
               {isEditing ? (
@@ -139,7 +139,7 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
                       value={form.password} 
                       onChange={handleChange}
                       placeholder="Mật khẩu mới..."
-                      style={{ background: 'white', color: '#334155', fontWeight: 500, outline: '1px solid var(--primary)', width: '100%', boxSizing: 'border-box' }} 
+                      style={{ background: 'white', color: '#334155', fontWeight: 'var(--font-weight-body)', outline: '1px solid var(--primary)', width: '100%', boxSizing: 'border-box' }}
                     />
                     <button
                       type="button"
@@ -153,10 +153,10 @@ export default function Profile({ currentUser, setCurrentPage, setCurrentUser })
               ) : (
                 <>
                   <Field label="Quyền hạn">
-                    <input type="text" value={currentUser.role === 'admin' ? 'Quản trị viên' : (currentUser.role === 'sale' ? 'Môi giới' : 'Khách hàng')} disabled style={{ background: '#f8fafc', color: '#334155', fontWeight: 500 }} />
+                    <input type="text" value={currentUser.role === 'admin' ? 'Quản trị viên' : (currentUser.role === 'sale' ? 'Môi giới' : 'Khách hàng')} disabled style={{ background: '#f8fafc', color: '#334155', fontWeight: 'var(--font-weight-body)' }} />
                   </Field>
                   <Field label="Trạng thái tài khoản">
-                    <input type="text" value={currentUser.status || 'Đang hoạt động'} disabled style={{ background: '#f8fafc', color: '#166534', fontWeight: 600 }} />
+                    <input type="text" value={currentUser.status || 'Đang hoạt động'} disabled style={{ background: '#f8fafc', color: '#166534', fontWeight: 'var(--font-weight-body)' }} />
                   </Field>
                 </>
               )}

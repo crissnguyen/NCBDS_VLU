@@ -31,8 +31,8 @@ export default function AiModelTab() {
 
   return <div>
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', marginBottom: '1.1rem', flexWrap: 'wrap' }}>
-      <div><h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: '#0f172a' }}>Mô hình AI</h2><p style={{ margin: '0.35rem 0 0', color: '#64748b', fontSize: '.82rem' }}>Theo dõi dữ liệu phân tích giá và đề xuất bất động sản.</p></div>
-      <button onClick={loadModelData} disabled={loading} style={{ display: 'inline-flex', alignItems: 'center', gap: '.45rem', border: '1px solid #cbd5e1', borderRadius: 10, background: 'white', color: '#0f2a44', padding: '.65rem .85rem', fontWeight: 700, cursor: loading ? 'wait' : 'pointer' }}><RefreshCw size={16} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} /> Phân tích lại</button>
+      <div><h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'var(--font-weight-heading)', color: '#0f172a' }}>Mô hình AI</h2><p style={{ margin: '0.35rem 0 0', color: '#64748b', fontSize: '.82rem' }}>Theo dõi dữ liệu phân tích giá và đề xuất bất động sản.</p></div>
+      <button onClick={loadModelData} disabled={loading} style={{ display: 'inline-flex', alignItems: 'center', gap: '.45rem', border: '1px solid #cbd5e1', borderRadius: 10, background: 'white', color: '#0f2a44', padding: '.65rem .85rem', fontWeight: 'var(--font-weight-button)', cursor: loading ? 'wait' : 'pointer' }}><RefreshCw size={16} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} /> Phân tích lại</button>
     </div>
     {error && <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', color: '#be123c', borderRadius: 10, padding: '.8rem 1rem', marginBottom: '1rem', fontSize: '.85rem' }}>{error}</div>}
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(190px,1fr))', gap: '.85rem', marginBottom: '1rem' }}>
@@ -41,7 +41,7 @@ export default function AiModelTab() {
     <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.15fr) minmax(280px,.85fr)', gap: '1rem' }}>
       <section style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 14, padding: '1.15rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '.85rem' }}><BrainCircuit size={19} color="#0f766e" /><h3 style={{ margin: 0, fontSize: '.98rem' }}>Phân tích theo khu vực</h3></div>
-        {market?.locations?.length ? market.locations.map(item => <div key={item.location} style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: '.75rem', alignItems: 'center', padding: '.75rem 0', borderTop: '1px solid #f1f5f9', fontSize: '.82rem' }}><strong style={{ color: '#0f2a44' }}>{item.location}</strong><span style={{ color: '#64748b' }}>{item.listings} tin</span><span style={{ color: '#0f766e', fontWeight: 800 }}>{formatMillion(item.averagePriceMillion)}</span></div>) : <p style={{ color: '#94a3b8', fontSize: '.85rem' }}>Chưa có dữ liệu đã duyệt.</p>}
+        {market?.locations?.length ? market.locations.map(item => <div key={item.location} style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: '.75rem', alignItems: 'center', padding: '.75rem 0', borderTop: '1px solid #f1f5f9', fontSize: '.82rem' }}><strong style={{ color: '#0f2a44' }}>{item.location}</strong><span style={{ color: '#64748b' }}>{item.listings} tin</span><span style={{ color: '#0f766e', fontWeight: 'var(--font-weight-subheading)' }}>{formatMillion(item.averagePriceMillion)}</span></div>) : <p style={{ color: '#94a3b8', fontSize: '.85rem' }}>Chưa có dữ liệu đã duyệt.</p>}
         <p style={{ color: '#94a3b8', fontSize: '.72rem', lineHeight: 1.5, margin: '.8rem 0 0' }}>{market?.methodology}</p>
       </section>
       <section className="dark-surface" style={{ background: 'linear-gradient(145deg,#0f2a44,#0f766e)', color: 'white', borderRadius: 14, padding: '1.15rem' }}>

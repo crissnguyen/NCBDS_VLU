@@ -44,7 +44,7 @@ export default function Header({ currentPage, setCurrentPage, userRole, setUserR
                   background: 'none',
                   border: 'none',
                   color: 'var(--text-primary)',
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-button)',
                   fontSize: '0.88rem',
                   display: 'flex',
                   alignItems: 'center',
@@ -74,7 +74,7 @@ export default function Header({ currentPage, setCurrentPage, userRole, setUserR
                   borderRadius: '99px',
                   padding: '0.5rem 1.1rem',
                   fontSize: '0.88rem',
-                  fontWeight: 600,
+                  fontWeight: 'var(--font-weight-button)',
                   color: '#fff',
                   cursor: 'pointer',
                   boxShadow: '0 4px 12px rgba(15, 23, 42, 0.12)',
@@ -135,13 +135,13 @@ export default function Header({ currentPage, setCurrentPage, userRole, setUserR
   return (
     <>
       <header className={`header glass ${scrolled ? 'scrolled' : ''}`} style={{ position: 'sticky', top: 0, zIndex: 100, transition: 'all 0.3s', padding: scrolled ? '0.75rem 5%' : '1.25rem 5%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent' }}>
-        <div className="brand" onClick={() => setCurrentPage('home')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800, fontSize: '1.25rem', color: 'var(--primary)' }}>
+        <div className="brand" onClick={() => setCurrentPage('home')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'var(--font-weight-subheading)', fontSize: '1.25rem', color: 'var(--primary)' }}>
           <div className="brand-icon" style={{ background: 'linear-gradient(135deg, var(--primary), var(--primary-light))', color: 'white', padding: '0.4rem', borderRadius: '10px' }}>
             <Home size={22} />
           </div>
           <div>
             <span>EstateAI</span>
-            <span style={{ color: 'var(--text-secondary)', fontWeight: 400, marginLeft: '0.25rem', fontSize: '1rem' }}>Vietnam</span>
+            <span style={{ color: 'var(--text-secondary)', fontWeight: 'var(--font-weight-body)', marginLeft: '0.25rem', fontSize: '1rem' }}>Vietnam</span>
           </div>
         </div>
 
@@ -151,7 +151,7 @@ export default function Header({ currentPage, setCurrentPage, userRole, setUserR
             <button
               key={item.id}
               className={`nav-link-modern ${currentPage === item.id ? 'active' : ''}`}
-              style={{ background: 'none', border: 'none', fontSize: '0.95rem', fontWeight: 600, color: currentPage === item.id ? 'var(--primary)' : 'var(--text-secondary)', position: 'relative', cursor: 'pointer', padding: '0.5rem 0' }}
+              style={{ background: 'none', border: 'none', fontSize: '0.95rem', fontWeight: 'var(--font-weight-button)', color: currentPage === item.id ? 'var(--primary)' : 'var(--text-secondary)', position: 'relative', cursor: 'pointer', padding: '0.5rem 0' }}
               onClick={() => setCurrentPage(item.id)}
             >
               {item.label}
@@ -204,7 +204,7 @@ export default function Header({ currentPage, setCurrentPage, userRole, setUserR
               style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '85%', maxWidth: 360, background: 'white', zIndex: 1001, display: 'flex', flexDirection: 'column', boxShadow: '-10px 0 30px rgba(0,0,0,0.1)' }}
             >
               <div style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)' }}>
-                <div style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--primary)' }}>Menu</div>
+                <div style={{ fontWeight: 'var(--font-weight-subheading)', fontSize: '1.25rem', color: 'var(--primary)' }}>Menu</div>
                 <button onClick={() => setIsMobileMenuOpen(false)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: 36, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                   <X size={20} color="var(--text-secondary)" />
                 </button>
@@ -225,7 +225,7 @@ export default function Header({ currentPage, setCurrentPage, userRole, setUserR
                 </div>
 
                 <div style={{ borderTop: '1px solid var(--border)', paddingTop: '2rem' }}>
-                  <p style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Tài khoản</p>
+                  <p style={{ fontSize: '0.8rem', fontWeight: 'var(--font-weight-body)', color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Tài khoản</p>
                   <ActionButtons isMobile={true} />
                 </div>
               </div>

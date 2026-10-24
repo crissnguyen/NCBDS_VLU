@@ -325,17 +325,17 @@ export default function NewsTab({ toast }) {
                   <div style={{ display: 'flex', gap: '0.85rem', alignItems: 'center' }}>
                     <img src={item.image} alt="" style={{ width: 68, height: 48, objectFit: 'cover', borderRadius: 8, border: '1px solid #e2e8f0', flexShrink: 0 }} />
                     <div>
-                      <div style={{ fontWeight: 650, color: '#101828', fontSize: '0.88rem', marginBottom: 2 }}>{item.title}</div>
+                      <div style={{ fontWeight: 'var(--font-weight-subheading)', color: '#101828', fontSize: '0.88rem', marginBottom: 2 }}>{item.title}</div>
                       <div style={{ color: '#64748b', fontSize: '0.78rem', maxWidth: 420, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.excerpt}</div>
                     </div>
                   </div>
                 </td>
                 <td>
-                  <span style={{ background: '#ecfdf5', color: '#027a48', border: '1px solid #a6f4c5', padding: '2px 8px', borderRadius: 999, fontWeight: 600, fontSize: '0.75rem' }}>{item.category}</span>
+                  <span style={{ background: '#ecfdf5', color: '#027a48', border: '1px solid #a6f4c5', padding: '2px 8px', borderRadius: 999, fontWeight: 'var(--font-weight-subheading)', fontSize: '0.75rem' }}>{item.category}</span>
                 </td>
                 <td>
-                  {item.sourceUrl ? <span style={{ color: '#0f766e', fontWeight: 600, fontSize: '0.8rem' }}>URL nguồn</span> : <span style={{ color: '#64748b', fontSize: '0.8rem' }}>Tự biên soạn</span>}
-                  {item.featured && <div style={{ color: '#b54708', fontSize: '0.74rem', marginTop: 3, fontWeight: 700 }}>★ Nổi bật</div>}
+                  {item.sourceUrl ? <span style={{ color: '#0f766e', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.8rem' }}>URL nguồn</span> : <span style={{ color: '#64748b', fontSize: '0.8rem' }}>Tự biên soạn</span>}
+                  {item.featured && <div style={{ color: '#b54708', fontSize: '0.74rem', marginTop: 3, fontWeight: 'var(--font-weight-subheading)' }}>★ Nổi bật</div>}
                 </td>
                 <td style={{ color: '#64748b', fontSize: '0.82rem' }}>{new Date(item.createdAt).toLocaleDateString('vi-VN')}</td>
                 <td style={{ textAlign: 'center', whiteSpace: 'nowrap', position: 'relative' }}>
@@ -403,7 +403,7 @@ export default function NewsTab({ toast }) {
                               borderRadius: 6,
                               color: '#344054',
                               fontSize: '0.82rem',
-                              fontWeight: 500,
+                              fontWeight: 'var(--font-weight-button)',
                               cursor: 'pointer',
                               textAlign: 'left',
                               transition: 'background 0.12s'
@@ -434,7 +434,7 @@ export default function NewsTab({ toast }) {
                               borderRadius: 6,
                               color: '#d92d20',
                               fontSize: '0.82rem',
-                              fontWeight: 500,
+                              fontWeight: 'var(--font-weight-button)',
                               cursor: 'pointer',
                               textAlign: 'left',
                               transition: 'background 0.12s'
@@ -457,7 +457,7 @@ export default function NewsTab({ toast }) {
         {filteredNews.length === 0 && (
           <div style={{ padding: '3.5rem 1.5rem', textAlign: 'center', color: '#475467', fontSize: '0.875rem' }}>
             <Newspaper size={36} color="#d0d5dd" style={{ marginBottom: '0.5rem' }} />
-            <div style={{ fontWeight: 600, color: '#101828' }}>Không tìm thấy bài viết nào</div>
+            <div style={{ fontWeight: 'var(--font-weight-subheading)', color: '#101828' }}>Không tìm thấy bài viết nào</div>
             <div style={{ fontSize: '0.8rem', color: '#667085', marginTop: 2 }}>Thử tìm kiếm với từ khóa khác hoặc thay đổi bộ lọc chuyên mục.</div>
           </div>
         )}
@@ -470,7 +470,7 @@ export default function NewsTab({ toast }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                 <div style={{ width: 42, height: 42, borderRadius: 12, background: '#0f766e', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Newspaper size={20} /></div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 900, color: '#0f172a' }}>{editingId ? 'Sửa bài viết' : 'Thêm tin tức mới'}</h3>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>{editingId ? 'Sửa bài viết' : 'Thêm tin tức mới'}</h3>
                   <p style={{ margin: '0.18rem 0 0', color: '#64748b', fontSize: '0.8rem' }}>Khách hàng có thể bấm vào bài viết để xem chi tiết hoặc mở URL nguồn.</p>
                 </div>
               </div>
@@ -484,38 +484,38 @@ export default function NewsTab({ toast }) {
                     ['write', FileText, 'Tự viết bài'],
                     ['link', Link2, 'Gắn URL bài báo']
                   ].map(([mode, Icon, label]) => (
-                    <button key={mode} type="button" onClick={() => setContentMode(mode)} style={{ border: 'none', borderRadius: 9, padding: '0.72rem', cursor: 'pointer', background: contentMode === mode ? 'white' : 'transparent', color: contentMode === mode ? '#0f766e' : '#64748b', fontWeight: 800, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.45rem', boxShadow: contentMode === mode ? '0 8px 22px rgba(15,42,68,0.08)' : 'none' }}>
+                    <button key={mode} type="button" onClick={() => setContentMode(mode)} style={{ border: 'none', borderRadius: 9, padding: '0.72rem', cursor: 'pointer', background: contentMode === mode ? 'white' : 'transparent', color: contentMode === mode ? '#0f766e' : '#64748b', fontWeight: 'var(--font-weight-button)', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.45rem', boxShadow: contentMode === mode ? '0 8px 22px rgba(15,42,68,0.08)' : 'none' }}>
                       <Icon size={16} /> {label}
                     </button>
                   ))}
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.45rem', fontWeight: 700, fontSize: '0.82rem', color: '#475569' }}>Tiêu đề *</label>
+                  <label style={{ display: 'block', marginBottom: '0.45rem', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.82rem', color: '#475569' }}>Tiêu đề *</label>
                   <input type="text" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} style={inputStyle} placeholder="VD: Những tín hiệu mới của thị trường căn hộ Hà Nội" />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.45rem', fontWeight: 700, fontSize: '0.82rem', color: '#475569' }}>Tóm tắt *</label>
+                  <label style={{ display: 'block', marginBottom: '0.45rem', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.82rem', color: '#475569' }}>Tóm tắt *</label>
                   <textarea value={formData.excerpt} onChange={e => setFormData({ ...formData, excerpt: e.target.value })} style={{ ...inputStyle, minHeight: 86, resize: 'vertical', lineHeight: 1.55 }} placeholder="Tóm tắt ngắn hiển thị trên card tin tức" />
                 </div>
 
                 {contentMode === 'link' && (
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.45rem', fontWeight: 700, fontSize: '0.82rem', color: '#475569' }}>URL bài báo nguồn *</label>
+                    <label style={{ display: 'block', marginBottom: '0.45rem', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.82rem', color: '#475569' }}>URL bài báo nguồn *</label>
                     <input type="url" value={formData.sourceUrl} onChange={e => setFormData({ ...formData, sourceUrl: e.target.value })} style={inputStyle} placeholder="https://..." />
                   </div>
                 )}
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.45rem', fontWeight: 700, fontSize: '0.82rem', color: '#475569' }}>Nội dung chi tiết {contentMode === 'write' && '*'}</label>
+                  <label style={{ display: 'block', marginBottom: '0.45rem', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.82rem', color: '#475569' }}>Nội dung chi tiết {contentMode === 'write' && '*'}</label>
                   <textarea value={formData.content} onChange={e => setFormData({ ...formData, content: e.target.value })} style={{ ...inputStyle, minHeight: 170, resize: 'vertical', lineHeight: 1.65 }} placeholder={contentMode === 'write' ? 'Tự viết nội dung bài báo tại đây...' : 'Có thể thêm nhận định ngắn của EstateAI trước khi khách mở URL nguồn...'} />
                 </div>
               </div>
 
               <aside style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.45rem', fontWeight: 700, fontSize: '0.82rem', color: '#475569' }}>Ảnh bìa</label>
+                  <label style={{ display: 'block', marginBottom: '0.45rem', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.82rem', color: '#475569' }}>Ảnh bìa</label>
                   <div style={{ border: '1px dashed #b6c5d5', borderRadius: 13, overflow: 'hidden', background: '#f8fafc' }}>
                     <div style={{ height: 150, background: imagePreview ? `url("${imagePreview}") center/cover` : 'linear-gradient(135deg, #e2e8f0, #eff6ff)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>
                       {!imagePreview && <ImagePlus size={30} />}
@@ -541,7 +541,7 @@ export default function NewsTab({ toast }) {
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.45rem', fontWeight: 700, fontSize: '0.82rem', color: '#475569' }}>Chuyên mục</label>
+                  <label style={{ display: 'block', marginBottom: '0.45rem', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.82rem', color: '#475569' }}>Chuyên mục</label>
                   <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} style={inputStyle}>
                     <option>Thị trường</option>
                     <option>Tiêu điểm Thị trường</option>
@@ -553,14 +553,14 @@ export default function NewsTab({ toast }) {
                   </select>
                 </div>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer', fontWeight: 800, fontSize: '0.86rem', color: '#0f172a', padding: '0.8rem', border: '1px solid #e2e8f0', borderRadius: 12 }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', cursor: 'pointer', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.86rem', color: '#0f172a', padding: '0.8rem', border: '1px solid #e2e8f0', borderRadius: 12 }}>
                   <input type="checkbox" checked={formData.featured} onChange={e => setFormData({ ...formData, featured: e.target.checked })} style={{ width: 18, height: 18 }} />
                   <Star size={16} color="#f59e0b" /> Bài viết nổi bật
                 </label>
 
                 <div style={{ marginTop: 'auto', display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '0.75rem', paddingTop: '0.5rem' }}>
-                  <button type="button" onClick={() => setShowModal(false)} style={{ padding: '0.78rem 1rem', borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', fontWeight: 800, cursor: 'pointer' }}>Hủy</button>
-                  <button type="submit" style={{ padding: '0.78rem 1rem', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', fontWeight: 800, cursor: 'pointer', boxShadow: '0 12px 24px rgba(15,118,110,0.18)' }}>Lưu bài viết</button>
+                  <button type="button" onClick={() => setShowModal(false)} style={{ padding: '0.78rem 1rem', borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', fontWeight: 'var(--font-weight-button)', cursor: 'pointer' }}>Hủy</button>
+                  <button type="submit" style={{ padding: '0.78rem 1rem', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', fontWeight: 'var(--font-weight-button)', cursor: 'pointer', boxShadow: '0 12px 24px rgba(15,118,110,0.18)' }}>Lưu bài viết</button>
                 </div>
               </aside>
             </form>
@@ -581,7 +581,7 @@ export default function NewsTab({ toast }) {
                 <Trash2 size={28} />
               </div>
               
-              <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>Xác nhận xóa hàng loạt</h3>
+              <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>Xác nhận xóa hàng loạt</h3>
               
               <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b', lineHeight: 1.5 }}>
                 Bạn có chắc chắn muốn xóa <strong style={{ color: '#ef4444' }}>{selectedIds.length}</strong> bài viết đã chọn không? Hành động này không thể hoàn tác.
@@ -592,7 +592,7 @@ export default function NewsTab({ toast }) {
                 <button 
                   type="button"
                   onClick={() => setIsBulkDeleteOpen(false)}
-                  style={{ flex: 1, background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, padding: '0.75rem 1.25rem', fontSize: '0.875rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                  style={{ flex: 1, background: '#f1f5f9', color: '#64748b', border: 'none', borderRadius: 10, padding: '0.75rem 1.25rem', fontSize: '0.875rem', fontWeight: 'var(--font-weight-button)', cursor: 'pointer', transition: 'all 0.2s' }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = '#e2e8f0'; }}
                   onMouseLeave={(e) => { e.currentTarget.style.background = '#f1f5f9'; }}
                 >
@@ -609,7 +609,7 @@ export default function NewsTab({ toast }) {
                     borderRadius: 10,
                     padding: '0.75rem 1.25rem',
                     fontSize: '0.875rem',
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-button)',
                     cursor: 'pointer',
                     boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)',
                     transition: 'all 0.2s'

@@ -236,8 +236,8 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
               <Home size={18} color="white" />
             </div>
             <div>
-              <div style={{ color: 'white', fontWeight: 800, fontSize: '1.05rem' }}>Estate<span style={{ color: '#38bdf8' }}>AI</span></div>
-              <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.67rem', fontWeight: 600, letterSpacing: '0.08em' }}>ADMIN PORTAL</div>
+              <div style={{ color: 'white', fontWeight: 'var(--font-weight-subheading)', fontSize: '1.05rem' }}>Estate<span style={{ color: '#38bdf8' }}>AI</span></div>
+              <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.67rem', fontWeight: 'var(--font-weight-subheading)', letterSpacing: '0.08em' }}>ADMIN PORTAL</div>
             </div>
           </div>
         </div>
@@ -245,7 +245,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
         <nav className="dashboard-sidebar-nav" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '1rem 0' }}>
           {navigationGroups.map(group => (
             <div key={group.title} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.72rem', fontWeight: 600, padding: '0 1.25rem 0.25rem' }}>
+              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.72rem', fontWeight: 'var(--font-weight-subheading)', padding: '0 1.25rem 0.25rem' }}>
                 {group.title}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', paddingLeft: '0.75rem', paddingRight: '0.75rem' }}>
@@ -261,7 +261,7 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
             <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg, #0f766e, #0891b2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><User size={15} color="white" /></div>
             <div style={{ flex: 1, overflow: 'hidden' }}>
-              <div style={{ color: 'white', fontWeight: 600, fontSize: '0.82rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{currentUser?.name || 'Admin'}</div>
+              <div style={{ color: 'white', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.82rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{currentUser?.name || 'Admin'}</div>
               <div style={{ color: 'rgba(255,255,255,0.38)', fontSize: '0.7rem' }}>Quản trị viên</div>
             </div>
             <button onClick={() => { setUserRole?.(null); setCurrentUser?.(null); setCurrentPage?.('home'); }} title="Đăng xuất"
@@ -282,20 +282,20 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
               <Menu size={24} color="#0f172a" />
             </button>
             <div>
-              <h2 style={{ margin: 0, fontWeight: 700, fontSize: '1rem', color: '#0f172a' }}>{navItems.find(n => n.tab === activeTab)?.label}</h2>
+              <h2 style={{ margin: 0, fontWeight: 'var(--font-weight-heading)', fontSize: '1rem', color: '#0f172a' }}>{navItems.find(n => n.tab === activeTab)?.label}</h2>
               <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: 1 }}>{new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setActiveTab(2)}>
               <Bell size={18} color="#64748b" />
-              {pendingProperties.length > 0 && <span style={{ position: 'absolute', top: -5, right: -5, width: 15, height: 15, background: '#ef4444', borderRadius: '50%', fontSize: '0.6rem', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>{pendingProperties.length}</span>}
+              {pendingProperties.length > 0 && <span style={{ position: 'absolute', top: -5, right: -5, width: 15, height: 15, background: '#ef4444', borderRadius: '50%', fontSize: '0.6rem', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'var(--font-weight-subheading)' }}>{pendingProperties.length}</span>}
             </div>
             <div style={{ width: 1, height: 22, background: '#e2e8f0' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={14} color="white" /></div>
-              <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#0f172a' }}>{currentUser?.name || 'Admin'}</span>
-              <span style={{ background: '#fee2e2', color: '#ef4444', fontSize: '0.68rem', fontWeight: 700, padding: '2px 8px', borderRadius: 99 }}>Admin</span>
+              <span style={{ fontWeight: 'var(--font-weight-subheading)', fontSize: '0.85rem', color: '#0f172a' }}>{currentUser?.name || 'Admin'}</span>
+              <span style={{ background: '#fee2e2', color: '#ef4444', fontSize: '0.68rem', fontWeight: 'var(--font-weight-subheading)', padding: '2px 8px', borderRadius: 99 }}>Admin</span>
             </div>
           </div>
         </header>
@@ -324,15 +324,15 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
             <div style={{ width:48,height:48,borderRadius:'50%',background:confirmModal.action==='approve'||confirmModal.newStatus==='Active'?'#d8f3ef':'#fee2e2',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 0 1rem' }}>
               {confirmModal.action==='approve'||confirmModal.newStatus==='Active' ? <Check size={22} color="#0f766e"/> : <X size={22} color="#ef4444"/>}
             </div>
-            <h3 style={{ margin:'0 0 0.4rem',fontWeight:800,fontSize:'1.1rem' }}>
+            <h3 style={{ margin:'0 0 0.4rem',fontWeight:'var(--font-weight-subheading)',fontSize:'1.1rem' }}>
               {confirmModal.type==='property' ? `Xác nhận ${confirmModal.action==='approve'?'phê duyệt':'từ chối'}?` : `Xác nhận ${confirmModal.newStatus==='Locked'?'khóa':'mở khóa'} tài khoản?`}
             </h3>
             <p style={{ color:'#64748b',marginBottom:'1.5rem',lineHeight:1.6,fontSize:'0.875rem' }}>
               {confirmModal.type==='property' ? `Bạn có chắc muốn ${confirmModal.action==='approve'?'phê duyệt':'từ chối'} tin đăng này?` : `Tài khoản "${confirmModal.userName}" sẽ bị ${confirmModal.newStatus==='Locked'?'khóa, không thể đăng nhập':'mở khóa trở lại'}.`}
             </p>
             <div style={{ display:'flex',justifyContent:'flex-end',gap:'0.75rem' }}>
-              <button onClick={() => setConfirmModal({isOpen:false})} style={{ padding:'0.6rem 1.25rem',borderRadius:10,border:'1px solid #e2e8f0',background:'white',color:'#475569',fontWeight:600,cursor:'pointer',fontSize:'0.875rem' }}>Hủy bỏ</button>
-              <button onClick={executeAction} style={{ padding:'0.6rem 1.25rem',borderRadius:10,border:'none',background:(confirmModal.action==='approve'||confirmModal.newStatus==='Active')?'linear-gradient(135deg,#0f766e,#0891b2)':'#ef4444',color:'white',fontWeight:600,cursor:'pointer',fontSize:'0.875rem' }}>Xác nhận</button>
+              <button onClick={() => setConfirmModal({isOpen:false})} style={{ padding:'0.6rem 1.25rem',borderRadius:10,border:'1px solid #e2e8f0',background:'white',color:'#475569',fontWeight:'var(--font-weight-button)',cursor:'pointer',fontSize:'0.875rem' }}>Hủy bỏ</button>
+              <button onClick={executeAction} style={{ padding:'0.6rem 1.25rem',borderRadius:10,border:'none',background:(confirmModal.action==='approve'||confirmModal.newStatus==='Active')?'linear-gradient(135deg,#0f766e,#0891b2)':'#ef4444',color:'white',fontWeight:'var(--font-weight-button)',cursor:'pointer',fontSize:'0.875rem' }}>Xác nhận</button>
             </div>
           </div>
         </div>

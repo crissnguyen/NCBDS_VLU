@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Bot, Search, ShieldCheck } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Hero from '../components/Hero';
+import TrustStats from '../components/TrustStats';
+import HowItWorks from '../components/HowItWorks';
 import PropertyCard from '../components/PropertyCard';
 import { SectionHeader } from '../components/ui';
 import { mediaUrl } from '../services/api';
@@ -22,67 +24,13 @@ export default function Home({ setCurrentPage }) {
       .catch(e => console.log(e));
   }, []);
 
-  const features = [
-    { 
-      icon: Search, 
-      title: 'Nhập nhu cầu', 
-      desc: 'Nói ngân sách, khu vực, mục tiêu.',
-      theme: { color: 'var(--secondary)', bg: 'var(--secondary-soft)' }
-    },
-    { 
-      icon: Bot, 
-      title: 'AI phân tích', 
-      desc: 'So giá, vị trí, pháp lý, độ phù hợp.',
-      theme: { color: 'var(--primary-light)', bg: 'var(--primary-soft)' }
-    },
-    { 
-      icon: ShieldCheck, 
-      title: 'Chọn an toàn', 
-      desc: 'Ưu tiên tin đáng tin và ít rủi ro.',
-      theme: { color: 'var(--accent)', bg: 'var(--accent-soft)' }
-    },
-  ];
-
   return (
     <main>
       <Hero setCurrentPage={setCurrentPage} />
 
-      <section className="landing-trust-strip">
-        <div className="container">
-          <span>12K+ tin đăng</span>
-          <span>98% AI match</span>
-          <span>24/7 tư vấn</span>
-          <span>Nha Trang focus</span>
-        </div>
-      </section>
+      <TrustStats />
 
-      <section className="landing-section landing-process">
-        <div className="container">
-          <div className="landing-process__header">
-            <span className="eyebrow">Cách hoạt động</span>
-            <h2>Tìm nhanh hơn chọn chắc hơn.</h2>
-            <p>Một luồng 3 bước gọn từ nhu cầu đến quyết định.</p>
-          </div>
-          <div className="landing-steps">
-            {features.map((feature, index) => (
-              <article
-                className="landing-step-card"
-                key={feature.title}
-                style={{ 
-                  '--animation-order': index,
-                  '--card-theme-color': feature.theme.color,
-                  '--card-theme-bg': feature.theme.bg
-                }}
-              >
-                <span className="step-number">0{index + 1}</span>
-                <div className="bento-card__icon"><feature.icon size={24} /></div>
-                <h3>{feature.title}</h3>
-                <p>{feature.desc}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <HowItWorks setCurrentPage={setCurrentPage} />
 
       <section className="landing-section landing-featured">
         <div className="container">

@@ -137,7 +137,7 @@ export default function EditUserModal({ user, onClose, onSuccess, toast }) {
           border: none;
           background: #0284c7;
           color: white;
-          font-weight: 700;
+          font-weight: var(--font-weight-subheading);
           font-size: 0.8rem;
           cursor: pointer;
           transition: all 0.2s ease;
@@ -160,7 +160,7 @@ export default function EditUserModal({ user, onClose, onSuccess, toast }) {
           border: 1px solid #e2e8f0;
           padding: 0.65rem 1.35rem;
           border-radius: 10px;
-          font-weight: 700;
+          font-weight: var(--font-weight-subheading);
           cursor: pointer;
           font-size: 0.875rem;
           transition: all 0.2s ease;
@@ -175,7 +175,7 @@ export default function EditUserModal({ user, onClose, onSuccess, toast }) {
           border: none;
           padding: 0.65rem 1.5rem;
           border-radius: 10px;
-          font-weight: 700;
+          font-weight: var(--font-weight-subheading);
           cursor: pointer;
           font-size: 0.875rem;
           transition: all 0.2s ease;
@@ -207,7 +207,7 @@ export default function EditUserModal({ user, onClose, onSuccess, toast }) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div>
-            <h3 style={{ margin: 0, fontWeight: 800, fontSize: '1.15rem', color: '#0f172a' }}>Sửa thông tin tài khoản</h3>
+            <h3 style={{ margin: 0, fontWeight: 'var(--font-weight-subheading)', fontSize: '1.15rem', color: '#0f172a' }}>Sửa thông tin tài khoản</h3>
             <p style={{ margin: '0.2rem 0 0', color: '#64748b', fontSize: '0.82rem' }}>Thay đổi tên hoặc email của thành viên hệ thống</p>
           </div>
           <button 
@@ -261,7 +261,7 @@ export default function EditUserModal({ user, onClose, onSuccess, toast }) {
                 <Mail size={14} color="#0284c7" />
               </div>
               <div style={{ flex: 1 }}>
-                <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#0f172a' }}>Gửi OTP đổi mật khẩu</span>
+                <span style={{ fontSize: '0.82rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>Gửi OTP đổi mật khẩu</span>
                 <p style={{ margin: '0.2rem 0 0', fontSize: '0.75rem', color: '#475569', lineHeight: 1.5 }}>
                   {isEmailChanged 
                     ? 'Bạn vừa thay đổi email của tài khoản này. Khuyên dùng gửi OTP để chủ tài khoản thiết lập lại mật khẩu mới.'
@@ -279,7 +279,7 @@ export default function EditUserModal({ user, onClose, onSuccess, toast }) {
                 padding: '0.65rem 0.85rem',
                 borderRadius: 10,
                 fontSize: '0.78rem',
-                fontWeight: 600,
+                fontWeight: 'var(--font-weight-subheading)',
                 background: otpStatus.type === 'success' ? '#dcfce7' : '#fee2e2',
                 color: otpStatus.type === 'success' ? '#15803d' : '#b91c1c',
                 border: otpStatus.type === 'success' ? '1px solid #bbf7d0' : '1px solid #fca5a5',

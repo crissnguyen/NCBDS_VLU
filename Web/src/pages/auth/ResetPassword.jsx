@@ -163,7 +163,7 @@ export default function ResetPassword({ setCurrentPage }) {
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem', fontSize: '0.9rem' }}>
               <button 
                 type="button" 
-                style={{ padding: 0, background: 'none', border: 'none', color: 'var(--text-muted)', fontWeight: 500, cursor: 'pointer' }}
+                style={{ padding: 0, background: 'none', border: 'none', color: 'var(--text-muted)', fontWeight: 'var(--font-weight-button)', cursor: 'pointer' }}
                 onClick={() => {
                   window.history.replaceState({}, document.title, "/");
                   setCurrentPage('login');

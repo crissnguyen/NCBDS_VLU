@@ -44,7 +44,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
     return (
       <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem', background: '#f8fafc' }}>
         <div style={{ width: 40, height: 40, border: '3px solid #e2e8f0', borderTopColor: '#0f2a44', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-        <p style={{ color: '#64748b', fontWeight: 600 }}>Đang tải thông tin...</p>
+        <p style={{ color: '#64748b', fontWeight: 'var(--font-weight-subheading)' }}>Đang tải thông tin...</p>
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
@@ -54,7 +54,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
     return (
       <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem' }}>
         <h2 style={{ color: '#0f2a44' }}>Không tìm thấy bất động sản</h2>
-        <button onClick={() => setCurrentPage('home')} style={{ padding: '0.75rem 1.5rem', background: '#0f2a44', color: 'white', borderRadius: 8, border: 'none', cursor: 'pointer', fontWeight: 600 }}>Quay lại trang chủ</button>
+        <button onClick={() => setCurrentPage('home')} style={{ padding: '0.75rem 1.5rem', background: '#0f2a44', color: 'white', borderRadius: 8, border: 'none', cursor: 'pointer', fontWeight: 'var(--font-weight-button)' }}>Quay lại trang chủ</button>
       </div>
     );
   }
@@ -119,7 +119,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
         <div style={{ position: 'relative' }}>
           <img src={images[4]} alt="5" onClick={() => openLightbox(4)} style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }} />
           {images.length > 5 && (
-            <div onClick={() => openLightbox(4)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '1.25rem', cursor: 'pointer' }}>
+            <div onClick={() => openLightbox(4)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'var(--font-weight-subheading)', fontSize: '1.25rem', cursor: 'pointer' }}>
               +{images.length - 5} ảnh
             </div>
           )}
@@ -170,14 +170,14 @@ export default function PropertyDetail({ id, setCurrentPage }) {
         .detail-title-h1 {
           margin: 0 0 1rem 0; 
           font-size: clamp(1.15rem, 1.35vw, 1.5rem); 
-          font-weight: 700; 
-          color: #0f2a44; 
-          line-height: 1.3;
+          font-weight: var(--font-weight-heading);
+          color: #0f2a44;
+          line-height: var(--line-height-heading);
           transition: font-size 0.2s;
         }
         .detail-price-text {
           font-size: 1.6rem; 
-          font-weight: 800; 
+          font-weight: var(--font-weight-subheading);
           color: #0f766e; 
           line-height: 1;
         }
@@ -252,7 +252,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
       <div className="container" style={{ paddingTop: '1rem', paddingBottom: '0.65rem' }}>
         <button 
           onClick={() => setCurrentPage('search')} 
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', border: 'none', background: 'transparent', color: '#64748b', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer', padding: '0.5rem 0' }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', border: 'none', background: 'transparent', color: '#64748b', fontWeight: 'var(--font-weight-button)', fontSize: '0.9rem', cursor: 'pointer', padding: '0.5rem 0' }}
         >
           <ArrowLeft size={18} /> Quay lại tìm kiếm
         </button>
@@ -268,15 +268,15 @@ export default function PropertyDetail({ id, setCurrentPage }) {
           <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15,42,68,0.8) 0%, transparent 50%)', pointerEvents: 'none' }} />
           <div className="detail-banner-content">
             <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <span style={{ background: '#0f766e', color: 'white', padding: '0.4rem 1rem', borderRadius: 99, fontSize: '0.8rem', fontWeight: 700 }}>{transDisplay}</span>
-              <span style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', color: 'white', padding: '0.4rem 1rem', borderRadius: 99, fontSize: '0.8rem', fontWeight: 600, border: '1px solid rgba(255,255,255,0.3)' }}>{typeDisplay}</span>
+              <span style={{ background: '#0f766e', color: 'white', padding: '0.4rem 1rem', borderRadius: 99, fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)' }}>{transDisplay}</span>
+              <span style={{ background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', color: 'white', padding: '0.4rem 1rem', borderRadius: 99, fontSize: '0.8rem', fontWeight: 'var(--font-weight-subheading)', border: '1px solid rgba(255,255,255,0.3)' }}>{typeDisplay}</span>
               {typeof property.aiScore === 'number' && (
-                <div style={{ background: 'linear-gradient(135deg, #0f766e, #14b8a6)', color: 'white', padding: '0.45rem 1rem', borderRadius: 99, display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 700, fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(15,118,110,0.3)' }}>
+                <div style={{ background: 'linear-gradient(135deg, #0f766e, #14b8a6)', color: 'white', padding: '0.45rem 1rem', borderRadius: 99, display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(15,118,110,0.3)' }}>
                   <Sparkles size={16} /> AI đánh giá: {property.aiScore}/100
                 </div>
               )}
               {typeof property.trustScore === 'number' && (
-                <div style={{ background: '#2563eb', color: 'white', padding: '0.45rem 1rem', borderRadius: 99, display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 700, fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(37,99,235,0.3)' }}>
+                <div style={{ background: '#2563eb', color: 'white', padding: '0.45rem 1rem', borderRadius: 99, display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.85rem', boxShadow: '0 4px 12px rgba(37,99,235,0.3)' }}>
                   <ShieldCheck size={16} /> Độ uy tín: {property.trustScore}/100
                 </div>
               )}
@@ -307,21 +307,21 @@ export default function PropertyDetail({ id, setCurrentPage }) {
             <div className="detail-specs-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Bed size={20} color="#2563eb" /></div>
-                <div><div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>Phòng ngủ</div><div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>{property.beds || '-'}</div></div>
+                <div><div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 'var(--font-weight-subheading)' }}>Phòng ngủ</div><div style={{ fontSize: '1.1rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>{property.beds || '-'}</div></div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Bath size={20} color="#16a34a" /></div>
-                <div><div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>Phòng tắm</div><div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>{property.baths || '-'}</div></div>
+                <div><div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 'var(--font-weight-subheading)' }}>Phòng tắm</div><div style={{ fontSize: '1.1rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>{property.baths || '-'}</div></div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#fef2f2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Maximize size={20} color="#dc2626" /></div>
-                <div><div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>Diện tích</div><div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>{property.area || '-'} m²</div></div>
+                <div><div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 'var(--font-weight-subheading)' }}>Diện tích</div><div style={{ fontSize: '1.1rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>{property.area || '-'} m²</div></div>
               </div>
             </div>
           </section>
 
           <section className="detail-section-card">
-            <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: 800, color: '#0f2a44', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', fontWeight: 'var(--font-weight-heading)', color: '#0f2a44', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Sparkles size={20} color="#0f766e" /> Mô tả chi tiết
             </h2>
             <PropertyDescription value={property.description} />
@@ -335,19 +335,19 @@ export default function PropertyDetail({ id, setCurrentPage }) {
         <div>
           <div className="detail-contact-card">
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
-              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.5rem' }}>
+              <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'var(--font-weight-heading)', fontSize: '1.5rem' }}>
                 {property.author?.name ? property.author.name[0] : 'S'}
               </div>
               <div>
-                <div style={{ fontWeight: 800, color: '#0f2a44', fontSize: '1.1rem' }}>{property.author?.name || 'Sale Chuyên Nghiệp'}</div>
+                <div style={{ fontWeight: 'var(--font-weight-subheading)', color: '#0f2a44', fontSize: '1.1rem' }}>{property.author?.name || 'Sale Chuyên Nghiệp'}</div>
                 <div style={{ color: '#64748b', fontSize: '0.85rem', marginTop: '0.2rem' }}>EstateAI Broker</div>
               </div>
             </div>
 
-            <button style={{ width: '100%', padding: '1rem', background: '#0f2a44', color: 'white', borderRadius: 12, border: 'none', fontWeight: 700, fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '1rem', boxShadow: '0 4px 12px rgba(15,42,68,0.2)' }}>
+            <button style={{ width: '100%', padding: '1rem', background: '#0f2a44', color: 'white', borderRadius: 12, border: 'none', fontWeight: 'var(--font-weight-button)', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '1rem', boxShadow: '0 4px 12px rgba(15,42,68,0.2)' }}>
               <Phone size={18} /> Yêu cầu gọi lại
             </button>
-            <button style={{ width: '100%', padding: '1rem', background: 'white', color: '#0f766e', borderRadius: 12, border: '2px solid #0f766e', fontWeight: 700, fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+            <button style={{ width: '100%', padding: '1rem', background: 'white', color: '#0f766e', borderRadius: 12, border: '2px solid #0f766e', fontWeight: 'var(--font-weight-button)', fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer' }}>
               <MessageCircle size={18} /> Nhắn tin Zalo
             </button>
 
@@ -385,7 +385,7 @@ export default function PropertyDetail({ id, setCurrentPage }) {
             </button>
           )}
           
-          <div style={{ position: 'absolute', bottom: '1.5rem', color: 'rgba(255,255,255,0.8)', fontSize: '1.1rem', fontWeight: 600, letterSpacing: '2px' }}>
+          <div style={{ position: 'absolute', bottom: '1.5rem', color: 'rgba(255,255,255,0.8)', fontSize: '1.1rem', fontWeight: 'var(--font-weight-subheading)', letterSpacing: '2px' }}>
             {lightboxIdx + 1} / {images.length}
           </div>
         </div>

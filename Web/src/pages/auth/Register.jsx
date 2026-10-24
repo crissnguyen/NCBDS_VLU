@@ -87,7 +87,7 @@ export default function Register({ setCurrentPage }) {
               padding: '0.45rem 0.9rem',
               borderRadius: '20px',
               fontSize: '0.85rem',
-              fontWeight: 600,
+              fontWeight: 'var(--font-weight-button)',
               cursor: 'pointer',
               marginBottom: '1.25rem',
               transition: 'all 0.15s ease'
@@ -200,7 +200,7 @@ export default function Register({ setCurrentPage }) {
               <span style={{ color: 'var(--text-muted)', marginRight: '0.5rem' }}>Đã có tài khoản?</span>
               <button 
                 type="button" 
-                style={{ padding: 0, background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer' }}
+                style={{ padding: 0, background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'var(--font-weight-button)', cursor: 'pointer' }}
                 onClick={() => setCurrentPage('login')}
               >
                 Đăng nhập

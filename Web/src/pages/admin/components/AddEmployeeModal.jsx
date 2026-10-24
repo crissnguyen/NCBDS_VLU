@@ -42,7 +42,7 @@ export default function AddEmployeeModal({ onClose, onSuccess, toast }) {
       <div style={{ background: 'white', borderRadius: 20, padding: '2rem', width: 480, boxShadow: '0 20px 60px rgba(0,0,0,0.2)', animation: 'fadeInScale 0.2s ease' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div>
-            <h3 style={{ margin: 0, fontWeight: 800, fontSize: '1.15rem' }}>Thêm nhân viên mới</h3>
+            <h3 style={{ margin: 0, fontWeight: 'var(--font-weight-subheading)', fontSize: '1.15rem' }}>Thêm nhân viên mới</h3>
             <p style={{ margin: '0.2rem 0 0', color: '#64748b', fontSize: '0.82rem' }}>Tạo tài khoản Sale để đăng nhập vào hệ thống</p>
           </div>
           <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: '50%', border: '1px solid #e2e8f0', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={16} color="#64748b" /></button>
@@ -76,8 +76,8 @@ export default function AddEmployeeModal({ onClose, onSuccess, toast }) {
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '1.5rem' }}>
-          <button onClick={onClose} style={{ padding: '0.6rem 1.25rem', borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', color: '#475569', fontWeight: 600, cursor: 'pointer', fontSize: '0.875rem' }}>Hủy</button>
-          <button onClick={handleSubmit} disabled={loading} style={{ padding: '0.6rem 1.5rem', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', fontSize: '0.875rem', opacity: loading ? 0.7 : 1 }}>
+          <button onClick={onClose} style={{ padding: '0.6rem 1.25rem', borderRadius: 10, border: '1px solid #e2e8f0', background: 'white', color: '#475569', fontWeight: 'var(--font-weight-button)', cursor: 'pointer', fontSize: '0.875rem' }}>Hủy</button>
+          <button onClick={handleSubmit} disabled={loading} style={{ padding: '0.6rem 1.5rem', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg, #0f2a44, #0f766e)', color: 'white', fontWeight: 'var(--font-weight-button)', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '0.875rem', opacity: loading ? 0.7 : 1 }}>
             {loading ? 'Đang tạo...' : '✓ Tạo tài khoản'}
           </button>
         </div>

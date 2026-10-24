@@ -78,7 +78,7 @@ export default function OverviewTab({ stats, currentUser, pendingProperties, all
     <>
 {/* TAB 0: Tổng quan */}
                         <div className="overview-welcome-banner dark-surface" style={{ background: 'linear-gradient(120deg, #0f2a44 0%, #0f766e 100%)', borderRadius: 14, padding: '1.5rem 2rem', color: 'white' }}>
-                <h1 style={{ fontSize: '1.35rem', fontWeight: 800, margin: '0 0 0.2rem' }}>Chào mừng, {currentUser?.name?.split(' ').pop() || 'Admin'}! 👋</h1>
+                <h1 style={{ fontSize: '1.35rem', fontWeight: 'var(--font-weight-heading)', margin: '0 0 0.2rem' }}>Chào mừng, {currentUser?.name?.split(' ').pop() || 'Admin'}! 👋</h1>
                 <p style={{ color: '#e2f3f1', margin: 0, fontSize: '0.875rem' }}>
                   <strong style={{ color: 'white' }}>{pendingProperties.length} tin đăng</strong> chờ phê duyệt · <strong style={{ color: 'white' }}>{metrics.totalSales || 0} nhân viên</strong> đang hoạt động
                 </p>
@@ -96,8 +96,8 @@ export default function OverviewTab({ stats, currentUser, pendingProperties, all
               <div className="dashboard-charts-grid overview-charts-grid">
                 <div className="overview-chart-card" style={{ background: 'white', borderRadius: 14, padding: '1.25rem 1.5rem', border: '1px solid #e2e8f0' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <div><h3 style={{ margin: 0, fontWeight: 700, fontSize: '0.95rem' }}>Xu hướng tin đăng</h3><p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8', marginTop: 2 }}>6 tháng gần nhất</p></div>
-                    <span style={{ background: '#d8f3ef', color: '#0f766e', padding: '3px 10px', borderRadius: 99, fontSize: '0.75rem', fontWeight: 600 }}>+23% ↑</span>
+                    <div><h3 style={{ margin: 0, fontWeight: 'var(--font-weight-subheading)', fontSize: '0.95rem' }}>Xu hướng tin đăng</h3><p style={{ margin: 0, fontSize: '0.75rem', color: '#94a3b8', marginTop: 2 }}>6 tháng gần nhất</p></div>
+                    <span style={{ background: '#d8f3ef', color: '#0f766e', padding: '3px 10px', borderRadius: 99, fontSize: '0.75rem', fontWeight: 'var(--font-weight-subheading)' }}>+23% ↑</span>
                   </div>
                   <ResponsiveContainer width="100%" height={190}>
                     <AreaChart data={chartData.trend} margin={{ top: 12, right: 10, left: -14, bottom: 0 }}>
@@ -114,7 +114,7 @@ export default function OverviewTab({ stats, currentUser, pendingProperties, all
                   </ResponsiveContainer>
                 </div>
                 <div className="overview-chart-card overview-type-card" style={{ background: 'white', borderRadius: 14, padding: '1.25rem 1.5rem', border: '1px solid #e2e8f0' }}>
-                  <h3 style={{ margin: '0 0 1rem', fontWeight: 700, fontSize: '0.95rem' }}>Loại BĐS</h3>
+                  <h3 style={{ margin: '0 0 1rem', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.95rem' }}>Loại BĐS</h3>
                   <ResponsiveContainer width="100%" height={150}>
                     <PieChart>
                       <Pie data={propertyTypeData} cx="50%" cy="50%" innerRadius={47} outerRadius={76} paddingAngle={4} cornerRadius={5} dataKey="value" stroke="none" animationDuration={1200} animationBegin={150}>
@@ -129,7 +129,7 @@ export default function OverviewTab({ stats, currentUser, pendingProperties, all
                     {propertyTypeData.map(d=>(
                       <div key={d.name} style={{display:'flex',alignItems:'center',justifyContent:'space-between',fontSize:'0.78rem'}}>
                         <div style={{display:'flex',alignItems:'center',gap:'0.4rem'}}><div style={{width:9,height:9,borderRadius:3,background:d.color}}/><span style={{color:'#475569'}}>{d.name}</span></div>
-                        <span style={{fontWeight:700,color:'#0f172a'}}>{d.value}%</span>
+                        <span style={{fontWeight:'var(--font-weight-subheading)',color:'#0f172a'}}>{d.value}%</span>
                       </div>
                     ))}
                   </div>

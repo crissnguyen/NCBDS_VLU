@@ -194,7 +194,7 @@ export default function Search({ setCurrentPage }) {
       <section className="container search-content">
         <div className="filters-layout search-layout">
         <aside className="search-filter-aside">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800, fontSize: '1.25rem', color: '#0f2a44', marginBottom: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'var(--font-weight-subheading)', fontSize: '1.25rem', color: '#0f2a44', marginBottom: '0.5rem' }}>
             <Filter size={20} color="#0f2a44" /> Bộ lọc thông minh
           </div>
           
@@ -204,14 +204,14 @@ export default function Search({ setCurrentPage }) {
           </div>
 
           <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: 14, padding: '4px' }}>
-            <button onClick={() => setTab('project')} style={{ flex: 1, background: tab === 'project' ? '#0f2a44' : 'transparent', color: tab === 'project' ? 'white' : '#475569', borderRadius: 10, padding: '0.6rem', border: 'none', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer', boxShadow: tab === 'project' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}>Dự án</button>
-            <button onClick={() => setTab('sale')} style={{ flex: 1, background: tab === 'sale' ? '#0f2a44' : 'transparent', color: tab === 'sale' ? 'white' : '#475569', borderRadius: 10, padding: '0.6rem', border: 'none', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', boxShadow: tab === 'sale' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}>Mua</button>
-            <button onClick={() => setTab('rent')} style={{ flex: 1, background: tab === 'rent' ? '#0f2a44' : 'transparent', color: tab === 'rent' ? 'white' : '#475569', borderRadius: 10, padding: '0.6rem', border: 'none', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer', boxShadow: tab === 'rent' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}>Thuê</button>
+            <button onClick={() => setTab('project')} style={{ flex: 1, background: tab === 'project' ? '#0f2a44' : 'transparent', color: tab === 'project' ? 'white' : '#475569', borderRadius: 10, padding: '0.6rem', border: 'none', fontWeight: 'var(--font-weight-button)', fontSize: '0.9rem', cursor: 'pointer', boxShadow: tab === 'project' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}>Dự án</button>
+            <button onClick={() => setTab('sale')} style={{ flex: 1, background: tab === 'sale' ? '#0f2a44' : 'transparent', color: tab === 'sale' ? 'white' : '#475569', borderRadius: 10, padding: '0.6rem', border: 'none', fontWeight: 'var(--font-weight-button)', fontSize: '0.9rem', cursor: 'pointer', boxShadow: tab === 'sale' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}>Mua</button>
+            <button onClick={() => setTab('rent')} style={{ flex: 1, background: tab === 'rent' ? '#0f2a44' : 'transparent', color: tab === 'rent' ? 'white' : '#475569', borderRadius: 10, padding: '0.6rem', border: 'none', fontWeight: 'var(--font-weight-button)', fontSize: '0.9rem', cursor: 'pointer', boxShadow: tab === 'rent' ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}>Thuê</button>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '0.5rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#475569', marginBottom: '0.4rem' }}>Loại giao dịch</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'var(--font-weight-subheading)', color: '#475569', marginBottom: '0.4rem' }}>Loại giao dịch</label>
               <select value={transactionType} onChange={e => setTransactionType(e.target.value)} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 12, border: '1px solid #e2e8f0', background: 'white', fontSize: '0.95rem', color: '#0f172a', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23475569%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1rem' }}>
                 <option value="all">Tất cả</option>
                 <option value="sale">Mua bán</option>
@@ -220,7 +220,7 @@ export default function Search({ setCurrentPage }) {
             </div>
             
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#475569', marginBottom: '0.4rem' }}>Loại BĐS</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'var(--font-weight-subheading)', color: '#475569', marginBottom: '0.4rem' }}>Loại BĐS</label>
               <select value={propertyType} onChange={e => setPropertyType(e.target.value)} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 12, border: '1px solid #e2e8f0', background: 'white', fontSize: '0.95rem', color: '#0f172a', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23475569%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1rem' }}>
                 <option value="all">Tất cả</option>
                 <option value="apartment">Căn hộ</option>
@@ -230,7 +230,7 @@ export default function Search({ setCurrentPage }) {
             </div>
             
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#475569', marginBottom: '0.4rem' }}>Khu vực</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'var(--font-weight-subheading)', color: '#475569', marginBottom: '0.4rem' }}>Khu vực</label>
               <select value={location} onChange={e => setLocation(e.target.value)} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 12, border: '1px solid #e2e8f0', background: 'white', fontSize: '0.95rem', color: '#0f172a', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23475569%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1rem' }}>
                 <option value="all">Tất cả khu vực</option>
                 {provinces.map(p => (
@@ -240,7 +240,7 @@ export default function Search({ setCurrentPage }) {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#475569', marginBottom: '0.4rem' }}>Khoảng giá</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'var(--font-weight-subheading)', color: '#475569', marginBottom: '0.4rem' }}>Khoảng giá</label>
               <select value={priceRange} onChange={e => setPriceRange(e.target.value)} style={{ width: '100%', padding: '0.75rem 1rem', borderRadius: 12, border: '1px solid #e2e8f0', background: 'white', fontSize: '0.95rem', color: '#0f172a', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23475569%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1rem' }}>
                 <option value="all">Tất cả</option>
                 <option value="low">Dưới 3 tỷ</option>
@@ -250,7 +250,7 @@ export default function Search({ setCurrentPage }) {
             </div>
 
             <div style={{ marginTop: '0.5rem' }}>
-              <label style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, color: '#475569', marginBottom: '0.75rem' }}>
+              <label style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 'var(--font-weight-subheading)', color: '#475569', marginBottom: '0.75rem' }}>
                 <span>Điểm tin cậy tối thiểu</span>
                 <span style={{ color: '#2563eb' }}>{minTrust}</span>
               </label>
@@ -260,12 +260,12 @@ export default function Search({ setCurrentPage }) {
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginTop: '0.5rem' }}>
               <input type="checkbox" checked={verifiedOnly} onChange={e => setVerifiedOnly(e.target.checked)} style={{ width: 16, height: 16, accentColor: '#0f766e', cursor: 'pointer' }} />
               <CheckCircle2 size={18} color="#0f766e" />
-              <span style={{ fontWeight: 700, color: '#475569', fontSize: '0.95rem' }}>Chỉ hiện tin xác thực</span>
+              <span style={{ fontWeight: 'var(--font-weight-subheading)', color: '#475569', fontSize: '0.95rem' }}>Chỉ hiện tin xác thực</span>
             </label>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
-              <button onClick={applyFilters} style={{ width: '100%', padding: '0.85rem', background: '#0f2a44', color: 'white', borderRadius: 12, border: 'none', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(15,42,68,0.2)' }}>Áp dụng lọc</button>
-              <button onClick={resetFilters} style={{ width: '100%', padding: '0.85rem', background: 'white', color: '#0f172a', borderRadius: 12, border: '1px solid #e2e8f0', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer' }}>Đặt lại</button>
+              <button onClick={applyFilters} style={{ width: '100%', padding: '0.85rem', background: '#0f2a44', color: 'white', borderRadius: 12, border: 'none', fontWeight: 'var(--font-weight-button)', fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(15,42,68,0.2)' }}>Áp dụng lọc</button>
+              <button onClick={resetFilters} style={{ width: '100%', padding: '0.85rem', background: 'white', color: '#0f172a', borderRadius: 12, border: '1px solid #e2e8f0', fontWeight: 'var(--font-weight-button)', fontSize: '0.95rem', cursor: 'pointer' }}>Đặt lại</button>
             </div>
           </div>
         </aside>

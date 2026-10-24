@@ -182,10 +182,10 @@ export default function ChatWidget() {
                   <div style={{ position: 'absolute', bottom: 0, right: 0, width: 12, height: 12, background: '#10b981', borderRadius: '50%', border: '2px solid var(--primary-dark)' }}></div>
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'white', fontWeight: 800, letterSpacing: '0.02em', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'white', fontWeight: 'var(--font-weight-subheading)', letterSpacing: 'var(--letter-spacing-subheading)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                     EstateAI <Sparkles size={14} color="var(--accent)" />
                   </h3>
-                  <div style={{ fontSize: '0.75rem', color: '#e2f3f1', fontWeight: 500 }}>Sẵn sàng hỗ trợ 24/7</div>
+                  <div style={{ fontSize: '0.75rem', color: '#e2f3f1', fontWeight: 'var(--font-weight-medium)' }}>Sẵn sàng hỗ trợ 24/7</div>
                 </div>
               </div>
               <button 
@@ -261,7 +261,7 @@ export default function ChatWidget() {
                   style={{ marginLeft: '40px', maxWidth: '82%' }}
                 >
                   <div style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
-                    <div style={{ padding: '0.75rem 1rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', fontSize: '0.8rem', color: '#64748b', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 600 }}>
+                    <div style={{ padding: '0.75rem 1rem', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', fontSize: '0.8rem', color: '#64748b', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 'var(--font-weight-subheading)' }}>
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><MapPin size={14} color="var(--secondary)" /> Kết quả đề xuất</span>
                       <Maximize2 size={14} style={{ cursor: 'pointer', color: 'var(--secondary)' }}/>
                     </div>
@@ -270,13 +270,13 @@ export default function ChatWidget() {
                         <div key={p.id} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', cursor: 'pointer' }}>
                           <div style={{ width: '65px', height: '65px', borderRadius: '10px', background: `url(${p.image}) center/cover` }}></div>
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--secondary)' }}>{p.price}</div>
-                            <div style={{ fontSize: '0.8rem', color: '#0f172a', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.title}</div>
+                            <div style={{ fontWeight: 'var(--font-weight-subheading)', fontSize: '0.95rem', color: 'var(--secondary)' }}>{p.price}</div>
+                            <div style={{ fontSize: '0.8rem', color: '#0f172a', fontWeight: 'var(--font-weight-subheading)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.title}</div>
                             <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: 2 }}>{p.location}</div>
                           </div>
                         </div>
                       ))}
-                      <button style={{ width: '100%', padding: '0.5rem', background: 'var(--secondary-soft)', color: 'var(--secondary)', border: 'none', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', marginTop: '0.2rem' }}>Xem chi tiết (2 căn)</button>
+                      <button style={{ width: '100%', padding: '0.5rem', background: 'var(--secondary-soft)', color: 'var(--secondary)', border: 'none', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 'var(--font-weight-button)', cursor: 'pointer', marginTop: '0.2rem' }}>Xem chi tiết (2 căn)</button>
                     </div>
                   </div>
                 </motion.div>
@@ -293,7 +293,7 @@ export default function ChatWidget() {
                   <button 
                     key={chip} 
                     onClick={() => handleQuickReply(chip)}
-                    style={{ whiteSpace: 'nowrap', padding: '0.4rem 0.85rem', fontSize: '0.8rem', fontWeight: 600, borderRadius: '20px', background: 'white', border: '1px solid #cbd5e1', color: '#475569', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.02)', transition: 'all 0.2s' }}
+                    style={{ whiteSpace: 'nowrap', padding: '0.4rem 0.85rem', fontSize: '0.8rem', fontWeight: 'var(--font-weight-button)', borderRadius: '20px', background: 'white', border: '1px solid #cbd5e1', color: '#475569', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.02)', transition: 'all 0.2s' }}
                     onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--secondary)'; e.currentTarget.style.color = 'var(--secondary)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
                     onMouseOut={e => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.color = '#475569'; e.currentTarget.style.transform = 'translateY(0)'; }}
                   >

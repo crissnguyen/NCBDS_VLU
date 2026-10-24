@@ -317,7 +317,7 @@ export default function PotentialCustomersTab({ toast }) {
       {/* 1. Header Toolbar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
-          <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'var(--font-weight-heading)', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
              Khách hàng tiềm năng & VIP
           </h2>
           <p style={{ margin: '0.25rem 0 0', color: '#64748b', fontSize: '0.82rem' }}>
@@ -331,7 +331,7 @@ export default function PotentialCustomersTab({ toast }) {
             style={{ 
               display: 'inline-flex', alignItems: 'center', gap: '0.45rem', 
               padding: '0.55rem 0.9rem', borderRadius: 10, border: '1px solid #e2e8f0', 
-              background: 'white', color: '#334155', fontWeight: 600, fontSize: '0.82rem', 
+              background: 'white', color: '#334155', fontWeight: 'var(--font-weight-button)', fontSize: '0.82rem',
               cursor: 'pointer', transition: 'all 0.15s ease' 
             }}
           >
@@ -344,7 +344,7 @@ export default function PotentialCustomersTab({ toast }) {
               display: 'inline-flex', alignItems: 'center', gap: '0.45rem', 
               padding: '0.55rem 1.05rem', borderRadius: 10, border: 'none', 
               background: 'linear-gradient(135deg, #0f766e, #0d9488)', color: 'white', 
-              fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer', 
+              fontWeight: 'var(--font-weight-button)', fontSize: '0.82rem', cursor: 'pointer',
               boxShadow: '0 2px 8px rgba(15,118,110,0.25)' 
             }}
           >
@@ -360,8 +360,8 @@ export default function PotentialCustomersTab({ toast }) {
         <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 14, padding: '1.1rem 1.25rem', display: 'flex', alignItems: 'center', gap: '1rem', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
           
           <div>
-            <div style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 600 }}>Tổng khách theo dõi</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginTop: 2 }}>{metrics.total}</div>
+            <div style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 'var(--font-weight-subheading)' }}>Tổng khách theo dõi</div>
+            <div style={{ fontSize: '1.35rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a', marginTop: 2 }}>{metrics.total}</div>
           </div>
         </div>
 
@@ -369,8 +369,8 @@ export default function PotentialCustomersTab({ toast }) {
         <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 14, padding: '1.1rem 1.25rem', display: 'flex', alignItems: 'center', gap: '1rem', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
           
           <div>
-            <div style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 600 }}>Khách mua nhiều (VIP)</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginTop: 2 }}>{metrics.vipBuyers}</div>
+            <div style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 'var(--font-weight-subheading)' }}>Khách mua nhiều (VIP)</div>
+            <div style={{ fontSize: '1.35rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a', marginTop: 2 }}>{metrics.vipBuyers}</div>
           </div>
         </div>
 
@@ -378,8 +378,8 @@ export default function PotentialCustomersTab({ toast }) {
         <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 14, padding: '1.1rem 1.25rem', display: 'flex', alignItems: 'center', gap: '1rem', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
           
           <div>
-            <div style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 600 }}>Khách thuê nhiều</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginTop: 2 }}>{metrics.vipRenters}</div>
+            <div style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 'var(--font-weight-subheading)' }}>Khách thuê nhiều</div>
+            <div style={{ fontSize: '1.35rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a', marginTop: 2 }}>{metrics.vipRenters}</div>
           </div>
         </div>
 
@@ -387,8 +387,8 @@ export default function PotentialCustomersTab({ toast }) {
         <div style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: 14, padding: '1.1rem 1.25rem', display: 'flex', alignItems: 'center', gap: '1rem', boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
           
           <div>
-            <div style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 600 }}>Truy cập nhiều (&gt;80 lượt)</div>
-            <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', marginTop: 2 }}>{metrics.highVisitors}</div>
+            <div style={{ color: '#64748b', fontSize: '0.75rem', fontWeight: 'var(--font-weight-subheading)' }}>Truy cập nhiều (&gt;80 lượt)</div>
+            <div style={{ fontSize: '1.35rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a', marginTop: 2 }}>{metrics.highVisitors}</div>
           </div>
         </div>
 
@@ -461,7 +461,7 @@ export default function PotentialCustomersTab({ toast }) {
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
                   padding: '0.5rem 0.85rem', borderRadius: 9, border: '1px solid #fecdd3',
-                  background: '#fff1f2', color: '#be123c', fontWeight: 700, fontSize: '0.8rem', cursor: 'pointer'
+                  background: '#fff1f2', color: '#be123c', fontWeight: 'var(--font-weight-button)', fontSize: '0.8rem', cursor: 'pointer'
                 }}
               >
                  Xóa ({selectedIds.length})
@@ -475,7 +475,7 @@ export default function PotentialCustomersTab({ toast }) {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.82rem' }}>
             <thead>
-              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', color: '#475569', fontWeight: 700 }}>
+              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', color: '#475569', fontWeight: 'var(--font-weight-subheading)' }}>
 
                 <th style={{ padding: '0.85rem 1rem' }}>Khách hàng</th>
                 <th style={{ padding: '0.85rem 1rem' }}>Phân loại</th>
@@ -522,7 +522,7 @@ export default function PotentialCustomersTab({ toast }) {
                           <div style={{ 
                             width: 34, height: 34, borderRadius: '50%', 
                             background: '#f1f5f9', border: '1px solid #e2e8f0', 
-                            color: '#0f2a44', fontWeight: 800, fontSize: '0.85rem', 
+                            color: '#0f2a44', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.85rem',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 
                           }}>
                             {lead.name.charAt(0).toUpperCase()}
@@ -530,7 +530,7 @@ export default function PotentialCustomersTab({ toast }) {
                           <div>
                             <div 
                               onClick={() => setViewingLead(lead)}
-                              style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.85rem', cursor: 'pointer' }}
+                              style={{ fontWeight: 'var(--font-weight-subheading)', color: '#0f172a', fontSize: '0.85rem', cursor: 'pointer' }}
                               onMouseEnter={e => e.currentTarget.style.color = '#0f766e'}
                               onMouseLeave={e => e.currentTarget.style.color = '#0f172a'}
                             >
@@ -546,7 +546,7 @@ export default function PotentialCustomersTab({ toast }) {
                         <span style={{ 
                           display: 'inline-flex', alignItems: 'center', gap: '0.4rem', 
                           padding: 0, border: 'none', whiteSpace: 'nowrap', 
-                          background: 'transparent', color: '#1e293b', fontSize: '0.75rem', fontWeight: 600,
+                          background: 'transparent', color: '#1e293b', fontSize: '0.75rem', fontWeight: 'var(--font-weight-subheading)',
                           boxShadow: 'none'
                         }}>
                           <span style={{ width: 6, height: 6, flexShrink: 0, borderRadius: '50%', background: typeDots[lead.type] || '#64748b' }} />
@@ -558,9 +558,9 @@ export default function PotentialCustomersTab({ toast }) {
                       <td style={{ padding: '0.75rem 1rem' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', fontSize: '0.76rem' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <span style={{ color: '#0f766e', fontWeight: 700 }}>Mua: {lead.totalPurchases || 0}</span>
+                            <span style={{ color: '#0f766e', fontWeight: 'var(--font-weight-subheading)' }}>Mua: {lead.totalPurchases || 0}</span>
                             <span style={{ color: '#cbd5e1' }}>|</span>
-                            <span style={{ color: '#2563eb', fontWeight: 700 }}>Thuê: {lead.totalRentals || 0}</span>
+                            <span style={{ color: '#2563eb', fontWeight: 'var(--font-weight-subheading)' }}>Thuê: {lead.totalRentals || 0}</span>
                           </div>
                           <div style={{ color: '#64748b', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                              <strong>{lead.totalVisits || 0}</strong> lượt truy cập
@@ -571,7 +571,7 @@ export default function PotentialCustomersTab({ toast }) {
                       {/* Need & Budget */}
                       <td style={{ padding: '0.75rem 1rem' }}>
                         <div style={{ fontSize: '0.78rem' }}>
-                          <div style={{ fontWeight: 700, color: '#0f172a' }}>{lead.budget || 'Chưa rõ'}</div>
+                          <div style={{ fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>{lead.budget || 'Chưa rõ'}</div>
                           <div style={{ color: '#64748b', fontSize: '0.73rem', marginTop: 1 }}>
                             {lead.preferredType || 'Tất cả loại hình'} · {lead.preferredLocation || 'Toàn quốc'}
                           </div>
@@ -582,7 +582,7 @@ export default function PotentialCustomersTab({ toast }) {
                       <td style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>
                         <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
                           <span style={{ 
-                            fontWeight: 800, fontSize: '0.82rem', 
+                            fontWeight: 'var(--font-weight-subheading)', fontSize: '0.82rem',
                             color: score >= 85 ? '#0f766e' : score >= 70 ? '#2563eb' : '#d97706' 
                           }}>
                             {score}/100
@@ -606,7 +606,7 @@ export default function PotentialCustomersTab({ toast }) {
                           onChange={e => handleQuickStatusChange(lead.id, e.target.value)}
                           style={{
                             padding: '3px 0', borderRadius: 0,
-                            fontSize: '0.74rem', fontWeight: 600,
+                            fontSize: '0.74rem', fontWeight: 'var(--font-weight-body)',
                             border: 'none',
                             background: 'transparent',
                             color: statusColors[lead.status]?.text || '#475569',
@@ -659,7 +659,7 @@ export default function PotentialCustomersTab({ toast }) {
                                 style={{
                                   display: 'flex', alignItems: 'center', gap: '0.5rem',
                                   padding: '0.5rem 0.65rem', border: 'none', background: 'none',
-                                  fontSize: '0.78rem', color: '#1e293b', fontWeight: 600,
+                                  fontSize: '0.78rem', color: '#1e293b', fontWeight: 'var(--font-weight-button)',
                                   borderRadius: 6, cursor: 'pointer', textAlign: 'left', width: '100%'
                                 }}
                                 onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
@@ -673,7 +673,7 @@ export default function PotentialCustomersTab({ toast }) {
                                 style={{
                                   display: 'flex', alignItems: 'center', gap: '0.5rem',
                                   padding: '0.5rem 0.65rem', border: 'none', background: 'none',
-                                  fontSize: '0.78rem', color: '#1e293b', fontWeight: 600,
+                                  fontSize: '0.78rem', color: '#1e293b', fontWeight: 'var(--font-weight-button)',
                                   borderRadius: 6, cursor: 'pointer', textAlign: 'left', width: '100%'
                                 }}
                                 onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
@@ -687,7 +687,7 @@ export default function PotentialCustomersTab({ toast }) {
                                 style={{
                                   display: 'flex', alignItems: 'center', gap: '0.5rem',
                                   padding: '0.5rem 0.65rem', textDecoration: 'none',
-                                  fontSize: '0.78rem', color: '#1e293b', fontWeight: 600,
+                                  fontSize: '0.78rem', color: '#1e293b', fontWeight: 'var(--font-weight-button)',
                                   borderRadius: 6, textAlign: 'left'
                                 }}
                                 onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
@@ -703,7 +703,7 @@ export default function PotentialCustomersTab({ toast }) {
                                 style={{
                                   display: 'flex', alignItems: 'center', gap: '0.5rem',
                                   padding: '0.5rem 0.65rem', border: 'none', background: 'none',
-                                  fontSize: '0.78rem', color: '#ef4444', fontWeight: 600,
+                                  fontSize: '0.78rem', color: '#ef4444', fontWeight: 'var(--font-weight-button)',
                                   borderRadius: 6, cursor: 'pointer', textAlign: 'left', width: '100%'
                                 }}
                                 onMouseEnter={e => e.currentTarget.style.background = '#fff1f2'}
@@ -754,7 +754,7 @@ export default function PotentialCustomersTab({ toast }) {
           <div style={{ background: 'white', borderRadius: 18, width: 600, maxWidth: '94vw', maxHeight: '90vh', overflowY: 'auto', padding: '1.75rem', boxShadow: '0 25px 50px rgba(0,0,0,0.15)' }}>
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>
+              <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>
                 {modalMode === 'add' ? 'Thêm khách hàng tiềm năng' : 'Chỉnh sửa thông tin khách hàng'}
               </h3>
               <button type="button" aria-label="Đóng hộp thoại" onClick={() => setIsAddEditModalOpen(false)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#94a3b8' }}>
@@ -766,7 +766,7 @@ export default function PotentialCustomersTab({ toast }) {
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 700, color: '#334155', marginBottom: 4 }}>Tên khách hàng *</label>
+                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 'var(--font-weight-subheading)', color: '#334155', marginBottom: 4 }}>Tên khách hàng *</label>
                   <input 
                     type="text" required
                     value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -775,7 +775,7 @@ export default function PotentialCustomersTab({ toast }) {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 700, color: '#334155', marginBottom: 4 }}>Số điện thoại *</label>
+                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 'var(--font-weight-subheading)', color: '#334155', marginBottom: 4 }}>Số điện thoại *</label>
                   <input 
                     type="text" required
                     value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })}
@@ -787,7 +787,7 @@ export default function PotentialCustomersTab({ toast }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 700, color: '#334155', marginBottom: 4 }}>Email</label>
+                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 'var(--font-weight-subheading)', color: '#334155', marginBottom: 4 }}>Email</label>
                   <input 
                     type="email"
                     value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
@@ -796,7 +796,7 @@ export default function PotentialCustomersTab({ toast }) {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 700, color: '#334155', marginBottom: 4 }}>Phân loại khách hàng</label>
+                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 'var(--font-weight-subheading)', color: '#334155', marginBottom: 4 }}>Phân loại khách hàng</label>
                   <select
                     value={formData.type} onChange={e => setFormData({ ...formData, type: e.target.value })}
                     style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: 8, border: '1px solid #cbd5e1', fontSize: '0.82rem', outline: 'none' }}
@@ -812,7 +812,7 @@ export default function PotentialCustomersTab({ toast }) {
               {/* Behavior & Transactions */}
               <div style={{ background: '#f8fafc', padding: '0.85rem 1rem', borderRadius: 10, border: '1px solid #e2e8f0', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: '#475569', marginBottom: 3 }}>Đã mua (BĐS)</label>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 'var(--font-weight-subheading)', color: '#475569', marginBottom: 3 }}>Đã mua (BĐS)</label>
                   <input 
                     type="number" min={0}
                     value={formData.totalPurchases} onChange={e => setFormData({ ...formData, totalPurchases: e.target.value })}
@@ -820,7 +820,7 @@ export default function PotentialCustomersTab({ toast }) {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: '#475569', marginBottom: 3 }}>Đã thuê (BĐS)</label>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 'var(--font-weight-subheading)', color: '#475569', marginBottom: 3 }}>Đã thuê (BĐS)</label>
                   <input 
                     type="number" min={0}
                     value={formData.totalRentals} onChange={e => setFormData({ ...formData, totalRentals: e.target.value })}
@@ -828,7 +828,7 @@ export default function PotentialCustomersTab({ toast }) {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 700, color: '#475569', marginBottom: 3 }}>Số lượt truy cập</label>
+                  <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 'var(--font-weight-subheading)', color: '#475569', marginBottom: 3 }}>Số lượt truy cập</label>
                   <input 
                     type="number" min={0}
                     value={formData.totalVisits} onChange={e => setFormData({ ...formData, totalVisits: e.target.value })}
@@ -839,7 +839,7 @@ export default function PotentialCustomersTab({ toast }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 700, color: '#334155', marginBottom: 4 }}>Ngân sách dự kiến</label>
+                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 'var(--font-weight-subheading)', color: '#334155', marginBottom: 4 }}>Ngân sách dự kiến</label>
                   <input 
                     type="text"
                     value={formData.budget} onChange={e => setFormData({ ...formData, budget: e.target.value })}
@@ -848,7 +848,7 @@ export default function PotentialCustomersTab({ toast }) {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 700, color: '#334155', marginBottom: 4 }}>Khu vực quan tâm</label>
+                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 'var(--font-weight-subheading)', color: '#334155', marginBottom: 4 }}>Khu vực quan tâm</label>
                   <input 
                     type="text"
                     value={formData.preferredLocation} onChange={e => setFormData({ ...formData, preferredLocation: e.target.value })}
@@ -860,7 +860,7 @@ export default function PotentialCustomersTab({ toast }) {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 700, color: '#334155', marginBottom: 4 }}>Loại BĐS quan tâm</label>
+                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 'var(--font-weight-subheading)', color: '#334155', marginBottom: 4 }}>Loại BĐS quan tâm</label>
                   <input 
                     type="text"
                     value={formData.preferredType} onChange={e => setFormData({ ...formData, preferredType: e.target.value })}
@@ -869,7 +869,7 @@ export default function PotentialCustomersTab({ toast }) {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 700, color: '#334155', marginBottom: 4 }}>Trạng thái chăm sóc</label>
+                  <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 'var(--font-weight-subheading)', color: '#334155', marginBottom: 4 }}>Trạng thái chăm sóc</label>
                   <select
                     value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })}
                     style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: 8, border: '1px solid #cbd5e1', fontSize: '0.82rem', outline: 'none' }}
@@ -884,7 +884,7 @@ export default function PotentialCustomersTab({ toast }) {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 700, color: '#334155', marginBottom: 4 }}>Ghi chú hành vi / nhu cầu đặc thù</label>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 'var(--font-weight-subheading)', color: '#334155', marginBottom: 4 }}>Ghi chú hành vi / nhu cầu đặc thù</label>
                 <textarea 
                   rows={3}
                   value={formData.notes} onChange={e => setFormData({ ...formData, notes: e.target.value })}
@@ -896,13 +896,13 @@ export default function PotentialCustomersTab({ toast }) {
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
                 <button 
                   type="button" onClick={() => setIsAddEditModalOpen(false)}
-                  style={{ padding: '0.6rem 1.15rem', borderRadius: 8, border: '1px solid #cbd5e1', background: 'white', color: '#475569', fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer' }}
+                  style={{ padding: '0.6rem 1.15rem', borderRadius: 8, border: '1px solid #cbd5e1', background: 'white', color: '#475569', fontWeight: 'var(--font-weight-button)', fontSize: '0.82rem', cursor: 'pointer' }}
                 >
                   Hủy bỏ
                 </button>
                 <button 
                   type="submit"
-                  style={{ padding: '0.6rem 1.35rem', borderRadius: 8, border: 'none', background: '#0f766e', color: 'white', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer' }}
+                  style={{ padding: '0.6rem 1.35rem', borderRadius: 8, border: 'none', background: '#0f766e', color: 'white', fontWeight: 'var(--font-weight-button)', fontSize: '0.82rem', cursor: 'pointer' }}
                 >
                   {modalMode === 'add' ? 'Thêm khách hàng' : 'Lưu thay đổi'}
                 </button>
@@ -920,11 +920,11 @@ export default function PotentialCustomersTab({ toast }) {
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#0f766e', color: 'white', fontWeight: 800, fontSize: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#0f766e', color: 'white', fontWeight: 'var(--font-weight-subheading)', fontSize: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {viewingLead.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>{viewingLead.name}</h3>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f172a' }}>{viewingLead.name}</h3>
                   <div style={{ color: '#64748b', fontSize: '0.8rem', marginTop: 2 }}>{viewingLead.phone} · {viewingLead.email}</div>
                 </div>
               </div>
@@ -978,13 +978,13 @@ export default function PotentialCustomersTab({ toast }) {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: '#64748b' }}>Hoạt động gần nhất:</span>
-                <span style={{ color: '#16a34a', fontWeight: 600 }}>{viewingLead.lastActive || 'Gần đây'}</span>
+                <span style={{ color: '#16a34a', fontWeight: 'var(--font-weight-subheading)' }}>{viewingLead.lastActive || 'Gần đây'}</span>
               </div>
             </div>
 
             {/* AI Note Box */}
             <div style={{ background: '#f0fdfa', border: '1px solid #ccfbf1', borderRadius: 12, padding: '0.85rem 1rem', marginBottom: '1.25rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#0f766e', fontWeight: 700, fontSize: '0.8rem', marginBottom: '0.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#0f766e', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.8rem', marginBottom: '0.25rem' }}>
                  Ghi chú chăm sóc &amp; Đề xuất AI
               </div>
               <p style={{ margin: 0, fontSize: '0.78rem', color: '#134e4a', lineHeight: 1.5 }}>
@@ -996,7 +996,7 @@ export default function PotentialCustomersTab({ toast }) {
             <div style={{ display: 'flex', gap: '0.75rem' }}>
               <a 
                 href={`tel:${viewingLead.phone}`}
-                style={{ flex: 1, padding: '0.65rem', borderRadius: 9, background: '#0f766e', color: 'white', fontWeight: 700, fontSize: '0.84rem', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                style={{ flex: 1, padding: '0.65rem', borderRadius: 9, background: '#0f766e', color: 'white', fontWeight: 'var(--font-weight-button)', fontSize: '0.84rem', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
               >
                  Gọi điện ngay
               </a>
@@ -1006,7 +1006,7 @@ export default function PotentialCustomersTab({ toast }) {
                   setViewingLead(null);
                   handleOpenEditModal(leadToEdit);
                 }}
-                style={{ flex: 1, padding: '0.65rem', borderRadius: 9, background: 'white', border: '1px solid #cbd5e1', color: '#334155', fontWeight: 700, fontSize: '0.84rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                style={{ flex: 1, padding: '0.65rem', borderRadius: 9, background: 'white', border: '1px solid #cbd5e1', color: '#334155', fontWeight: 'var(--font-weight-button)', fontSize: '0.84rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
               >
                  Chỉnh sửa hồ sơ
               </button>
@@ -1021,13 +1021,13 @@ export default function PotentialCustomersTab({ toast }) {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999 }}>
           <div style={{ background: 'white', borderRadius: 16, width: 400, padding: '1.5rem', boxShadow: '0 20px 50px rgba(0,0,0,0.2)' }}>
             
-            <h3 style={{ margin: '0 0 0.4rem', fontSize: '1.05rem', fontWeight: 800 }}>Xác nhận xóa hàng loạt?</h3>
+            <h3 style={{ margin: '0 0 0.4rem', fontSize: '1.05rem', fontWeight: 'var(--font-weight-subheading)' }}>Xác nhận xóa hàng loạt?</h3>
             <p style={{ color: '#64748b', fontSize: '0.85rem', marginBottom: '1.5rem', lineHeight: 1.5 }}>
               Bạn có chắc chắn muốn xóa <strong>{selectedIds.length}</strong> khách hàng đã chọn? Thao tác này không thể hoàn tác.
             </p>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
-              <button onClick={() => setIsBulkDeleteOpen(false)} style={{ padding: '0.55rem 1rem', borderRadius: 8, border: '1px solid #cbd5e1', background: 'white', color: '#475569', fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer' }}>Hủy bỏ</button>
-              <button onClick={handleBulkDelete} style={{ padding: '0.55rem 1.15rem', borderRadius: 8, border: 'none', background: '#ef4444', color: 'white', fontWeight: 700, fontSize: '0.82rem', cursor: 'pointer' }}>Xác nhận xóa</button>
+              <button onClick={() => setIsBulkDeleteOpen(false)} style={{ padding: '0.55rem 1rem', borderRadius: 8, border: '1px solid #cbd5e1', background: 'white', color: '#475569', fontWeight: 'var(--font-weight-button)', fontSize: '0.82rem', cursor: 'pointer' }}>Hủy bỏ</button>
+              <button onClick={handleBulkDelete} style={{ padding: '0.55rem 1.15rem', borderRadius: 8, border: 'none', background: '#ef4444', color: 'white', fontWeight: 'var(--font-weight-button)', fontSize: '0.82rem', cursor: 'pointer' }}>Xác nhận xóa</button>
             </div>
           </div>
         </div>

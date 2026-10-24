@@ -66,7 +66,7 @@ export default function ForgotPassword({ setCurrentPage }) {
               padding: '0.45rem 0.9rem', 
               borderRadius: '20px', 
               fontSize: '0.85rem', 
-              fontWeight: 600, 
+              fontWeight: 'var(--font-weight-button)',
               cursor: 'pointer', 
               marginBottom: '1.5rem',
               transition: 'all 0.15s ease' 
@@ -96,7 +96,7 @@ export default function ForgotPassword({ setCurrentPage }) {
                 <CheckCircle2 size={40} />
               </div>
 
-              <h2 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#0f2a44', marginBottom: '0.5rem' }}>
+              <h2 style={{ fontSize: '1.75rem', fontWeight: 'var(--font-weight-heading)', color: '#0f2a44', marginBottom: '0.5rem' }}>
                 Đã gửi email khôi phục!
               </h2>
 
@@ -110,7 +110,7 @@ export default function ForgotPassword({ setCurrentPage }) {
                 padding: '0.85rem 1.25rem', 
                 borderRadius: 12, 
                 color: '#0f766e', 
-                fontWeight: 700, 
+                fontWeight: 'var(--font-weight-subheading)',
                 fontSize: '1rem',
                 wordBreak: 'break-all',
                 marginBottom: '1.5rem'
@@ -131,7 +131,7 @@ export default function ForgotPassword({ setCurrentPage }) {
                     padding: '0.9rem', 
                     borderRadius: '12px', 
                     fontSize: '0.95rem', 
-                    fontWeight: 700,
+                    fontWeight: 'var(--font-weight-button)',
                     boxShadow: '0 8px 24px rgba(15, 118, 110, 0.25)',
                     cursor: 'pointer'
                   }}
@@ -146,7 +146,7 @@ export default function ForgotPassword({ setCurrentPage }) {
                     border: 'none',
                     color: '#64748b',
                     fontSize: '0.85rem',
-                    fontWeight: 600,
+                    fontWeight: 'var(--font-weight-button)',
                     cursor: 'pointer',
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -166,7 +166,7 @@ export default function ForgotPassword({ setCurrentPage }) {
                 <div className="brand-icon" style={{ marginBottom: '1.25rem', width: '48px', height: '48px', borderRadius: '12px' }}>
                   <Building2 size={24} />
                 </div>
-                <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', fontWeight: 800, color: '#0f2a44' }}>Quên mật khẩu</h2>
+                <h2 style={{ fontSize: '2rem', marginBottom: '0.5rem', fontWeight: 'var(--font-weight-heading)', color: '#0f2a44' }}>Quên mật khẩu</h2>
                 <p style={{ color: 'var(--text-muted)' }}>Chúng tôi sẽ gửi hướng dẫn khôi phục qua email.</p>
               </div>
 
@@ -194,7 +194,7 @@ export default function ForgotPassword({ setCurrentPage }) {
                   className="btn btn-primary" 
                   type="submit" 
                   disabled={isLoading}
-                  style={{ width: '100%', marginTop: '0.5rem', padding: '0.9rem', borderRadius: '12px', fontSize: '1rem', fontWeight: 700, boxShadow: '0 8px 24px rgba(15, 118, 110, 0.25)', opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer' }}
+                  style={{ width: '100%', marginTop: '0.5rem', padding: '0.9rem', borderRadius: '12px', fontSize: '1rem', fontWeight: 'var(--font-weight-button)', boxShadow: '0 8px 24px rgba(15, 118, 110, 0.25)', opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer' }}
                 >
                   {isLoading ? 'Đang gửi...' : 'Gửi liên kết khôi phục'}
                 </button>

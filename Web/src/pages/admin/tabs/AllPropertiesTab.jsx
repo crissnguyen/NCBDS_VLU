@@ -254,7 +254,7 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
       {filteredProperties.length === 0 ? (
         <div style={{ padding: '3.5rem 1.5rem', textAlign: 'center', color: '#475467', fontSize: '0.875rem' }}>
           <Building2 size={36} color="#d0d5dd" style={{ marginBottom: '0.5rem' }} />
-          <div style={{ fontWeight: 600, color: '#101828' }}>Không tìm thấy tin đăng nào</div>
+          <div style={{ fontWeight: 'var(--font-weight-subheading)', color: '#101828' }}>Không tìm thấy tin đăng nào</div>
           <div style={{ fontSize: '0.8rem', color: '#667085', marginTop: 2 }}>Thử tìm kiếm với từ khóa khác hoặc thay đổi bộ lọc trạng thái.</div>
         </div>
       ) : (
@@ -312,9 +312,9 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
                             style={{ width: 56, height: 40, borderRadius: 6, objectFit: 'cover', flexShrink: 0, boxShadow: '0 1px 2px rgba(16, 24, 40, 0.06)' }} 
                           />
                           <div>
-                            <div style={{ fontWeight: 600, color: '#101828', fontSize: '0.875rem', marginBottom: 2 }}>{p.title}</div>
+                            <div style={{ fontWeight: 'var(--font-weight-subheading)', color: '#101828', fontSize: '0.875rem', marginBottom: 2 }}>{p.title}</div>
                             <div style={{ fontSize: '0.78rem', color: '#667085' }}>
-                              <strong style={{ color: '#0f766e', fontWeight: 700 }}>{p.price}</strong> • {p.location}
+                              <strong style={{ color: '#0f766e', fontWeight: 'var(--font-weight-subheading)' }}>{p.price}</strong> • {p.location}
                             </div>
                           </div>
                         </div>
@@ -332,10 +332,10 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
                       </td>
                       <td style={{ padding: '0.85rem 1.25rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                          <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#0f766e', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.72rem', flexShrink: 0 }}>
+                          <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#0f766e', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'var(--font-weight-subheading)', fontSize: '0.72rem', flexShrink: 0 }}>
                             {(p.author?.name || 'A').charAt(0).toUpperCase()}
                           </div>
-                          <span style={{ fontWeight: 600, color: '#344054', fontSize: '0.85rem' }}>{p.author?.name || 'Admin System'}</span>
+                          <span style={{ fontWeight: 'var(--font-weight-subheading)', color: '#344054', fontSize: '0.85rem' }}>{p.author?.name || 'Admin System'}</span>
                         </div>
                       </td>
                       <td style={{ padding: '0.85rem 1.25rem' }}>
@@ -346,7 +346,7 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
                           padding: '3px 10px', 
                           borderRadius: 16, 
                           fontSize: '0.75rem', 
-                          fontWeight: 600,
+                          fontWeight: 'var(--font-weight-subheading)',
                           background: isApproved ? '#ecfdf5' : isPending ? '#fffaeb' : '#fef2f2',
                           color: isApproved ? '#027a48' : isPending ? '#b54708' : '#b42318',
                           border: isApproved ? '1px solid #abedd8' : isPending ? '1px solid #fedf89' : '1px solid #fecdd3'
@@ -434,7 +434,7 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
                                   borderRadius: 6,
                                   color: '#344054',
                                   fontSize: '0.82rem',
-                                  fontWeight: 500,
+                                  fontWeight: 'var(--font-weight-button)',
                                   cursor: 'pointer',
                                   textAlign: 'left',
                                   transition: 'background 0.12s'
@@ -465,7 +465,7 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
                                   borderRadius: 6,
                                   color: '#d92d20',
                                   fontSize: '0.82rem',
-                                  fontWeight: 500,
+                                  fontWeight: 'var(--font-weight-button)',
                                   cursor: 'pointer',
                                   textAlign: 'left',
                                   transition: 'background 0.12s'
@@ -556,11 +556,11 @@ export default function AllPropertiesTab({ allProperties = [], setEditingPropert
         <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
           <div style={{ background: 'white', width: 380, maxWidth: '100%', borderRadius: 16, padding: '1.5rem', textAlign: 'center', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
             <Trash2 size={28} color="#ef4444" style={{ marginBottom: '0.75rem' }} />
-            <h3 style={{ margin: '0 0 0.4rem', fontSize: '1.1rem', fontWeight: 700, color: '#101828' }}>Xác nhận xóa {selectedIds.length} tin đăng</h3>
+            <h3 style={{ margin: '0 0 0.4rem', fontSize: '1.1rem', fontWeight: 'var(--font-weight-subheading)', color: '#101828' }}>Xác nhận xóa {selectedIds.length} tin đăng</h3>
             <p style={{ fontSize: '0.85rem', color: '#667085', margin: '0 0 1.25rem' }}>Hành động này sẽ xóa vĩnh viễn và không thể hoàn tác.</p>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button onClick={() => setIsBulkDeleteOpen(false)} style={{ flex: 1, background: '#f2f4f7', color: '#344054', border: '1px solid #d0d5dd', borderRadius: 8, padding: '0.6rem', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Hủy</button>
-              <button onClick={executeBulkDelete} style={{ flex: 1, background: '#b42318', color: 'white', border: 'none', borderRadius: 8, padding: '0.6rem', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)' }}>Xóa ngay</button>
+              <button onClick={() => setIsBulkDeleteOpen(false)} style={{ flex: 1, background: '#f2f4f7', color: '#344054', border: '1px solid #d0d5dd', borderRadius: 8, padding: '0.6rem', fontSize: '0.85rem', fontWeight: 'var(--font-weight-button)', cursor: 'pointer' }}>Hủy</button>
+              <button onClick={executeBulkDelete} style={{ flex: 1, background: '#b42318', color: 'white', border: 'none', borderRadius: 8, padding: '0.6rem', fontSize: '0.85rem', fontWeight: 'var(--font-weight-button)', cursor: 'pointer', boxShadow: '0 1px 2px rgba(16, 24, 40, 0.05)' }}>Xóa ngay</button>
             </div>
           </div>
         </div>
