@@ -1,5 +1,4 @@
-title,price,location,area,beds,baths,transactionType,propertyType,legalStatus,description,imageUrl,status
-Căn hộ 2 phòng ngủ view biển,2.85 tỷ,"Lộc Thọ, Nha Trang",68,2,2,sale,apartment,Sổ hồng lâu dài,"Căn hộ tầng cao, đầy đủ nội thất, phù hợp ở hoặc khai thác cho thuê.",,Approved
-Nhà phố trung tâm Phước Hải,4.9 tỷ,"Phước Hải, Nha Trang",85,3,3,sale,house,Sổ đỏ chính chủ,"Nhà phố hoàn thiện, đường ô tô, khu dân cư an ninh.",,Approved
-Đất nền thổ cư Diên Khánh,1.75 tỷ,"Diên Khánh, Khánh Hòa",100,,,sale,land,Sổ đỏ riêng,"Đất nền vuông vức, hạ tầng điện nước đầy đủ.",,Pending
-Căn hộ cao cấp cho thuê,12 triệu/tháng,"Trần Phú, Nha Trang",65,2,2,rent,apartment,Hợp đồng lâu dài,"Căn hộ đầy đủ nội thất, gần biển, phù hợp thuê dài hạn.",,Approved
+﻿Tiêu đề tin (*),Mức giá (*),Vị trí / Địa chỉ (*),Diện tích (m2),Số phòng ngủ,Số phòng tắm,Hình thức,Loại BĐS,Pháp lý,Mô tả chi tiết,Hình ảnh URL,Trạng thái
+"Bán căn hộ 2 phòng ngủ view biển Lộc Thọ","2.85 tỷ","Lộc Thọ, Nha Trang",75,2,2,"Bán","Căn hộ","Sổ hồng lâu dài","Căn hộ tầng cao thoáng mát, view biển trực diện, đầy đủ nội thất cao cấp.","https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800","Đã duyệt"
+"Cho thuê nhà phố 3 tầng trung tâm Phước Hải","15 triệu/tháng","Phước Hải, Nha Trang",100,3,3,"Cho thuê","Nhà phố","Sổ đỏ chính chủ","Nhà phố mặt tiền đường lớn, tiện kinh doanh buôn bán hoặc mở văn phòng công ty.","","Chờ duyệt"
+"Bán đất nền thổ cư Diên Khánh giá tốt","1.5 tỷ","Diên Khánh, Khánh Hòa",120,,,"Bán","Đất nền","Sổ đỏ riêng","Đất vuông vức, đường bê tông 6m ô tô quay đầu, điện nước đầy đủ, xây dựng ngay.","","Chờ duyệt"

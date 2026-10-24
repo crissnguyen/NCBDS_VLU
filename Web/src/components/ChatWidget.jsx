@@ -5,8 +5,8 @@ import { properties } from '../data/properties';
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Initialize Gemini API Key
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "AIzaSyA3zyV9shYc8yYAKH70nQAkqj_KwKbzFNY";
+// Initialize Gemini API Key (từ biến môi trường VITE_GEMINI_API_KEY)
+const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);

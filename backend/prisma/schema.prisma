@@ -71,14 +71,24 @@ model News {
 }
 
 model ContactRequest {
-  id        String   @id @default(uuid())
-  name      String
-  phone     String
-  email     String
-  subject   String
-  message   String
-  status    String   @default("Pending") // Pending, Replied
-  replyText String?  @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String    @id @default(uuid())
+  name           String
+  phone          String
+  email          String
+  subject        String
+  message        String
+  status         String    @default("Pending") // Pending, Replied
+  replyText      String?   @db.Text
+  repliedBy      String?
+  repliedByEmail String?
+  repliedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
+
+model SystemSetting {
+  key       String   @id
+  value     Boolean  @default(false)
+  updatedAt DateTime @default(now()) @updatedAt
+}
+

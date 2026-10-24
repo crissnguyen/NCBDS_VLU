@@ -607,7 +607,28 @@ router.post('/contacts/:id/reply', async (req, res) => {
       return res.status(404).json({ success: false, message: "Không tìm thấy yêu cầu liên hệ" });
     }
 
-    // Gửi email cho khách hàng qua GAS
+    // Xác định thông tin người trả lời và tài khoản
+    let responderName = req.user?.name || '';
+    let responderEmail = req.user?.email || '';
+
+    if (req.user?.id && (!responderName || !responderEmail)) {
+      try {
+        const u = await prisma.user.findUnique({
+          where: { id: req.user.id },
+          select: { name: true, email: true }
+        });
+        if (u) {
+          responderName = responderName || u.name;
+          responderEmail = responderEmail || u.email;
+        }
+      } catch (_) {}
+    }
+
+    responderName = req.body.repliedBy || responderName || 'Ban quản trị EstateAI';
+    responderEmail = req.body.repliedByEmail || responderEmail || (req.user?.email || '');
+    const repliedAt = new Date();
+
+    // Gửi email cho khách hàng qua Mail Service
     const emailSubject = subject || `[EstateAI] Phản hồi yêu cầu: ${contact.subject}`;
     const emailHtml = `
       <div style="font-family: sans-serif; padding: 20px; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px;">
@@ -617,9 +638,14 @@ router.post('/contacts/:id/reply', async (req, res) => {
         <div style="background-color: #f8fafc; padding: 15px; border-left: 4px solid #cbd5e1; margin-bottom: 20px; font-style: italic;">
           "${contact.message}"
         </div>
-        <p><strong>Câu trả lời từ Ban quản trị EstateAI:</strong></p>
-        <div style="background-color: #f0fdfa; padding: 15px; border-left: 4px solid #0f766e; margin-bottom: 20px; white-space: pre-line;">
+        <p><strong>Câu trả lời từ EstateAI:</strong></p>
+        <div style="background-color: #f0fdfa; padding: 15px; border-left: 4px solid #0f766e; margin-bottom: 15px; white-space: pre-line;">
           ${replyText}
+        </div>
+        <div style="background-color: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; font-size: 13px; color: #475569;">
+          <div style="margin-bottom: 4px;">👤 <strong>Người phản hồi:</strong> ${responderName}</div>
+          ${responderEmail ? `<div style="margin-bottom: 4px;">✉️ <strong>Tài khoản phản hồi:</strong> ${responderEmail}</div>` : ''}
+          <div style="color: #64748b; font-size: 12px;">🕒 <strong>Thời gian phản hồi:</strong> ${repliedAt.toLocaleString('vi-VN')}</div>
         </div>
         <p style="margin-top: 30px;">Nếu bạn có thêm câu hỏi, vui lòng liên hệ hotline <strong>+84 987 654 321</strong>.</p>
         <p>Trân trọng,<br/><strong>Đội ngũ EstateAI Việt Nam</strong></p>
@@ -631,12 +657,15 @@ router.post('/contacts/:id/reply', async (req, res) => {
       return res.status(500).json({ success: false, message: `Lỗi gửi email: ${mailResult.error}` });
     }
 
-    // Cập nhật trạng thái trong DB
+    // Cập nhật trạng thái trong DB bao gồm người và tài khoản trả lời
     const updatedContact = await prisma.contactRequest.update({
       where: { id },
       data: {
         status: 'Replied',
-        replyText
+        replyText,
+        repliedBy: responderName,
+        repliedByEmail: responderEmail,
+        repliedAt
       }
     });
 
@@ -650,7 +679,7 @@ router.post('/contacts/:id/reply', async (req, res) => {
 // Tạo liên hệ mới từ Admin
 router.post('/contacts', async (req, res) => {
   try {
-    const { name, email, phone, subject, message, status, replyText } = req.body;
+    const { name, email, phone, subject, message, status, replyText, repliedBy, repliedByEmail } = req.body;
     if (!name || !email || !phone || !subject || !message) {
       return res.status(400).json({ success: false, message: "Vui lòng điền đầy đủ các thông tin bắt buộc." });
     }
@@ -662,7 +691,10 @@ router.post('/contacts', async (req, res) => {
         subject,
         message,
         status: status || 'Pending',
-        replyText
+        replyText,
+        repliedBy: status === 'Replied' ? (repliedBy || req.user?.name || 'Ban quản trị') : null,
+        repliedByEmail: status === 'Replied' ? (repliedByEmail || req.user?.email || null) : null,
+        repliedAt: status === 'Replied' ? new Date() : null
       }
     });
     res.status(201).json({ success: true, message: "Thêm khách hàng liên hệ thành công", data: newContact });
@@ -676,10 +708,24 @@ router.post('/contacts', async (req, res) => {
 router.put('/contacts/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, phone, subject, message, status, replyText } = req.body;
+    const { name, email, phone, subject, message, status, replyText, repliedBy, repliedByEmail } = req.body;
+    
+    const updateData = { name, email, phone, subject, message, status };
+    if (status === 'Replied') {
+      updateData.replyText = replyText;
+      if (repliedBy !== undefined) updateData.repliedBy = repliedBy || req.user?.name || 'Ban quản trị';
+      if (repliedByEmail !== undefined) updateData.repliedByEmail = repliedByEmail || req.user?.email;
+      updateData.repliedAt = new Date();
+    } else {
+      updateData.replyText = null;
+      updateData.repliedBy = null;
+      updateData.repliedByEmail = null;
+      updateData.repliedAt = null;
+    }
+
     const updated = await prisma.contactRequest.update({
       where: { id },
-      data: { name, email, phone, subject, message, status, replyText }
+      data: updateData
     });
     res.json({ success: true, message: "Cập nhật liên hệ thành công", data: updated });
   } catch (error) {

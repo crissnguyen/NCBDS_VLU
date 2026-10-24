@@ -29,8 +29,8 @@ export default function PropertyDocumentImport({ onApply, disabled }) {
     setError('');
     setApplied('');
     setPreview(null);
-    if (!/\.(pdf|docx|txt|md)$/i.test(file.name)) {
-      setError('Chỉ hỗ trợ PDF có chữ, Word (.docx), .txt và .md.');
+    if (!/\.(pdf|docx|txt|md|xlsx|xls|csv)$/i.test(file.name)) {
+      setError('Hỗ trợ PDF, Word (.docx), Excel (.xlsx, .xls), CSV, .txt và .md.');
       return;
     }
     if (!file.size || file.size > 5 * 1024 * 1024) {
@@ -79,23 +79,32 @@ export default function PropertyDocumentImport({ onApply, disabled }) {
   return <section className="document-import" aria-label="Nhập tài liệu bất động sản" aria-busy={busy}>
     <div className="document-import-heading">
       <span className="document-import-icon"><FileText size={23} /></span>
-      <div><h4>Điền tin từ tài liệu</h4><p>Tải PDF có chữ để tự nhận diện thông tin và bố cục bài đăng.</p></div>
+      <div>
+        <h4>Điền tin từ tài liệu & Bộ quét Scanner</h4>
+        <p>Tải file gốc bất kỳ (PDF, Word, Excel, CSV, Text) — Hệ thống Scanner sẽ tự động phân tích và lọc dữ liệu sạch vào bài đăng.</p>
+      </div>
     </div>
     <div className="document-import-toolbar">
-      <input ref={input} type="file" accept=".pdf,.docx,.txt,.md" aria-label="Chọn tài liệu bất động sản" onChange={readFile} hidden disabled={busy || disabled} />
+      <input ref={input} type="file" accept=".pdf,.docx,.txt,.md,.xlsx,.xls,.csv" aria-label="Chọn tài liệu bất động sản" onChange={readFile} hidden disabled={busy || disabled} />
       <button type="button" onClick={() => input.current?.click()} disabled={busy || disabled}>
         {busy ? <LoaderCircle size={16} className="document-import-spinner" /> : <Upload size={16} />}
-        {busy ? 'Đang đọc và nhận diện…' : 'Chọn tài liệu'}
+        {busy ? 'Bộ quét đang phân tích & bóc tách…' : 'Chọn file tài liệu / File gốc'}
       </button>
       <a href="/mau-tai-lieu-bat-dong-san.docx" download>Tải mẫu Word (.docx)</a>
+      <a href="/mau-import-tin-dang.xlsx" download style={{ marginLeft: 8, fontSize: '0.78rem', color: '#0f766e', textDecoration: 'underline' }}>Tải mẫu Excel (.xlsx)</a>
     </div>
-    <p className="document-import-help">PDF có chữ, DOCX, TXT, MD · Tối đa 5MB · Một bất động sản mỗi file</p>
-    <p className="document-import-help">Nhận diện nội dung, đề mục và xuống dòng; bạn có thể chỉnh lại trước khi đăng. PDF scan ảnh cần OCR trước.</p>
+    <p className="document-import-help">Hỗ trợ: PDF có chữ, Word (.docx), Excel (.xlsx, .xls), CSV, TXT, MD · Tối đa 5MB · Một bất động sản mỗi file</p>
+    <p className="document-import-help">Scanner thông minh tự động tìm kiếm tiêu đề, mức giá, vị trí, diện tích, phòng ngủ, pháp lý và tự lọc sạch thông tin rác.</p>
     {error && <p className="document-import-error" role="alert">{error}</p>}
     {applied && <p className="document-import-success" role="status"><CheckCircle size={15} /> Đã điền từ “{applied}”. Kiểm tra thông tin bên dưới và bổ sung hình ảnh.</p>}
     {preview && <div className="document-import-preview">
-      <div className="document-import-preview-heading"><strong>Kết quả: {preview.filename}</strong><button type="button" className="document-import-dismiss" aria-label="Đóng kết quả nhập" onClick={() => setPreview(null)}><X size={17} /></button></div>
-      <p className="document-import-help">{preview.method === 'ai' ? 'Đã kết hợp AI để nhận diện nội dung.' : 'Đã nhận diện theo nhãn và nội dung tài liệu.'} Kiểm tra và sửa kết quả trước khi áp dụng.</p>
+      <div className="document-import-preview-heading">
+        <strong>Kết quả quét từ: {preview.filename}</strong>
+        <button type="button" className="document-import-dismiss" aria-label="Đóng kết quả nhập" onClick={() => setPreview(null)}><X size={17} /></button>
+      </div>
+      <p className="document-import-help" style={{ color: '#0f766e', fontWeight: 600 }}>
+        ✓ Bộ quét Scanner đã tự động nhận diện và bóc tách dữ liệu từ file gốc. Bạn có thể kiểm tra và chỉnh sửa trước khi áp dụng vào form:
+      </p>
       <div className="document-import-fields">
         {Object.entries(LABELS).map(([field, label]) => <label key={field}>
           <span>{label}</span>

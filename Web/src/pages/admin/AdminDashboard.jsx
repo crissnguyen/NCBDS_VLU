@@ -310,8 +310,8 @@ export default function AdminDashboard({ currentUser, setCurrentPage, setUserRol
           {activeTab === 3 && <PostPropertyTab currentUser={currentUser} toast={toast} fetchData={fetchData} />}
           {activeTab === 4 && <AllPropertiesTab allProperties={allProperties} setEditingProperty={setEditingProperty} handleDeleteProperty={handleDeleteProperty} handleApproveProperty={handleApproveProperty} fetchData={fetchData} toast={toast} />}
           {activeTab === 6 && <NewsTab toast={toast} />}
-          {activeTab === 7 && <ContactManagementTab toast={toast} />}
-          {activeTab === 9 && <PotentialCustomersTab toast={toast} />}
+          {activeTab === 7 && <ContactManagementTab toast={toast} currentUser={currentUser} />}
+          {activeTab === 9 && <PotentialCustomersTab toast={toast} users={users} currentUser={currentUser} />}
           {activeTab === 5 && <SettingsTab />}
           {activeTab === 8 && <AiModelTab />}
 </main>

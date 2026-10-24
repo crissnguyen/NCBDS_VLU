@@ -3,7 +3,16 @@ import { ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { dataService } from '../../../services/data/dataService';
 
-export default function PotentialCustomersTab({ toast }) {
+const DEFAULT_SALES = [
+  'Nguyễn Duy Đức',
+  'Hoàng Anh Tuấn',
+  'Trần Hữu Phúc',
+  'Lê Thị Kim Ngân',
+  'Phạm Minh Quân',
+  'Đặng Thu Hà'
+];
+
+export default function PotentialCustomersTab({ toast, users = [], currentUser = null }) {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,10 +32,34 @@ export default function PotentialCustomersTab({ toast }) {
   const [isAddEditModalOpen, setIsAddEditModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add'); // 'add' | 'edit'
   const [editingLeadId, setEditingLeadId] = useState(null);
+  const [isCustomSale, setIsCustomSale] = useState(false);
 
   // Detail Profile Modal
   const [viewingLead, setViewingLead] = useState(null);
   const [openActionId, setOpenActionId] = useState(null);
+
+  // Danh sách chuyên viên / Sale phụ trách
+  const salesStaffList = useMemo(() => {
+    const list = [...DEFAULT_SALES];
+    if (currentUser?.name && !list.includes(currentUser.name)) {
+      list.unshift(currentUser.name);
+    }
+    if (Array.isArray(users)) {
+      users.forEach(u => {
+        if (u.name && !list.includes(u.name)) {
+          list.push(u.name);
+        }
+      });
+    }
+    if (Array.isArray(leads)) {
+      leads.forEach(l => {
+        if (l.assignedSale && l.assignedSale !== 'Chưa gán' && !list.includes(l.assignedSale)) {
+          list.push(l.assignedSale);
+        }
+      });
+    }
+    return list;
+  }, [users, currentUser, leads]);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -40,7 +73,7 @@ export default function PotentialCustomersTab({ toast }) {
     budget: '',
     preferredType: '',
     preferredLocation: '',
-    assignedSale: 'Nguyễn Duy Đức',
+    assignedSale: currentUser?.name || 'Nguyễn Duy Đức',
     status: 'consulting',
     notes: ''
   });
@@ -141,6 +174,7 @@ export default function PotentialCustomersTab({ toast }) {
   const handleOpenAddModal = () => {
     setModalMode('add');
     setEditingLeadId(null);
+    setIsCustomSale(false);
     setFormData({
       name: '',
       phone: '',
@@ -152,7 +186,7 @@ export default function PotentialCustomersTab({ toast }) {
       budget: '',
       preferredType: '',
       preferredLocation: '',
-      assignedSale: 'Nguyễn Duy Đức',
+      assignedSale: currentUser?.name || 'Nguyễn Duy Đức',
       status: 'consulting',
       notes: ''
     });
@@ -162,6 +196,9 @@ export default function PotentialCustomersTab({ toast }) {
   const handleOpenEditModal = (lead) => {
     setModalMode('edit');
     setEditingLeadId(lead.id);
+    const saleVal = lead.assignedSale || currentUser?.name || 'Nguyễn Duy Đức';
+    const isCustom = Boolean(saleVal && !salesStaffList.includes(saleVal));
+    setIsCustomSale(isCustom);
     setFormData({
       name: lead.name || '',
       phone: lead.phone || '',
@@ -173,11 +210,31 @@ export default function PotentialCustomersTab({ toast }) {
       budget: lead.budget || '',
       preferredType: lead.preferredType || '',
       preferredLocation: lead.preferredLocation || '',
-      assignedSale: lead.assignedSale || 'Nguyễn Duy Đức',
+      assignedSale: saleVal,
       status: lead.status || 'consulting',
       notes: lead.notes || ''
     });
     setIsAddEditModalOpen(true);
+  };
+
+  const handleQuickStatusChange = async (leadId, newStatus) => {
+    try {
+      await dataService.updateLead(leadId, { status: newStatus });
+      setLeads(prev => prev.map(l => l.id === leadId ? { ...l, status: newStatus } : l));
+      toast?.success('Cập nhật', 'Đã đổi trạng thái chăm sóc.');
+    } catch {
+      toast?.error('Lỗi', 'Không thể cập nhật trạng thái.');
+    }
+  };
+
+  const handleQuickSaleChange = async (leadId, newSale) => {
+    try {
+      await dataService.updateLead(leadId, { assignedSale: newSale });
+      setLeads(prev => prev.map(l => l.id === leadId ? { ...l, assignedSale: newSale } : l));
+      toast?.success('Cập nhật', 'Đã đổi người phụ trách.');
+    } catch {
+      toast?.error('Lỗi', 'Không thể đổi người phụ trách.');
+    }
   };
 
   const handleSubmitForm = async (e) => {
@@ -187,8 +244,18 @@ export default function PotentialCustomersTab({ toast }) {
       return;
     }
 
+    let finalAssignedSale = formData.assignedSale?.trim();
+    if (isCustomSale && (!finalAssignedSale || finalAssignedSale === '__custom__')) {
+      toast?.error('Lỗi', 'Vui lòng nhập tên người phụ trách.');
+      return;
+    }
+    if (!finalAssignedSale || finalAssignedSale === '__custom__') {
+      finalAssignedSale = 'Chưa gán';
+    }
+
     const payload = {
       ...formData,
+      assignedSale: finalAssignedSale,
       totalPurchases: Number(formData.totalPurchases) || 0,
       totalRentals: Number(formData.totalRentals) || 0,
       totalVisits: Number(formData.totalVisits) || 0,
@@ -238,16 +305,6 @@ export default function PotentialCustomersTab({ toast }) {
       fetchLeads();
     } catch {
       toast?.error('Lỗi', 'Không thể xóa hàng loạt.');
-    }
-  };
-
-  const handleQuickStatusChange = async (leadId, newStatus) => {
-    try {
-      await dataService.updateLead(leadId, { status: newStatus });
-      setLeads(prev => prev.map(l => l.id === leadId ? { ...l, status: newStatus } : l));
-      toast?.success('Cập nhật', 'Đã đổi trạng thái chăm sóc.');
-    } catch {
-      toast?.error('Lỗi', 'Không thể cập nhật trạng thái.');
     }
   };
 
@@ -622,8 +679,29 @@ export default function PotentialCustomersTab({ toast }) {
                       </td>
 
                       {/* Assigned Sale */}
-                      <td style={{ padding: '0.75rem 1rem', color: '#475569', fontSize: '0.78rem' }}>
-                        {lead.assignedSale || 'Chưa gán'}
+                      <td style={{ padding: '0.75rem 1rem' }}>
+                        <select
+                          aria-label={`Người phụ trách cho ${lead.name}`}
+                          value={lead.assignedSale || ''}
+                          onChange={(e) => handleQuickSaleChange(lead.id, e.target.value)}
+                          style={{
+                            padding: '4px 8px',
+                            borderRadius: 6,
+                            border: '1px solid #e2e8f0',
+                            background: '#f8fafc',
+                            fontSize: '0.76rem',
+                            color: '#334155',
+                            fontWeight: 500,
+                            cursor: 'pointer',
+                            outline: 'none',
+                            maxWidth: '145px'
+                          }}
+                        >
+                          <option value="">Chưa gán</option>
+                          {salesStaffList.map(sale => (
+                            <option key={sale} value={sale}>{sale}</option>
+                          ))}
+                        </select>
                       </td>
 
                       {/* Action Dropdown Menu */}
@@ -874,12 +952,52 @@ export default function PotentialCustomersTab({ toast }) {
                     value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })}
                     style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: 8, border: '1px solid #cbd5e1', fontSize: '0.82rem', outline: 'none' }}
                   >
-                    <option value="hot"> Nóng (Cần liên hệ)</option>
+                    <option value="hot">Nóng (Cần liên hệ)</option>
                     <option value="consulting">Đang tư vấn</option>
                     <option value="viewing">Hẹn xem nhà</option>
                     <option value="closed">Đã chốt deal</option>
                     <option value="nurturing">Chăm sóc định kỳ</option>
                   </select>
+                </div>
+              </div>
+
+              {/* Người phụ trách (Sale / Chuyên viên) */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.76rem', fontWeight: 'var(--font-weight-subheading)', color: '#0f766e', marginBottom: 4 }}>
+                  Người phụ trách (Sale / Chuyên viên) *
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: isCustomSale ? '1fr 1fr' : '1fr', gap: '0.75rem' }}>
+                  <select
+                    value={isCustomSale ? '__custom__' : (formData.assignedSale || '')}
+                    onChange={e => {
+                      if (e.target.value === '__custom__') {
+                        setIsCustomSale(true);
+                      } else {
+                        setIsCustomSale(false);
+                        setFormData({ ...formData, assignedSale: e.target.value });
+                      }
+                    }}
+                    style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: 8, border: '1px solid #cbd5e1', fontSize: '0.82rem', outline: 'none', background: '#fff' }}
+                  >
+                    <option value="">-- Chưa gán người phụ trách --</option>
+                    {salesStaffList.map(sale => (
+                      <option key={sale} value={sale}>
+                        {sale} {currentUser?.name === sale ? '(Bạn)' : ''}
+                      </option>
+                    ))}
+                    <option value="__custom__">Nhập tên chuyên viên khác...</option>
+                  </select>
+
+                  {isCustomSale && (
+                    <input 
+                      type="text" required
+                      value={formData.assignedSale === '__custom__' ? '' : formData.assignedSale}
+                      onChange={e => setFormData({ ...formData, assignedSale: e.target.value })}
+                      placeholder="Nhập tên chuyên viên phụ trách..."
+                      autoFocus
+                      style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: 8, border: '1px solid #0f766e', fontSize: '0.82rem', outline: 'none', background: '#f0fdfa' }}
+                    />
+                  )}
                 </div>
               </div>
 

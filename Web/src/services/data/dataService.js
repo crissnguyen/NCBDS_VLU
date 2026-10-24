@@ -276,18 +276,21 @@ export const dataService = {
     return await res.json();
   },
 
-  replyContactRequest: async (id, replyText, subject) => {
+  replyContactRequest: async (id, replyText, subject, repliedBy, repliedByEmail) => {
     if (dataService.isLocalMode()) {
       const updated = localStore.update(CONFIG.LOCAL_KEYS.CONTACTS, id, {
         status: 'Replied',
-        replyText
+        replyText,
+        repliedBy: repliedBy || 'Ban quản trị EstateAI',
+        repliedByEmail: repliedByEmail || '',
+        repliedAt: new Date().toISOString()
       });
       return { success: true, data: updated };
     }
     const res = await fetch(`${CONFIG.API_BASE}/admin/contacts/${id}/reply`, {
       method: 'POST',
       headers: authHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ replyText, subject })
+      body: JSON.stringify({ replyText, subject, repliedBy, repliedByEmail })
     });
     return await res.json();
   },

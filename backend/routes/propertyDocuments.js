@@ -11,8 +11,9 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: MAX_FILE_SIZE, files: 1, fields: 0 },
   fileFilter(req, file, callback) {
-    callback(EXTENSIONS.includes(path.extname(file.originalname).toLowerCase())
-      ? null : new Error('Chỉ hỗ trợ .txt, .md, .docx và PDF có chữ.'), true);
+    const ext = path.extname(file.originalname).toLowerCase();
+    callback(EXTENSIONS.includes(ext)
+      ? null : new Error('Hỗ trợ .txt, .md, .docx, PDF có chữ, Excel (.xlsx, .xls) và CSV.'), true);
   },
 }).single('document');
 
