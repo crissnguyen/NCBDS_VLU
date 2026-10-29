@@ -34,7 +34,7 @@ const env = {
   frontendUrl: process.env.FRONTEND_URL || process.env.CLIENT_URL || process.env.PUBLIC_APP_URL || 'http://localhost:5173',
   corsOrigins: (process.env.CORS_ORIGINS || process.env.FRONTEND_URL || process.env.CLIENT_URL || '')
     .split(',')
-    .map(origin => origin.trim())
+    .map(origin => origin.trim().replace(/^["']|["']$/g, ''))
     .filter(Boolean),
   smtp: {
     host: process.env.SMTP_HOST,

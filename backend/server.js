@@ -23,15 +23,31 @@ const isLocalOrigin = (origin) => {
 
 const corsOptions = {
   origin(origin, callback) {
+    if (!origin) return callback(null, true);
+
+    const cleanOrigin = origin.trim().replace(/\/+$/, '').toLowerCase();
+
+    const isExplicitlyAllowed = env.corsOrigins.some((o) => {
+      const cleanAllowed = o.replace(/^["']|["']$/g, '').trim().replace(/\/+$/, '').toLowerCase();
+      return cleanAllowed === cleanOrigin || cleanAllowed === '*';
+    });
+
+    const isTrustedDomain =
+      cleanOrigin.endsWith('.vercel.app') ||
+      cleanOrigin.endsWith('.onrender.com') ||
+      isLocalOrigin(origin);
+
     if (
-      !origin
-      || env.corsOrigins.length === 0
-      || env.corsOrigins.includes(origin)
-      || (env.nodeEnv !== 'production' && isLocalOrigin(origin))
+      env.corsOrigins.length === 0
+      || isExplicitlyAllowed
+      || isTrustedDomain
+      || env.nodeEnv !== 'production'
     ) {
       return callback(null, true);
     }
-    return callback(new Error(`CORS blocked origin: ${origin}`));
+
+    console.warn(`[CORS] Blocked origin: ${origin}`);
+    return callback(null, false);
   },
   credentials: true,
 };
